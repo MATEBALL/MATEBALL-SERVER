@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
-    Success_Sample(HttpStatus.OK, "샘플 성공 코드입니다.");
+    SUCCESS_SAMPLE(HttpStatus.OK, "샘플 성공 코드입니다.");
 
     private final HttpStatus status;
     private final String message;

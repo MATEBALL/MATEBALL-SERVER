@@ -16,6 +16,6 @@ public class SampleController {
     public MateballResponse<SampleResponseDto> getSampleData() {
         SampleResponseDto sampleData = new SampleResponseDto("다진언니 안녕");
 
-        return MateballResponse.success(ErrorCode.Success_Sample, sampleData);
+        return MateballResponse.success(ErrorCode.SUCCESS_SAMPLE, sampleData);
     }
 }
