@@ -5,8 +5,7 @@ ex. [feat] searchPublicCourse -->
 
 ---
 
-#번호
-
+closed #이슈번호
 
 <br/>
 
