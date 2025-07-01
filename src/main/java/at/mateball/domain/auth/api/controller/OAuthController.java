@@ -1,7 +1,11 @@
-package at.mateball.domain;
+package at.mateball.domain.auth.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.jwt.JwtCookieProvider;
+import at.mateball.domain.auth.core.service.LoginService;
+import at.mateball.domain.auth.api.dto.LoginCommand;
+import at.mateball.domain.auth.api.dto.LoginResult;
+import at.mateball.domain.auth.api.dto.LoginUserInfo;
 import at.mateball.exception.code.SuccessCode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;

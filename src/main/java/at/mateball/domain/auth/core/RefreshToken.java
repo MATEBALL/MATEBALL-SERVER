@@ -1,4 +1,4 @@
-package at.mateball.domain;
+package at.mateball.domain.auth.core;
 
 import jakarta.persistence.Id;
 import lombok.Getter;

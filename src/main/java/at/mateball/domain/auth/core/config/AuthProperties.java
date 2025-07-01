@@ -1,4 +1,4 @@
-package at.mateball.domain;
+package at.mateball.domain.auth.core.config;
 
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

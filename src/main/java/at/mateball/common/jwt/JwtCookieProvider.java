@@ -1,6 +1,6 @@
 package at.mateball.common.jwt;
 
-import at.mateball.domain.LoginResult;
+import at.mateball.domain.auth.api.dto.LoginResult;
 import at.mateball.exception.code.BusinessErrorCode;
 import at.mateball.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;

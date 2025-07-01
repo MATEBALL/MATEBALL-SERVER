@@ -1,5 +1,7 @@
-package at.mateball.domain;
+package at.mateball.domain.auth.core.config;
 
+import at.mateball.domain.auth.api.dto.kako.KakaoTokenRes;
+import at.mateball.domain.auth.api.dto.kako.KakaoUserRes;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;

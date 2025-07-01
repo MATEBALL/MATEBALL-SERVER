@@ -1,5 +1,7 @@
-package at.mateball.domain;
+package at.mateball.domain.auth.core.service;
 
+import at.mateball.domain.auth.core.RefreshToken;
+import at.mateball.domain.auth.core.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 
 @Service

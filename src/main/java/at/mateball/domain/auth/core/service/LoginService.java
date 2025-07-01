@@ -1,6 +1,12 @@
-package at.mateball.domain;
+package at.mateball.domain.auth.core.service;
 
 import at.mateball.common.jwt.JwtTokenGenerator;
+import at.mateball.domain.auth.api.dto.kako.KakaoTokenRes;
+import at.mateball.domain.auth.api.dto.kako.KakaoUserRes;
+import at.mateball.domain.auth.api.dto.LoginCommand;
+import at.mateball.domain.auth.api.dto.LoginResult;
+import at.mateball.domain.auth.core.config.OauthClientApi;
+import at.mateball.domain.auth.core.config.RedirectUriResolver;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.UserRepository;
 import at.mateball.exception.BusinessException;

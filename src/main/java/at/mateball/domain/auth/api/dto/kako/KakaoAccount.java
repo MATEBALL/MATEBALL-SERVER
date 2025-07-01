@@ -1,4 +1,4 @@
-package at.mateball.domain;
+package at.mateball.domain.auth.api.dto.kako;
 
 public record KakaoAccount(
         String email,

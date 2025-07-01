@@ -1,4 +1,4 @@
-package at.mateball.domain;
+package at.mateball.domain.auth.core.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
