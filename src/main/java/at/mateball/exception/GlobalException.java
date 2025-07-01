@@ -1,6 +1,8 @@
 package at.mateball.exception;
 
 import at.mateball.common.MateballResponse;
+import at.mateball.exception.code.BusinessErrorCode;
+import at.mateball.exception.code.ErrorCode;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;

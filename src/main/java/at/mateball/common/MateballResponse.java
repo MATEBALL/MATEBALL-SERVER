@@ -1,7 +1,7 @@
 package at.mateball.common;
 
-import at.mateball.exception.ErrorCode;
-import at.mateball.exception.SuccessCode;
+import at.mateball.exception.code.ErrorCode;
+import at.mateball.exception.code.SuccessCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 public record MateballResponse<T>(

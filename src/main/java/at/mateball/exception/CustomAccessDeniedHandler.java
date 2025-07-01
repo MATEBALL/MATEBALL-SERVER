@@ -1,6 +1,7 @@
 package at.mateball.exception;
 
 import at.mateball.common.MateballResponse;
+import at.mateball.exception.code.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

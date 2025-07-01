@@ -1,6 +1,6 @@
 package at.mateball.common.jwt;
 
-import at.mateball.exception.BusinessErrorCode;
+import at.mateball.exception.code.BusinessErrorCode;
 import at.mateball.exception.BusinessException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
