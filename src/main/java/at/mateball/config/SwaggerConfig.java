@@ -1,8 +1,8 @@
 package at.mateball.config;
 
+import at.mateball.common.MateballResponse;
 import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.ExampleHolder;
-import at.mateball.common.MateballResponse;
 import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -107,7 +107,7 @@ public class SwaggerConfig {
     }
 
     private Example createSwaggerErrorExample(ErrorCode errorCode) {
-        MateballResponse<Void> errorResponse = new MateballResponse<>(errorCode);
+        MateballResponse<Void> errorResponse = new MateballResponse<>(errorCode.getStatus().value(), errorCode.getMessage(), null);
         Example example = new Example();
         example.setValue(errorResponse);
         return example;
