@@ -48,4 +48,24 @@ public class OauthClientApi {
             throw new BusinessException(BusinessErrorCode.KAKAO_CLIENT_ERROR);
         }
     }
+
+    public KakaoUserRes fetchUser(String accessToken) {
+        try {
+            return kakaoApiClient.get()
+                    .uri("/v2/user/me")
+                    .headers(headers -> headers.setBearerAuth(accessToken))
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, response ->
+                            response.bodyToMono(String.class).flatMap(errorBody -> {
+                                log.error("카카오 사용자 정보 요청 실패 - 응답: {}", errorBody);
+                                return Mono.error(new BusinessException(BusinessErrorCode.KAKAO_CLIENT_ERROR));
+                            })
+                    )
+                    .bodyToMono(KakaoUserRes.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("카카오 사용자 정보 요청 중 예외 발생", e);
+            throw new BusinessException(BusinessErrorCode.KAKAO_CLIENT_ERROR);
+        }
+    }
 }
