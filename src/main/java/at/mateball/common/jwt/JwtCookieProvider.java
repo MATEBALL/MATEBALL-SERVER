@@ -6,6 +6,8 @@ import at.mateball.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
+import jakarta.servlet.http.Cookie;
+
 
 import java.time.Duration;
 import java.util.Arrays;
