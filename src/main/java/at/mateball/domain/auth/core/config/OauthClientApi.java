@@ -5,6 +5,7 @@ import at.mateball.domain.auth.api.dto.kako.KakaoUserRes;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,10 @@ public class OauthClientApi {
     private final WebClient kakaoApiClient;
     private final KakaoOauthProperties properties;
 
-    public OauthClientApi(WebClient kakaoAuthClient, WebClient kakaoApiClient, KakaoOauthProperties properties) {
+    public OauthClientApi(
+            @Qualifier("kakaoAuthClient") WebClient kakaoAuthClient,
+            @Qualifier("kakaoApiClient") WebClient kakaoApiClient,
+            KakaoOauthProperties properties    ) {
         this.kakaoAuthClient = kakaoAuthClient;
         this.kakaoApiClient = kakaoApiClient;
         this.properties = properties;
