@@ -1,5 +1,6 @@
 package at.mateball.exception;
 
+import at.mateball.exception.code.BusinessErrorCode;
 import lombok.Getter;
 
 @Getter

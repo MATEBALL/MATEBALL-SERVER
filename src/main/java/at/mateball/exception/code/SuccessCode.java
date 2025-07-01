@@ -1,4 +1,4 @@
-package at.mateball.exception;
+package at.mateball.exception.code;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
