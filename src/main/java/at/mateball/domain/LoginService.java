@@ -2,6 +2,7 @@ package at.mateball.domain;
 
 import at.mateball.common.jwt.JwtTokenGenerator;
 import at.mateball.domain.user.User;
+import at.mateball.domain.user.UserRepository;
 import at.mateball.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
