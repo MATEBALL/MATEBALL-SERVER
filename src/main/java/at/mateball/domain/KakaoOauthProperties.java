@@ -1,4 +1,4 @@
-package at.mateball;
+package at.mateball.domain;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
