@@ -4,6 +4,7 @@ import at.mateball.common.jwt.JwtTokenGenerator;
 import at.mateball.domain.user.User;
 import at.mateball.domain.user.UserRepository;
 import at.mateball.exception.BusinessException;
+import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
