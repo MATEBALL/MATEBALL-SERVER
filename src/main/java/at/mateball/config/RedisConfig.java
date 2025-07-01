@@ -10,7 +10,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 @Configuration
-@EnableRedisRepositories(basePackages = "")
+@EnableRedisRepositories(basePackages = "at.mateball.domain.auth.core.repository")
 public class RedisConfig {
 
     @Bean
