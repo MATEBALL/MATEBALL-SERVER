@@ -2,6 +2,9 @@ package at.mateball.common.jwt;
 
 import at.mateball.exception.BusinessErrorCode;
 import at.mateball.exception.BusinessException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
