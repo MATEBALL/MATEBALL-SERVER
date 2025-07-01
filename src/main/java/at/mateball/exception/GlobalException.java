@@ -1,6 +1,7 @@
 package at.mateball.exception;
 
 import at.mateball.common.MateballResponse;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,11 @@ public class GlobalException {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<MateballResponse<?>> handleValidation(MethodArgumentNotValidException ex) {
         return toResponse(ErrorCode.VALIDATION_ERROR);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<MateballResponse<?>> handleJwtException(JwtException exception) {
+        return toResponse(ErrorCode.UNAUTHORIZED);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
