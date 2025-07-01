@@ -1,4 +1,12 @@
 package at.mateball.common.jwt;
 
-public class JwtProperties {
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "jwt")
+public record JwtProperties(
+        String secret,
+        Long accessExpiration,
+        Long refreshExpiration,
+        Long kakaoExpiration
+) {
 }
