@@ -1,4 +1,4 @@
-package at.mateball.domain.user;
+package at.mateball.domain.user.core;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

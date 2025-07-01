@@ -1,6 +1,6 @@
 package at.mateball.domain;
 
-import at.mateball.domain.user.User;
+import at.mateball.domain.user.core.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Optional;

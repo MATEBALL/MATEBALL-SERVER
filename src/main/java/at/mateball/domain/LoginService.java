@@ -1,8 +1,8 @@
 package at.mateball.domain;
 
 import at.mateball.common.jwt.JwtTokenGenerator;
-import at.mateball.domain.user.User;
-import at.mateball.domain.user.UserRepository;
+import at.mateball.domain.user.core.User;
+import at.mateball.domain.user.core.UserRepository;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
