@@ -21,6 +21,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.method.HandlerMethod;
 
@@ -38,6 +39,7 @@ import static java.util.stream.Collectors.groupingBy;
         )
 )
 
+@Profile("dev")
 @Configuration
 public class SwaggerConfig {
     private final String securitySchemaName = "JWT";
