@@ -18,6 +18,13 @@ import org.springframework.security.access.AccessDeniedException;
 @RestControllerAdvice
 @Slf4j
 public class GlobalException {
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<MateballResponse<?>> handleBusinessException(BusinessException exception) {
+        BusinessErrorCode code = exception.getBusinessErrorCode();
+        return ResponseEntity.status(code.getStatus())
+                .body(new MateballResponse<>(code.getStatus().value(), code.getMessage(), null));
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<MateballResponse<?>> handleHttpMessageNotReadable(HttpMessageNotReadableException exception) {
         return toResponse(ErrorCode.INVALID_REQUEST_BODY);
