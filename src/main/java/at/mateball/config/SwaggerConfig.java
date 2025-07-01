@@ -4,7 +4,7 @@ import at.mateball.common.MateballResponse;
 import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.ExampleHolder;
 import at.mateball.common.swagger.SwaggerResponseDescription;
-import at.mateball.exception.ErrorCode;
+import at.mateball.exception.code.ErrorCode;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.models.Components;

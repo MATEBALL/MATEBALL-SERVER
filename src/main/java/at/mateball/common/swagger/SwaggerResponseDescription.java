@@ -1,12 +1,12 @@
 package at.mateball.common.swagger;
 
-import at.mateball.exception.ErrorCode;
+import at.mateball.exception.code.ErrorCode;
 import lombok.Getter;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static at.mateball.exception.ErrorCode.*;
+import static at.mateball.exception.code.ErrorCode.*;
 
 @Getter
 public enum SwaggerResponseDescription {
