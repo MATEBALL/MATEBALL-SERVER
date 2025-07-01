@@ -95,6 +95,6 @@ public class JwtCookieProvider {
     }
 
     private String getSameSite(HttpServletRequest request) {
-        return isSecure(request) ? "None" : "Lax"; // dev용 분기
+        return isSecure(request) ? "None" : "Lax";
     }
 }
