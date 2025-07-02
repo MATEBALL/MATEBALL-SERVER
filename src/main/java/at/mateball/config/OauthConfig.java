@@ -9,5 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({
         KakaoOauthProperties.class,
         AuthProperties.class
-})public class OauthConfig {
+})
+public class OauthConfig {
+
 }
