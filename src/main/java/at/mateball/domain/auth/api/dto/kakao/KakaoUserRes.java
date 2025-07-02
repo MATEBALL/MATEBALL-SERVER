@@ -1,4 +1,4 @@
-package at.mateball.domain.auth.api.dto.kako;
+package at.mateball.domain.auth.api.dto.kakao;
 
 import at.mateball.domain.user.core.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
