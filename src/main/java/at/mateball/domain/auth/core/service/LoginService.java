@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,7 @@ public class LoginService {
     private final TokenService tokenService;
     private final RedirectUriResolver redirectUriResolver;
 
+    @Transactional
     public LoginResult login(LoginCommand command, HttpServletRequest request) {
         String redirectUri = redirectUriResolver.resolve(request);
 
