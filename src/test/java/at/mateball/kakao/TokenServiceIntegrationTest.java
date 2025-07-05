@@ -36,5 +36,34 @@ class TokenServiceIntegrationTest {
         assertThat(saved).isPresent();
         assertThat(saved.get().getValue()).isEqualTo(token);
     }
+
+    @Test
+    void redis에_저장된_refreshToken_검증_성공() {
+        // given
+        Long userId = 456L;
+        String token = "validateToken";
+        tokenService.save(userId, token);
+
+        // when
+        boolean isValid = tokenService.validate(userId, token);
+
+        // then
+        assertThat(isValid).isTrue();
+    }
+
+    @Test
+    void redis에_저장된_refreshToken_검증_실패() {
+        // given
+        Long userId = 789L;
+        String savedToken = "actualToken";
+        String wrongToken = "fakeToken";
+        tokenService.save(userId, savedToken);
+
+        // when
+        boolean isValid = tokenService.validate(userId, wrongToken);
+
+        // then
+        assertThat(isValid).isFalse();
+    }
 }
 
