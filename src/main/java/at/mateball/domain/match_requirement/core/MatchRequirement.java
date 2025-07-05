@@ -18,21 +18,21 @@ public class MatchRequirement {
     private User user;
 
     @Column(nullable = false)
-    private Integer team;
+    private int team;
 
     @Column(nullable = true)
     private Integer teamAllowed;
 
     @Column(nullable = false)
-    private Integer style;
+    private int style;
 
     @Column(nullable = false)
-    private Integer genderPreference;
+    private int genderPreference;
 
     protected MatchRequirement() {
     }
 
-    public MatchRequirement(User user, Integer team, Integer teamAllowed, Integer style, Integer genderPreference) {
+    public MatchRequirement(User user, int team, Integer teamAllowed, int style, int genderPreference) {
         this.user = user;
         this.team = team;
         this.teamAllowed = teamAllowed;
