@@ -25,10 +25,10 @@ public class User {
     @Column(nullable = false)
     private String birthyear;
 
-    @Column(length = 45)
+    @Column(nullable = true, length = 45)
     private String nickname;
 
-    @Column(length = 500)
+    @Column(nullable = true, length = 500)
     private String introduction;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
