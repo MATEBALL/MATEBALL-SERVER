@@ -14,7 +14,7 @@ public class MatchRequirement {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, unique = true) // TODO: 앱잼 기간 내에는 하나만이니까 unique 설정, 스프린트에서는 삭제 필요
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false)
