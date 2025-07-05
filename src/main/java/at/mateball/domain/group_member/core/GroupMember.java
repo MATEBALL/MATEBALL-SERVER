@@ -25,7 +25,7 @@ public class GroupMember {
     @Column(nullable = false)
     private Boolean isParticipant = false;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private int status = 3; // TODO: "승인 대기 중"==3 로 기본값 설정함. 값 확정 필요
 
     protected GroupMember() {
