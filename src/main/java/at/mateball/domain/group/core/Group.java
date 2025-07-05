@@ -33,13 +33,17 @@ public class Group {
     @Column(length = 1000)
     private String chattingUrl;
 
+    @Column(nullable = false)
+    private boolean isGroup;
+
     protected Group() {
     }
 
-    public Group(User leader, GameInformation gameInformation, LocalDateTime createdAt, int status) {
+    public Group(User leader, GameInformation gameInformation, LocalDateTime createdAt, int status, boolean isGroup) {
         this.leader = leader;
         this.gameInformation = gameInformation;
         this.createdAt = createdAt;
         this.status = status;
+        this.isGroup = isGroup;
     }
 }
