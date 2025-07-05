@@ -42,3 +42,6 @@ application-local.yml
 
 ### env ###
 .env
+
+### redis ###
+redis.conf
