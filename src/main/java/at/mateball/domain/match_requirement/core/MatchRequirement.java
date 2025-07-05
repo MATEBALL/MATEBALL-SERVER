@@ -20,7 +20,7 @@ public class MatchRequirement {
     @Column(nullable = false)
     private Integer team;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Integer teamAllowed;
 
     @Column(nullable = false)
