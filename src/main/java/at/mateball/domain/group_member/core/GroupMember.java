@@ -25,13 +25,13 @@ public class GroupMember {
     @Column(nullable = false)
     private Boolean isParticipant = false;
 
-    @Column(nullable = false)
-    private Integer status = 3; // TODO: "승인 대기 중"==3 로 기본값 설정함. Integer 값 확정 필요
+    @Column(nullable = true)
+    private int status = 3; // TODO: "승인 대기 중"==3 로 기본값 설정함. 값 확정 필요
 
     protected GroupMember() {
     }
 
-    public GroupMember(User user, Group group, Boolean isParticipant, Integer status) {
+    public GroupMember(User user, Group group, Boolean isParticipant, int status) {
         this.user = user;
         this.group = group;
         this.isParticipant = isParticipant;

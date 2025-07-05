@@ -27,8 +27,8 @@ public class Group {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    private Integer status = 1; // TODO: "대기중"==1 로 기본값 설정함. Integer 값 확정 필요
+    @Column(nullable = true)
+    private int status = 1; // TODO: "대기중"==1 로 기본값 설정함. 값 확정 필요
 
     @Column(length = 1000)
     private String chattingUrl;
@@ -36,7 +36,7 @@ public class Group {
     protected Group() {
     }
 
-    public Group(User leader, GameInformation gameInformation, LocalDateTime createdAt, Integer status) {
+    public Group(User leader, GameInformation gameInformation, LocalDateTime createdAt, int status) {
         this.leader = leader;
         this.gameInformation = gameInformation;
         this.createdAt = createdAt;
