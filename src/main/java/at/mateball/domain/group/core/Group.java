@@ -27,7 +27,7 @@ public class Group {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private int status = 1; // TODO: "대기중"==1 로 기본값 설정함. 값 확정 필요
 
     @Column(nullable = true, length = 1000)
