@@ -28,7 +28,7 @@ public class Group {
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private int status = 1; // TODO: "대기중"==1 로 기본값 설정함. 값 확정 필요
+    private int status;
 
     @Column(nullable = true, length = 1000)
     private String chattingUrl;
