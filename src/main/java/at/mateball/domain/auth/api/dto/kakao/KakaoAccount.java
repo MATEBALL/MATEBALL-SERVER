@@ -1,7 +1,9 @@
 package at.mateball.domain.auth.api.dto.kakao;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public record KakaoAccount(
         String gender,
-        String birthyear
+        @JsonProperty("birthyear") String birthyear
 ) {
 }
