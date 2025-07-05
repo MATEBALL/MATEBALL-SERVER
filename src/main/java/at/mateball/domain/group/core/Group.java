@@ -30,7 +30,7 @@ public class Group {
     @Column(nullable = true)
     private int status = 1; // TODO: "대기중"==1 로 기본값 설정함. 값 확정 필요
 
-    @Column(length = 1000)
+    @Column(nullable = true, length = 1000)
     private String chattingUrl;
 
     @Column(nullable = false)
