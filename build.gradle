@@ -46,8 +46,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-  // swagger
+  	// swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
+	// queryDSL
+	implementation 'com.querydsl:querydsl-jpa:5.1.0'
+	annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jpa'
 }
 
 tasks.named('test') {
