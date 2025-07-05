@@ -18,7 +18,7 @@ public class Group {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // TODO: user,leader 네이밍 고민
+    private User leader;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "game_information_id", nullable = false, unique = true)
@@ -36,8 +36,8 @@ public class Group {
     protected Group() {
     }
 
-    public Group(User user, GameInformation gameInformation, LocalDateTime createdAt, Integer status) {
-        this.user = user;
+    public Group(User leader, GameInformation gameInformation, LocalDateTime createdAt, Integer status) {
+        this.leader = leader;
         this.gameInformation = gameInformation;
         this.createdAt = createdAt;
         this.status = status;
