@@ -54,6 +54,17 @@ services:
     networks:
       - backend
 
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/www/certbot:/var/www/certbot
+    depends_on:
+      - nginx
+    networks:
+      - backend
+
 networks:
   backend:
     driver: bridge
