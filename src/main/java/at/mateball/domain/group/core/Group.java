@@ -21,7 +21,7 @@ public class Group {
     private User leader;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "game_information_id", nullable = false, unique = true)
+    @JoinColumn(name = "game_information_id", nullable = false)
     private GameInformation gameInformation;
 
     @Column(nullable = false)
