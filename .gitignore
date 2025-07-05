@@ -38,3 +38,7 @@ out/
 
 ### yml ###
 application.yml
+application-local.yml
+
+### env ###
+.env
