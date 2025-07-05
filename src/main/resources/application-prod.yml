@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      dialect: org.hibernate.dialect.MySQL8Dialect
+
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
+      password: ${SPRING_DATA_REDIS_PASSWORD}
+      timeout: 50000
+
+kakao:
+  client:
+    client-id: ${KAKAO_CLIENT_ID}
+    admin-key: ${KAKAO_ADMIN_KEY}
+    client-secret: ${KAKAO_CLIENT_SECRET}
+    client-authentication-method: client_secret_post
+    authorization-grant-type: authorization_code
+    redirect-uri: https://mateball.co.kr/auth/login
+    scope:
+      - birthday
+      - gender
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-expiration: ${JWT_ACCESS_EXPIRATION}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION}
+  kakao-expiration: ${JWT_KAKAO_EXPIRATION}
+
+auth:
+  redirect-uri:
+    local: https://api.mateball.co.kr/auth/login
+    prod: https://mateball.co.kr/auth/login
