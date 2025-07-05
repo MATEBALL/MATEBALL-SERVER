@@ -23,7 +23,7 @@ public class User {
     private String gender;
 
     @Column(nullable = false)
-    private String birthyear;
+    private String birthYear;
 
     @Column(nullable = true, length = 45)
     private String nickname;
@@ -38,10 +38,10 @@ public class User {
 
     }
 
-    public User(Long kakaoUserId, String gender, String birthyear) {
+    public User(Long kakaoUserId, String gender, String birthYear) {
         this.kakaoUserId = kakaoUserId;
         this.gender = gender;
-        this.birthyear = birthyear;
+        this.birthYear = birthYear;
     }
 
     public void updateNickname(final String nickname) {
