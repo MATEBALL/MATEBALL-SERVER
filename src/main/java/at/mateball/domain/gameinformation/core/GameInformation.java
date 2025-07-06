@@ -1,4 +1,4 @@
-package at.mateball.domain.game_information.core;
+package at.mateball.domain.gameinformation.core;
 
 import jakarta.persistence.*;
 import lombok.Getter;

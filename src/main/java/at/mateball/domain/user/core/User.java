@@ -1,6 +1,6 @@
 package at.mateball.domain.user.core;
 
-import at.mateball.domain.match_requirement.core.MatchRequirement;
+import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import jakarta.persistence.*;
 import lombok.Getter;
 

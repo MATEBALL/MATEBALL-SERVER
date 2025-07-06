@@ -1,4 +1,4 @@
-package at.mateball.domain.match_requirement.core;
+package at.mateball.domain.matchrequirement.core;
 
 import at.mateball.domain.user.core.User;
 import jakarta.persistence.*;
