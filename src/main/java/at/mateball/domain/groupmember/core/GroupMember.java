@@ -1,4 +1,4 @@
-package at.mateball.domain.group_member.core;
+package at.mateball.domain.groupmember.core;
 
 import at.mateball.domain.group.core.Group;
 import at.mateball.domain.user.core.User;

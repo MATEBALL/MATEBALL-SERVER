@@ -1,6 +1,6 @@
 package at.mateball.domain.group.core;
 
-import at.mateball.domain.game_information.core.GameInformation;
+import at.mateball.domain.gameinformation.core.GameInformation;
 import at.mateball.domain.user.core.User;
 import jakarta.persistence.*;
 import lombok.Getter;
