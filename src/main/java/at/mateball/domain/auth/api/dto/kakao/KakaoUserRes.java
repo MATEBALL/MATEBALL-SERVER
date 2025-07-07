@@ -13,7 +13,16 @@ public record KakaoUserRes(
         return new User(
                 id,
                 Optional.ofNullable(kakaoAccount).map(KakaoAccount::gender).orElse(null),
-                Optional.ofNullable(kakaoAccount).map(KakaoAccount::birthyear).orElse(null)
+                Optional.ofNullable(kakaoAccount)
+                        .map(KakaoAccount::birthyear)
+                        .map(b -> {
+                            try {
+                                return Integer.parseInt(b);
+                            } catch (NumberFormatException e) {
+                                return null;
+                            }
+                        })
+                        .orElse(null)
         );
     }
 }
