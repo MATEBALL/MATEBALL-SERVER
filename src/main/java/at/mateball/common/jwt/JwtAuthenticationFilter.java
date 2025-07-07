@@ -1,5 +1,9 @@
 package at.mateball.common.jwt;
 
+import at.mateball.exception.BusinessException;
+import at.mateball.exception.code.BusinessErrorCode;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +22,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenValidator tokenValidator;
     private final JwtAuthenticationProvider authenticationProvider;
 
-    public JwtAuthenticationFilter(JwtCookieProvider cookieProvider, JwtTokenValidator tokenValidator, JwtAuthenticationProvider authenticationProvider) {
+    public JwtAuthenticationFilter(JwtCookieProvider cookieProvider,
+                                   JwtTokenValidator tokenValidator,
+                                   JwtAuthenticationProvider authenticationProvider) {
         this.cookieProvider = cookieProvider;
         this.tokenValidator = tokenValidator;
         this.authenticationProvider = authenticationProvider;
@@ -27,16 +33,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         try {
             String token = cookieProvider.extractAccessToken(request);
-            tokenValidator.validate(token);
-            Authentication authentication = authenticationProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            if (token != null && token.contains(".") && countDots(token) == 2) {
+                tokenValidator.validate(token);
+                Authentication authentication = authenticationProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+        } catch (ExpiredJwtException e) {
+            throw new BusinessException(BusinessErrorCode.EXPIRED_TOKEN);
         } catch (Exception e) {
-            logger.debug("JWT 인증 실패", e);
+            throw new BusinessException(BusinessErrorCode.INVALID_SERVER_JWT);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private int countDots(String token) {
+        return (int) token.chars().filter(ch -> ch == '.').count();
     }
 
     @Override
