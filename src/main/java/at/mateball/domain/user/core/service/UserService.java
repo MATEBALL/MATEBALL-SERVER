@@ -18,7 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void updateNickname(long userId, String updatedNickname) {
+    public void updateNickname(final Long userId, final String updatedNickname) {
         User user = userRepository.findById(userId).orElseThrow(()
                 -> new BusinessException(USER_NOT_FOUND));
 
