@@ -12,6 +12,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -81,6 +82,11 @@ public class GlobalException {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<MateballResponse<?>> handleAccessDenied(AccessDeniedException ex) {
         return toResponse(CommonErrorCode.FORBIDDEN);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<MateballResponse<?>> handleMissingServletRequestParam(MissingServletRequestParameterException ex) {
+        return toResponse(CommonErrorCode.MISSING_REQUEST_PARAM);
     }
 
     @ExceptionHandler(Exception.class)
