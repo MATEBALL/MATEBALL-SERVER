@@ -5,6 +5,8 @@ import at.mateball.domain.group.QGroup;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
+import at.mateball.exception.BusinessException;
+import at.mateball.exception.code.BusinessErrorCode;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -24,10 +26,10 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     public DirectCreateRes findDirectCreateResults(Long userId, Long matchId) {
         QGroup group = QGroup.group;
         QUser user = QUser.user;
-        QGameInformation gameInformation = QGameInformation.gameInformation;
+        QGameInformation game = QGameInformation.gameInformation;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
 
-        List<Tuple> tuples = queryFactory
+        Tuple tuple = queryFactory
                 .select(
                         group.id,
                         user.nickname,
@@ -35,22 +37,23 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                         user.gender,
                         matchRequirement.team,
                         matchRequirement.style,
-                        gameInformation.awayTeamName,
-                        gameInformation.homeTeamName,
-                        gameInformation.stadiumName,
-                        gameInformation.gameDate,
+                        game.awayTeamName,
+                        game.homeTeamName,
+                        game.stadiumName,
+                        game.gameDate,
                         user.imgUrl
                 )
                 .from(group)
-                .join(user).on(group.id.eq(user.id))
-                .join(gameInformation).on(group.id.eq(gameInformation.id))
-                .join(matchRequirement).on(user.id.eq(matchRequirement.user.id))
-                .where(user.id.eq(userId))
-                .fetch();
+                .join(user).on(group.leader.eq(user))
+                .join(game).on(group.gameInformation.eq(game))
+                .join(matchRequirement).on(matchRequirement.user.eq(user))
+                .where(
+                        user.id.eq(userId),
+                        group.id.eq(matchId)
+                )
+                .fetchOne();
 
-        return tuples.stream()
-                .map(DirectCreateRes::from)
-                .toList();
+        return tuple != null ? DirectCreateRes.from(tuple) : null;
     }
 
 }
