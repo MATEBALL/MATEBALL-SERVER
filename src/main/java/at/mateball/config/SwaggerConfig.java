@@ -4,6 +4,7 @@ import at.mateball.common.MateballResponse;
 import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.ExampleHolder;
 import at.mateball.common.swagger.SwaggerResponseDescription;
+import at.mateball.exception.code.CommonErrorCode;
 import at.mateball.exception.code.ErrorCode;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -95,15 +96,15 @@ public class SwaggerConfig {
 
         ApiResponses responses = operation.getResponses();
 
-        Set<ErrorCode> errorCodeList = type.getErrorCodeList();
+        Set<ErrorCode> commonErrorCodeList = type.getCommonErrorCodeList();
 
         Map<Integer, List<ExampleHolder>> statusWithExampleHolders =
-                errorCodeList.stream()
+                commonErrorCodeList.stream()
                         .map(
                                 errorCode -> {
                                     return ExampleHolder.builder()
                                             .holder(
-                                                    createSwaggerErrorExample(errorCode))
+                                                    createSwaggerErrorExample((CommonErrorCode) errorCode))
                                             .code(errorCode.getStatus().value())
                                             .name(errorCode.toString())
                                             .build();
@@ -112,8 +113,8 @@ public class SwaggerConfig {
         addExamplesToResponses(responses, statusWithExampleHolders);
     }
 
-    private Example createSwaggerErrorExample(ErrorCode errorCode) {
-        MateballResponse<Void> errorResponse = new MateballResponse<>(errorCode.getStatus().value(), errorCode.getMessage(), null);
+    private Example createSwaggerErrorExample(CommonErrorCode commonErrorCode) {
+        MateballResponse<Void> errorResponse = new MateballResponse<>(commonErrorCode.getStatus().value(), commonErrorCode.getMessage(), null);
         Example example = new Example();
         example.setValue(errorResponse);
         return example;

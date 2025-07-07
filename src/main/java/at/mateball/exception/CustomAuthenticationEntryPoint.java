@@ -1,7 +1,7 @@
 package at.mateball.exception;
 
 import at.mateball.common.MateballResponse;
-import at.mateball.exception.code.ErrorCode;
+import at.mateball.exception.code.CommonErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             HttpServletResponse response,
             AuthenticationException authenticationException
     ) throws IOException {
-        MateballResponse<?> errorResponse = MateballResponse.failure(ErrorCode.UNAUTHORIZED);
+        MateballResponse<?> errorResponse = MateballResponse.failure(CommonErrorCode.UNAUTHORIZED);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
