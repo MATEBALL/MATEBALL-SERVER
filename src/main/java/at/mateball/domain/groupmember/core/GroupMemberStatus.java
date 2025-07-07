@@ -9,9 +9,9 @@ import java.util.Arrays;
 
 @Getter
 public enum GroupMemberStatus {
-    PENDING_REQUEST(1, "요청대기중"),
+    PENDING_REQUEST(1, "요청 대기 중"),
     NEW_REQUEST(2, "새요청"),
-    AWAITING_APPROVAL(3, "승인대기중"),
+    AWAITING_APPROVAL(3, "승인 대기 중"),
     APPROVED(4, "승인 완료"),
     MATCHED(5, "매칭 완료"),
     MATCH_FAILED(6, "매칭 실패");
