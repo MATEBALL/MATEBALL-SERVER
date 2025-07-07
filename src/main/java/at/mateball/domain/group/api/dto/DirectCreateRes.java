@@ -11,7 +11,6 @@ import com.querydsl.core.Tuple;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public record DirectCreateRes(
         Long id,
@@ -23,7 +22,7 @@ public record DirectCreateRes(
         String awayTeam,
         String homeTeam,
         String stadium,
-        String date,
+        LocalDate date,
         String imgUrl
 ) {
     public static DirectCreateRes from(Tuple tuple) {
@@ -37,7 +36,6 @@ public record DirectCreateRes(
         int age = currentYear - birthYear + 1;
 
         LocalDate gameDate = tuple.get(gameInformation.gameDate);
-        String formattedDate = gameDate.format(DateTimeFormatter.ofPattern("MM월 dd일"));
 
         return new DirectCreateRes(
                 tuple.get(group.id),
@@ -49,7 +47,7 @@ public record DirectCreateRes(
                 tuple.get(gameInformation.awayTeamName),
                 tuple.get(gameInformation.homeTeamName),
                 tuple.get(gameInformation.stadiumName),
-                formattedDate,
+                tuple.get(gameInformation.gameDate),
                 tuple.get(user.imgUrl)
         );
     }
