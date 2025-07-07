@@ -24,8 +24,8 @@ public class MatchRequirementRepositoryImpl implements MatchRequirementRepositor
 
     @Override
     public List<MatchingScoreDto> findMatchingUsers(Long userId) {
-        QUser userB = new QUser("userB");
-        QMatchRequirement requirementB = new QMatchRequirement("requirementB");
+        QMatchRequirement requirementB = QMatchRequirement.matchRequirement;
+        QUser userB = QUser.user;
 
         User user = entityManager.find(User.class, userId);
         MatchRequirement reqAEntity = entityManager.createQuery(
@@ -68,14 +68,15 @@ public class MatchRequirementRepositoryImpl implements MatchRequirementRepositor
                                         "WHEN ({0} = 1 AND {1} = 3) OR ({0} = 3 AND {1} = 1) THEN 20 ELSE 10 END",
                                 Expressions.constant(styleA), requirementB.style)
                 ))
-                .from(userB)
+                .from(requirementB)
                 .join(requirementB.user, userB)
                 .where(userB.id.ne(userId)
                         .and(Expressions.numberTemplate(Integer.class,
                                 "ABS(({0} - {1} + 1) - ({2} - {3} + 1))",
                                 Expressions.constant(thisYear), userB.birthYear,
                                 Expressions.constant(thisYear), Expressions.constant(birthYearA)
-                        ).loe(5)))
+                        ).loe(5))
+                )
                 .fetch();
     }
 }
