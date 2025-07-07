@@ -15,6 +15,12 @@ public class GroupService {
     }
 
     public DirectCreateRes getDirectMatching(Long userId, Long matchId) {
-        return groupRepository.findDirectCreateResults(userId, matchId);
+        DirectCreateRes result = groupRepository.findDirectCreateResults(userId, matchId);
+
+        if (result == null) {
+            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
+        }
+
+        return result;
     }
 }
