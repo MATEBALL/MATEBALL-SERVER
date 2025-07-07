@@ -25,7 +25,11 @@ public enum BusinessErrorCode implements ErrorCode {
     // 404 NOT FOUND
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "요청에 해당하는 토큰이 존재하지 않습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 사용자입니다."),
-    GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 매칭입니다."),;
+    GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 매칭입니다."),
+
+    // 404 CONFLICT
+    DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임입니다.");
+
     private final HttpStatus status;
     private final String message;
 
