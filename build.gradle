@@ -64,6 +64,13 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+test {
+	testLogging {
+		events "passed", "skipped", "failed", "standard_out", "standard_error"
+		showStandardStreams = true
+	}
+}
+
 def querydslDir = "$buildDir/generated"
 
 tasks.withType(JavaCompile).configureEach {
