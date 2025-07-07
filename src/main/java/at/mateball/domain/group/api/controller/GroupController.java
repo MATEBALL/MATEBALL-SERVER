@@ -2,9 +2,12 @@ package at.mateball.domain.group.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
+import at.mateball.common.swagger.CustomExceptionDescription;
+import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.core.service.GroupService;
 import at.mateball.exception.code.SuccessCode;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +23,8 @@ public class GroupController {
     }
 
     @GetMapping("/direct/{matchId}")
+    @CustomExceptionDescription(SwaggerResponseDescription.GROUP_NOT)
+    @Operation(summary = "일대일 매칭 생성 결과 조회")
     public ResponseEntity<MateballResponse<?>> getDirectMatching(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @NotNull @PathVariable Long matchId
