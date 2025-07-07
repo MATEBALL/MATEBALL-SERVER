@@ -60,7 +60,7 @@ class LoginServiceTest {
 
         Long kakaoUserId = 12345L;
         String gender = "male";
-        String birthYear = "1994";
+        int birthYear = 1994;
 
         KakaoTokenRes kakaoTokenRes = new KakaoTokenRes(kakaoAccessToken, kakaoRefreshToken);
         KakaoUserRes kakaoUserRes = new KakaoUserRes(kakaoUserId,
