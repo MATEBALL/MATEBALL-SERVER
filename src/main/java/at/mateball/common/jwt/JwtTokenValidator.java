@@ -5,12 +5,14 @@ import at.mateball.exception.BusinessException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 @Component
+@Slf4j
 public class JwtTokenValidator {
 
     private final JwtProperties jwtProperties;
@@ -33,7 +35,7 @@ public class JwtTokenValidator {
                     .parseClaimsJws(token);
 
         } catch (JwtException | IllegalArgumentException e) {
-            e.printStackTrace();
+            log.debug("JWT validation failed: {}", e.getMessage());
             throw new BusinessException(BusinessErrorCode.INVALID_SERVER_JWT);
         }
     }
