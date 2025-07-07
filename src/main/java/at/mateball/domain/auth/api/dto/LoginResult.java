@@ -7,7 +7,7 @@ public record LoginResult(
         Long userId,
         String gender,
 
-        String birthyear
+        int birthyear
 ) {
 
 }

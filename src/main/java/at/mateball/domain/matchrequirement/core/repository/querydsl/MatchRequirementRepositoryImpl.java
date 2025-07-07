@@ -1,6 +1,6 @@
 package at.mateball.domain.matchrequirement.core.repository.querydsl;
 
-import at.mateball.domain.match_requirement.core.QMatchRequirement;
+import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import at.mateball.domain.user.core.QUser;
@@ -33,7 +33,7 @@ public class MatchRequirementRepositoryImpl implements MatchRequirementRepositor
                 .setParameter("id", userId)
                 .getSingleResult();
 
-        int birthYearA = Integer.parseInt(user.getBirthYear());
+        int birthYearA = user.getBirthYear();
         int teamA = reqAEntity.getTeam();
         int allowA = reqAEntity.getTeamAllowed();
         int styleA = reqAEntity.getStyle();

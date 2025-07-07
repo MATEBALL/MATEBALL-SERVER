@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "user")
+@Table(name = "`user`")
 public class User {
 
     @Id
@@ -23,7 +23,7 @@ public class User {
     private String gender;
 
     @Column(nullable = false)
-    private String birthYear;
+    private int birthYear;
 
     @Column(nullable = true, length = 45)
     private String nickname;
@@ -38,7 +38,7 @@ public class User {
 
     }
 
-    public User(Long kakaoUserId, String gender, String birthYear) {
+    public User(Long kakaoUserId, String gender, int birthYear) {
         this.kakaoUserId = kakaoUserId;
         this.gender = gender;
         this.birthYear = birthYear;
