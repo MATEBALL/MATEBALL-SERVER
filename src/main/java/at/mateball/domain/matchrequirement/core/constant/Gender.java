@@ -9,21 +9,23 @@ import java.util.Arrays;
 
 @Getter
 public enum Gender {
-    MALE(1, "남성"),
-    FEMALE(2, "여성"),
-    NO_PREFERENCE(3, "상관없어요");
+    MALE(1, "남성", "male"),
+    FEMALE(2, "여성", "female"),
+    NO_PREFERENCE(3, "상관없어요", "none");
 
     private final int value;
     private final String label;
+    private final String raw;
 
-    Gender(int value, String label) {
+    Gender(int value, String label, String raw) {
         this.value = value;
         this.label = label;
+        this.raw = raw;
     }
 
-    public static Gender Gender(int value) {
+    public static Gender from(String raw) {
         return Arrays.stream(values())
-                .filter(g -> g.value == value)
+                .filter(g -> g.raw.equalsIgnoreCase(raw))
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
     }

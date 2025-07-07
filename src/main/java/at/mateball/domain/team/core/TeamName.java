@@ -22,11 +22,11 @@ public enum TeamName {
     NONE(11, "응원하는 팀이 없어요.");
 
     private final int value;
-    private final String lkabel;
+    private final String label;
 
-    TeamName(int value, String lkabel) {
+    TeamName(int value, String label) {
         this.value = value;
-        this.lkabel = lkabel;
+        this.label = label;
     }
 
     public static TeamName from(int value) {
