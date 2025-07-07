@@ -31,6 +31,9 @@ public class User {
     @Column(nullable = true, length = 500)
     private String introduction;
 
+    @Column(nullable = true, length = 500)
+    private String imgUrl;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchRequirement> matchRequirements = new ArrayList<>();
 
@@ -50,5 +53,9 @@ public class User {
 
     public void updateIntroduction(final String introduction) {
         this.introduction = introduction;
+    }
+
+    public void updateImgUrl(final String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 }
