@@ -1,5 +1,6 @@
 package at.mateball.domain.group.core.service;
 
+import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import org.springframework.stereotype.Service;
 
@@ -9,5 +10,9 @@ public class GroupService {
 
     public GroupService(GroupRepository groupRepository) {
         this.groupRepository = groupRepository;
+    }
+
+    public DirectCreateRes getDirectMatching(Long userId) {
+        
     }
 }
