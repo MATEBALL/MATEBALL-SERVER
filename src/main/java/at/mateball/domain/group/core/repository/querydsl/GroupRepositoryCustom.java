@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface GroupRepositoryCustom {
-    List<DirectCreateRes> findDirectCreateResults(Long userId);
+    DirectCreateRes findDirectCreateResults(Long userId, Long matchId);
 }

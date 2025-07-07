@@ -21,7 +21,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     }
 
     @Override
-    public List<DirectCreateRes> findDirectCreateResults(Long userId) {
+    public DirectCreateRes findDirectCreateResults(Long userId, Long matchId) {
         QGroup group = QGroup.group;
         QUser user = QUser.user;
         QGameInformation gameInformation = QGameInformation.gameInformation;
