@@ -2,9 +2,12 @@ package at.mateball.domain.user.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
+import at.mateball.common.swagger.CustomExceptionDescription;
+import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.user.api.dto.request.NicknameRequest;
 import at.mateball.domain.user.core.service.UserService;
 import at.mateball.exception.code.SuccessCode;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +24,8 @@ public class UserController {
     }
 
     @PostMapping("/info/nickname")
+    @CustomExceptionDescription(SwaggerResponseDescription.UPDATE_NICKNAME)
+    @Operation(summary = "닉네임 설정 api")
     public MateballResponse<Void> updateNickname(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody NicknameRequest nicknameRequest
