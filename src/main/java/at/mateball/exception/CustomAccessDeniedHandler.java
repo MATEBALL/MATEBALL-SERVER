@@ -1,7 +1,7 @@
 package at.mateball.exception;
 
 import at.mateball.common.MateballResponse;
-import at.mateball.exception.code.ErrorCode;
+import at.mateball.exception.code.CommonErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             HttpServletResponse response,
             AccessDeniedException accessDeniedException
     ) throws IOException {
-        MateballResponse<?> errorResponse = MateballResponse.failure(ErrorCode.FORBIDDEN);
+        MateballResponse<?> errorResponse = MateballResponse.failure(CommonErrorCode.FORBIDDEN);
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
