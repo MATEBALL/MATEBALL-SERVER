@@ -29,12 +29,12 @@ class MatchRequirementRepositoryTest {
     @Test
     void 매칭_점수_계산_정상작동_테스트() {
         // given
-        User userA = new User(12345L, "M", "1997");
+        User userA = new User(12345L, "M", 1997);
         entityManager.persist(userA);
         MatchRequirement reqA = new MatchRequirement(userA, 1, 1, 1, 3);
         entityManager.persist(reqA);
 
-        User userB = new User(67890L, "F", "1998");
+        User userB = new User(67890L, "F", 1998);
         entityManager.persist(userB);
         MatchRequirement reqB = new MatchRequirement(userB, 1, 1, 1, 3);
         entityManager.persist(reqB);
