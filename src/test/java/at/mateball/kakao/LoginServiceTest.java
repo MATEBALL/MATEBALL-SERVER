@@ -11,7 +11,7 @@ import at.mateball.domain.auth.core.config.RedirectUriResolver;
 import at.mateball.domain.auth.core.service.LoginService;
 import at.mateball.domain.auth.core.service.TokenService;
 import at.mateball.domain.user.core.User;
-import at.mateball.domain.user.core.UserRepository;
+import at.mateball.domain.user.core.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
