@@ -6,23 +6,36 @@ import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.groupmember.core.QGroupMember;
+import at.mateball.domain.group.api.dto.DirectGetListRes;
+import at.mateball.domain.group.api.dto.DirectGetRes;
+import at.mateball.domain.group.core.QGroup;
+import at.mateball.domain.group.api.dto.DirectCreateRes;
+import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
+import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
+import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
 import at.mateball.domain.user.core.QUser;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GroupRepositoryImpl implements GroupRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final EntityManager entityManager;
+    private final MatchRequirementService matchRequirementService;
 
-    public GroupRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager) {
+    public GroupRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager, MatchRequirementService matchRequirementService) {
         this.queryFactory = queryFactory;
         this.entityManager = entityManager;
+        this.matchRequirementService = matchRequirementService;
     }
 
     @Override
