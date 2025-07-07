@@ -31,8 +31,10 @@ public class JwtTokenValidator {
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
+
         } catch (JwtException | IllegalArgumentException e) {
-            throw new BusinessException(BusinessErrorCode.KAKAO_CLIENT_ERROR);
+            e.printStackTrace();
+            throw new BusinessException(BusinessErrorCode.INVALID_SERVER_JWT);
         }
     }
 }
