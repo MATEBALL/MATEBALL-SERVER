@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record KakaoAccount(
         String gender,
-        @JsonProperty("birthyear") int birthyear
+        @JsonProperty("birthyear") String birthyear
 ) {
 }
