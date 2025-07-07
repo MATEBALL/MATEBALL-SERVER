@@ -5,6 +5,8 @@ import at.mateball.common.security.CustomUserDetails;
 import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
+import at.mateball.domain.group.api.dto.DirectGetListRes;
+import at.mateball.domain.group.api.dto.DirectGetRes;
 import at.mateball.domain.group.core.service.GroupService;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +14,9 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -33,5 +38,16 @@ public class GroupController {
         DirectCreateRes directCreateRes = groupService.getDirectMatching(userId, matchId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, directCreateRes));
+    }
+
+    @GetMapping("/direct")
+    public ResponseEntity<MateballResponse<?>> getDirects(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @NotNull @RequestParam LocalDate date
+    ) {
+        Long userId = customUserDetails.getUserId();
+        DirectGetListRes directGetListRes = groupService.getDirects(userId, date);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, directGetListRes));
     }
 }
