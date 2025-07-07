@@ -10,6 +10,7 @@ public enum BusinessErrorCode implements ErrorCode {
     INVALID_TOKEN_FORMAT(HttpStatus.BAD_REQUEST, "토큰 형식이 잘못되었습니다."),
     KAKAO_TOKEN_FETCH_FAILED(HttpStatus.BAD_REQUEST, "카카오 인가 코드로 토큰을 가져오는 데 실패했습니다."),
     KAKAO_USER_INFO_FETCH_FAILED(HttpStatus.BAD_REQUEST, "카카오 사용자 정보를 가져오는 데 실패했습니다."),
+    BAD_REQUEST_ENUM(HttpStatus.BAD_REQUEST, "존재하지 않는 enum값입니다."),
 
     // 401 UNAUTHORIZED
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "Access Token이 유효하지 않습니다."),
