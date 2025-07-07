@@ -1,4 +1,4 @@
-package at.mateball.domain.group.api;
+package at.mateball.domain.group.api.controller;
 
 import at.mateball.domain.group.core.service.GroupService;
 import org.springframework.web.bind.annotation.RestController;
