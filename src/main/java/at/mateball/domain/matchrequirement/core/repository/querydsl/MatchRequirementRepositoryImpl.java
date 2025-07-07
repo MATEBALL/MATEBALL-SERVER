@@ -53,8 +53,8 @@ public class MatchRequirementRepositoryImpl implements MatchRequirementRepositor
 
                         Expressions.numberTemplate(Integer.class,
                                 "CASE WHEN {0} = 3 AND {1} = 3 THEN 35 " +
-                                        "WHEN ({0} = 3 AND ({2} = 'M' AND {3} = 1 OR {2} = 'F' AND {3} = 2)) THEN 35 " +
-                                        "WHEN ({1} = 3 AND ({4} = 'M' AND {5} = 1 OR {4} = 'F' AND {5} = 2)) THEN 35 " +
+                                        "WHEN ({0} = 3 AND (({2} = 'M' AND {3} = 1) OR ({2} = 'F' AND {3} = 2))) THEN 35 " +
+                                        "WHEN ({1} = 3 AND (({4} = 'M' AND {5} = 1) OR ({4} = 'F' AND {5} = 2))) THEN 35 " +
                                         "WHEN ({3} = 1 AND {2} = 'M' AND {5} = 2 AND {4} = 'F') THEN 35 " +
                                         "WHEN ({3} = 2 AND {2} = 'F' AND {5} = 1 AND {4} = 'M') THEN 35 " +
                                         "WHEN ({3} = 1 AND {2} = 'M' AND {5} = 1 AND {4} = 'M') THEN 35 " +

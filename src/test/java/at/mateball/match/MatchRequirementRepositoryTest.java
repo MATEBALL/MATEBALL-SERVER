@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
+@Slf4j
 class MatchRequirementRepositoryTest {
 
     @Autowired
@@ -49,11 +50,8 @@ class MatchRequirementRepositoryTest {
         assertThat(result).hasSize(1);
         MatchingScoreDto score = result.get(0);
 
-        System.out.println("[매칭 점수]: " +
-                "teamScore = " + score.teamScore() + ", " +
-                "genderScore = " + score.genderScore() + ", " +
-                "styleScore = " + score.styleScore() + ", " +
-                "total = " + score.totalScore());
+        log.info("[매칭 점수]: teamScore = {}, genderScore = {}, styleScore = {}, total = {}",
+                score.teamScore(), score.genderScore(), score.styleScore(), score.totalScore());
 
         // 예상값: 팀(40), 성별(35), 스타일(25) = 총 100
         assertThat(score.totalScore()).isEqualTo(100);
