@@ -1,7 +1,7 @@
 package at.mateball.domain.group.api.dto;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
-import at.mateball.domain.group.QGroup;
+import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
 import at.mateball.domain.matchrequirement.core.constant.Style;
