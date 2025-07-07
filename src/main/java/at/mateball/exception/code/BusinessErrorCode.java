@@ -27,7 +27,7 @@ public enum BusinessErrorCode implements ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 사용자입니다."),
     GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 매칭입니다."),
 
-    // 404 CONFLICT
+    // 409 CONFLICT
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임입니다.");
 
     private final HttpStatus status;
