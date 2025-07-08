@@ -89,10 +89,11 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
             return Optional.empty();
         }
 
-        Integer count = queryFactory
+        int count = Optional.ofNullable(queryFactory
                 .select(groupMember.count().intValue())
                 .from(groupMember)
-                .fetchOne();
+                .where(groupMember.group.id.eq(matchId))
+                .fetchOne()).orElse(0);
 
         List<String> imgUrls = queryFactory
                 .select(member.imgUrl)
@@ -101,6 +102,6 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .where(groupMember.group.id.eq(matchId))
                 .fetch();
 
-        return Optional.of(GroupCreateRes.from(base, count != null ? count : 0, imgUrls));
+        return Optional.of(GroupCreateRes.from(base, count, imgUrls));
     }
 }
