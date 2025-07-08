@@ -55,14 +55,13 @@ public class UserController {
     @GetMapping("/info")
     @CustomExceptionDescription(SwaggerResponseDescription.UPDATE_NICKNAME)
     @Operation(summary = "내 정보 조회 api")
-    public MateballResponse<UserInformationRes> getUserInformation(
+    public ResponseEntity<MateballResponse<UserInformationRes>> getUserInformation(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getUserId();
 
         UserInformationRes data = userService.getUserInformation(userId);
 
-        return MateballResponse.success(SuccessCode.OK, data);
-
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
     }
 }
