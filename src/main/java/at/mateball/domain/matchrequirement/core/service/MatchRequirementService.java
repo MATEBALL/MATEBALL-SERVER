@@ -48,7 +48,7 @@ public class MatchRequirementService {
         );
     }
 
-    public User findUser(final Long userId) {
+    private User findUser(final Long userId) {
         return userRepository.findById(userId).orElseThrow(()
                 -> new BusinessException(USER_NOT_FOUND));
     }
