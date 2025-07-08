@@ -24,7 +24,4 @@ public class GameInformationRepositoryImpl implements GameInformationRepositoryC
                 .where(gameInformation.gameDate.eq(gameDate))
                 .fetch();
     }
-
-    ;
-
 }
