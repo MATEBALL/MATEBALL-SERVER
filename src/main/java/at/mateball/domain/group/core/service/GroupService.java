@@ -39,19 +39,35 @@ public class GroupService {
     }
 
     public DirectGetListRes getDirects(Long userId, LocalDate date) {
-        LocalDate baseDate = date.plusDays(2);
+        LocalDate baseDate;
+        LocalDate today = LocalDate.now();
 
-        if (baseDate.getDayOfWeek() == DayOfWeek.MONDAY) {
-            baseDate = date.plusDays(3);
+        if (date.getDayOfWeek() == DayOfWeek.MONDAY) {
+            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MONDAY);
         }
+
+        if (date.isBefore(today)) {
+            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_PAST);
+        }
+
+        LocalDate minAvailableDate = today.plusDays(2);
+        if (minAvailableDate.getDayOfWeek() == DayOfWeek.MONDAY) {
+            minAvailableDate = today.plusDays(3);
+        }
+
+        if (date.isBefore(minAvailableDate)) {
+            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_DATE);
+        }
+
+        baseDate = date;
+
+        List<Tuple> tuples = groupRepository.findDirectGroupsAfterDate(baseDate);
 
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
                 .collect(Collectors.toMap(
                         MatchingScoreDto::targetUserId,
                         MatchingScoreDto::totalScore
                 ));
-
-        List<Tuple> tuples = groupRepository.findDirectGroupsAfterDate(baseDate);
 
         List<DirectGetRes> result = tuples.stream()
                 .map(tuple -> {

@@ -12,6 +12,8 @@ public enum BusinessErrorCode implements ErrorCode {
     KAKAO_USER_INFO_FETCH_FAILED(HttpStatus.BAD_REQUEST, "카카오 사용자 정보를 가져오는 데 실패했습니다."),
     BAD_REQUEST_ENUM(HttpStatus.BAD_REQUEST, "존재하지 않는 enum값입니다."),
     BAD_REQUEST_MONDAY(HttpStatus.BAD_REQUEST, "월요일은 경기가 없습니다."),
+    BAD_REQUEST_PAST(HttpStatus.BAD_REQUEST,"과거에 머물러있지 마십쇼. 이미 종료된 경기입니다."),
+    BAD_REQUEST_DATE(HttpStatus.BAD_REQUEST, "매칭신청은 2일 전까지 가능합니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED,"만료된 토큰입니다."),

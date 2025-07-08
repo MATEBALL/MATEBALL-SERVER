@@ -66,7 +66,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     }
 
     @Override
-    public List<Tuple> findDirectGroupsAfterDate(LocalDate baseDate) {
+    public List<Tuple> findDirectGroupsAfterDate(LocalDate date) {
         QGroup group = QGroup.group;
         QUser user = QUser.user;
         QGameInformation game = QGameInformation.gameInformation;
@@ -91,7 +91,10 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .join(user).on(group.leader.eq(user))
                 .join(game).on(group.gameInformation.eq(game))
                 .join(matchRequirement).on(matchRequirement.user.eq(user))
-                .where(game.gameDate.after(baseDate))
+                .where(
+                        game.gameDate.eq(date),
+                        group.isGroup.isFalse()
+                )
                 .orderBy(game.gameDate.asc())
                 .fetch();
     }
