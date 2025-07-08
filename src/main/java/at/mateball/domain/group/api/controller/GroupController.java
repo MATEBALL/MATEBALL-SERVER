@@ -67,7 +67,7 @@ public class GroupController {
     }
 
     @GetMapping("/group")
-    public ResponseEntity<MateballResponse<?>> getGoups(
+    public ResponseEntity<MateballResponse<?>> getGroups(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @NotNull @RequestParam LocalDate date
     ) {
