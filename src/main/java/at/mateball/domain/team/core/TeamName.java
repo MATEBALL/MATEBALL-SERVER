@@ -37,7 +37,7 @@ public enum TeamName {
 
     public static TeamName fromLabel(String label) {
         return Arrays.stream(values())
-                .filter(e -> e.label.equals(label))
+                .filter(e -> e.label.equalsIgnoreCase(label))
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
     }
