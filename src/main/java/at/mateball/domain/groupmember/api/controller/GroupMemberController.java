@@ -4,6 +4,7 @@ import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.groupmember.api.dto.DirectStatusListRes;
+import at.mateball.domain.groupmember.api.dto.GroupStatusListRes;
 import at.mateball.domain.groupmember.core.service.GroupMemberService;
 import at.mateball.exception.code.SuccessCode;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,24 @@ public class GroupMemberController {
         } else {
             GroupStatus groupStatus = GroupStatus.fromCode(statusLabel);
             result = groupMemberService.getDirectStatus(userId, groupStatus);
+        }
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
+    }
+
+    @GetMapping("/match-stage/group")
+    public ResponseEntity<MateballResponse<?>> getGroupStatus(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(value = "status", required = false) String statusLabel
+    ) {
+        Long userId = userDetails.getUserId();
+        GroupStatusListRes result;
+
+        if (statusLabel == null || statusLabel.isBlank()) {
+            result = groupMemberService.getAllGroupStatus(userId);
+        } else {
+            GroupStatus groupStatus = GroupStatus.fromCode(statusLabel);
+            result = groupMemberService.getAllGroupStatus(userId, groupStatus);
         }
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
