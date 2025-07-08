@@ -47,8 +47,10 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .join(matchRequirement).on(matchRequirement.user.eq(user))
                 .where(
                         user.id.eq(userId),
-                        group.id.eq(matchId)
+                        group.id.eq(matchId),
+                        group.isGroup.isFalse()
                 )
+
                 .fetchOne();
 
         return tuple != null ? DirectCreateRes.from(tuple) : null;
