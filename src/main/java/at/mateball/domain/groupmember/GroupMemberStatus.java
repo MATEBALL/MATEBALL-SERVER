@@ -1,6 +1,5 @@
-package at.mateball.domain.groupmember.core;
+package at.mateball.domain.groupmember;
 
-import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import lombok.Getter;

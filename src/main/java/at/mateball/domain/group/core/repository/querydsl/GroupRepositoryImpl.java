@@ -1,7 +1,6 @@
 package at.mateball.domain.group.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
-import at.mateball.domain.group.api.dto.GroupGetRes;
 import at.mateball.domain.group.api.dto.base.GroupCreateBaseRes;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.api.dto.base.DirectCreateBaseRes;
@@ -19,9 +18,7 @@ import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static at.mateball.domain.user.core.QUser.user;
 
@@ -171,45 +168,5 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                         game.gameDate.eq(date)
                 )
                 .fetch();
-    }
-
-    @Override
-    public Map<Long, Integer> findGroupMemberCountMap(List<Long> groupIds) {
-        QGroupMember member = QGroupMember.groupMember;
-        QUser user = QUser.user;
-
-        if (groupIds.isEmpty()) return Map.of();
-
-        return queryFactory
-                .select(member.group.id, member.count())
-                .from(member)
-                .where(member.group.id.in(groupIds))
-                .groupBy(member.group.id)
-                .fetch()
-                .stream()
-                .collect(Collectors.toMap(
-                        tuple -> tuple.get(0, Long.class),
-                        tuple -> tuple.get(1, Long.class).intValue() + 1
-                ));
-    }
-
-    @Override
-    public Map<Long, List<String>> findGroupMemberImgMap(List<Long> groupIds) {
-        QGroupMember member = QGroupMember.groupMember;
-        QUser user = QUser.user;
-
-        if (groupIds.isEmpty()) return Map.of();
-
-        return queryFactory
-                .select(member.group.id, user.imgUrl)
-                .from(member)
-                .join(user).on(member.user.eq(user))
-                .where(member.group.id.in(groupIds))
-                .fetch()
-                .stream()
-                .collect(Collectors.groupingBy(
-                        tuple -> tuple.get(0, Long.class),
-                        Collectors.mapping(t -> t.get(1, String.class), Collectors.toList())
-                ));
     }
 }

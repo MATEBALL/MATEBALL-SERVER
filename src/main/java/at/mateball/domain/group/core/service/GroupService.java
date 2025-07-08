@@ -7,6 +7,7 @@ import at.mateball.domain.group.api.dto.DirectGetListRes;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
 import at.mateball.domain.group.core.repository.GroupRepository;
+import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
 import at.mateball.exception.BusinessException;
@@ -24,10 +25,12 @@ import java.util.stream.Collectors;
 public class GroupService {
     private final GroupRepository groupRepository;
     private final MatchRequirementService matchRequirementService;
+    private final GroupMemberRepository groupMemberRepository;
 
-    public GroupService(GroupRepository groupRepository, MatchRequirementService matchRequirementService) {
+    public GroupService(GroupRepository groupRepository, MatchRequirementService matchRequirementService, GroupMemberRepository groupMemberRepository) {
         this.groupRepository = groupRepository;
         this.matchRequirementService = matchRequirementService;
+        this.groupMemberRepository = groupMemberRepository;
     }
 
     public DirectCreateRes getDirectMatching(Long userId, Long matchId) {
@@ -111,8 +114,8 @@ public class GroupService {
                         MatchingScoreDto::totalScore
                 ));
 
-        Map<Long, Integer> countMap = groupRepository.findGroupMemberCountMap(groupIds);
-        Map<Long, List<String>> imgMap = groupRepository.findGroupMemberImgMap(groupIds);
+        Map<Long, Integer> countMap = groupMemberRepository.findGroupMemberCountMap(groupIds);
+        Map<Long, List<String>> imgMap = groupMemberRepository.findGroupMemberImgMap(groupIds);
 
         List<GroupGetRes> result = baseList.stream()
                 .map(base -> {
