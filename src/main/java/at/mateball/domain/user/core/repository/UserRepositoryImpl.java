@@ -1,10 +1,11 @@
 package at.mateball.domain.user.core.repository;
 
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
+import at.mateball.domain.user.api.dto.response.BaseUserInformationRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
-import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
@@ -25,21 +26,22 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         QUser user = QUser.user;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
 
-        Tuple tuple = queryFactory
-                .select(
+        var baseUserInformation = queryFactory
+                .select(Projections.constructor(
+                        BaseUserInformationRes.class,
                         user.nickname,
                         user.birthYear,
                         user.gender,
                         matchRequirement.style,
                         user.introduction,
                         user.imgUrl
-                )
-                .from(user)
-                .join(matchRequirement).on(user.id.eq(matchRequirement.user.id))
-                .where(user.id.eq(userId))
+                ))
+                .from(user, matchRequirement)
+                .where(user.id.eq(userId),
+                        matchRequirement.user.id.eq(user.id))
                 .fetchOne();
 
-        return tuple != null ? UserInformationRes.from(tuple) : null;
+        return UserInformationRes.fromBase(baseUserInformation);
     }
 
     @Override
