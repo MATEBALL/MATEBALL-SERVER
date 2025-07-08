@@ -27,7 +27,7 @@ public class MatchRequirementController {
     @PostMapping("/match-condition")
     @CustomExceptionDescription(SwaggerResponseDescription.UPDATE_MATCH_REQUIREMENT)
     @Operation(summary = "매칭 조건 설정 api")
-    public ResponseEntity<MateballResponse<?>> updateNickname(
+    public ResponseEntity<MateballResponse<?>> updateMatchRequirement(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody MatchRequirementReq matchRequirementReq
     ) {
