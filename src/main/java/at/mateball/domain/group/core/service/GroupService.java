@@ -1,9 +1,9 @@
 package at.mateball.domain.group.core.service;
 
-import at.mateball.domain.group.api.dto.ClientDirectGetRes;
+import at.mateball.domain.group.api.dto.DirectGetRes;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.DirectGetListRes;
-import at.mateball.domain.group.api.dto.DirectGetRes;
+import at.mateball.domain.group.api.dto.DirectBaseRes;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
@@ -57,7 +57,7 @@ public class GroupService {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_DATE);
         }
 
-        List<DirectGetRes> result = groupRepository.findDirectGroupsByDate(date);
+        List<DirectBaseRes> result = groupRepository.findDirectGroupsByDate(date);
 
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
                 .collect(Collectors.toMap(
@@ -65,11 +65,11 @@ public class GroupService {
                         MatchingScoreDto::totalScore
                 ));
 
-        List<ClientDirectGetRes> clientDirectGetRes = result.stream()
+        List<DirectGetRes> directGetRes = result.stream()
                 .map(res -> res.withMatchRate(matchRateMap.getOrDefault(res.id(), 0)))
-                .map(ClientDirectGetRes::from)
+                .map(DirectGetRes::from)
                 .toList();
 
-        return new DirectGetListRes(clientDirectGetRes);
+        return new DirectGetListRes(directGetRes);
     }
 }

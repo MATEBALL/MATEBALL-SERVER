@@ -1,7 +1,7 @@
 package at.mateball.domain.group.core.repository.querydsl;
 
 import at.mateball.domain.group.api.dto.DirectCreateRes;
-import at.mateball.domain.group.api.dto.DirectGetRes;
+import at.mateball.domain.group.api.dto.DirectBaseRes;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -11,5 +11,5 @@ import java.util.List;
 public interface GroupRepositoryCustom {
     DirectCreateRes findDirectCreateResults(Long userId, Long matchId);
 
-    List<DirectGetRes> findDirectGroupsByDate(LocalDate date);
+    List<DirectBaseRes> findDirectGroupsByDate(LocalDate date);
 }
