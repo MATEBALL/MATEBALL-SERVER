@@ -23,7 +23,7 @@ public class UserController {
     }
 
     @GetMapping("kakao/info")
-    @CustomExceptionDescription(SwaggerResponseDescription.UPDATE_NICKNAME)
+    @CustomExceptionDescription(SwaggerResponseDescription.GET_KAKAO_INFORMATION)
     @Operation(summary = "카카오에서 받아온 사용자 정보 api")
     public ResponseEntity<MateballResponse<KaKaoInformationRes>> getKaKaoInformation(
             @AuthenticationPrincipal CustomUserDetails userDetails
