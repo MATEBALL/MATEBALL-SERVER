@@ -11,5 +11,5 @@ import java.util.List;
 public interface GroupRepositoryCustom {
     DirectCreateRes findDirectCreateResults(Long userId, Long matchId);
 
-    List<DirectGetRes> findDirectGroupsAfterDate(LocalDate date);
+    List<DirectGetRes> findDirectGroupsByDate(LocalDate date);
 }
