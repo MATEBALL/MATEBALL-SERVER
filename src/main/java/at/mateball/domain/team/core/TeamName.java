@@ -8,16 +8,16 @@ import java.util.Arrays;
 
 @Getter
 public enum TeamName {
-    KIA(1, "KIA 타이거즈"),
-    SAMSUNG(2, "삼성 라이온즈"),
-    LG(3, "LG 트윈스"),
-    DOOSAN(4, "두산 베어스"),
-    KT(5, "KT 위즈"),
-    SSG(6, "SSG 랜더스"),
-    LOTTE(7, "롯데 자이언츠"),
-    HANWHA(8, "한화 이글스"),
-    NC(9, "NC 다이노스"),
-    KIWOOM(10, "키움 히어로즈"),
+    KIA(1, "KIA"),
+    SAMSUNG(2, "삼성"),
+    LG(3, "LG"),
+    DOOSAN(4, "두산"),
+    KT(5, "KT"),
+    SSG(6, "SSG"),
+    LOTTE(7, "롯데"),
+    HANWHA(8, "한화"),
+    NC(9, "NC"),
+    KIWOOM(10, "키움"),
     NONE(11, "응원하는 팀이 없어요.");
 
     private final int value;
