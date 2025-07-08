@@ -2,9 +2,12 @@ package at.mateball.domain.gameinformation.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
+import at.mateball.common.swagger.CustomExceptionDescription;
+import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.gameinformation.api.dto.response.GameInformationsRes;
 import at.mateball.domain.gameinformation.core.service.GameInformationService;
 import at.mateball.exception.code.SuccessCode;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +27,8 @@ public class GameInformationController {
     }
 
     @GetMapping("/game/schedule")
+    @CustomExceptionDescription(SwaggerResponseDescription.GET_GAME_INFORMATION)
+    @Operation(summary = "경기 정보 조회 api")
     public ResponseEntity<MateballResponse<GameInformationsRes>> getUserInformation(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam("date") LocalDate gameInformationReq
