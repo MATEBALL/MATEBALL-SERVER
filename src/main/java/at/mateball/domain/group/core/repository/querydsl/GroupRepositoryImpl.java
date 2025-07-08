@@ -71,7 +71,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .select(Projections.constructor(DirectGetRes.class,
                         group.id,
                         user.nickname,
-                        Expressions.stringTemplate("CONCAT({0} - {1} + 1, '세')", currentYear, user.birthYear),
+                        user.birthYear,
                         user.gender,
                         matchRequirement.team,
                         matchRequirement.style,
