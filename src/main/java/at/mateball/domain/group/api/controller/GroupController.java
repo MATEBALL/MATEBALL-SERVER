@@ -6,7 +6,6 @@ import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.DirectGetListRes;
-import at.mateball.domain.group.api.dto.DirectGetRes;
 import at.mateball.domain.group.core.service.GroupService;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -41,6 +39,8 @@ public class GroupController {
     }
 
     @GetMapping("/direct")
+    @CustomExceptionDescription(SwaggerResponseDescription.DIRECT_MATCH)
+    @Operation(summary = "일대일 매칭 리스트 반환")
     public ResponseEntity<MateballResponse<?>> getDirects(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @NotNull @RequestParam LocalDate date
