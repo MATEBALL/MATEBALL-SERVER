@@ -8,6 +8,7 @@ import java.util.Set;
 import static at.mateball.exception.code.BusinessErrorCode.DUPLICATED_NICKNAME;
 import static at.mateball.exception.code.BusinessErrorCode.USER_NOT_FOUND;
 import static at.mateball.exception.code.BusinessErrorCode.GROUP_NOT_FOUND;
+import static at.mateball.exception.code.BusinessErrorCode.*;
 import static at.mateball.exception.code.CommonErrorCode.*;
 
 @Getter
