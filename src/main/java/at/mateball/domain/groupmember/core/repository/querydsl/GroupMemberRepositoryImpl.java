@@ -98,4 +98,40 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
                 )
                 .fetch();
     }
+
+    @Override
+    public List<DirectStatusBaseRes> findAllDirectMatchingsByUser(Long userId) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QGroup group = QGroup.group;
+        QUser user = QUser.user;
+        QGameInformation gameInformation = QGameInformation.gameInformation;
+        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+
+        return queryFactory
+                .select(Projections.constructor(DirectStatusBaseRes.class,
+                        group.id,
+                        user.nickname,
+                        user.birthYear,
+                        user.gender,
+                        matchRequirement.team,
+                        matchRequirement.style,
+                        gameInformation.awayTeamName,
+                        gameInformation.homeTeamName,
+                        gameInformation.stadiumName,
+                        gameInformation.gameDate,
+                        groupMember.status,
+                        user.imgUrl
+                ))
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(groupMember.user, user)
+                .join(group.gameInformation, gameInformation)
+                .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.isParticipant.isTrue(),
+                        group.isGroup.isFalse()
+                )
+                .fetch();
+    }
 }

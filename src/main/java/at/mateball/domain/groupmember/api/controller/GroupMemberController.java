@@ -25,12 +25,18 @@ public class GroupMemberController {
     @GetMapping("/match-stage/direct")
     public ResponseEntity<MateballResponse<?>> getDirectStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam("status") String statusLabel
+            @RequestParam(value = "status", required = false) String statusLabel
     ) {
         Long userId = userDetails.getUserId();
-        GroupStatus groupStatus = GroupStatus.fromCode(statusLabel);
-        DirectStatusListRes directStatusListRes = groupMemberService.getDirectStatus(userId, groupStatus);
+        DirectStatusListRes result;
 
-        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, directStatusListRes));
+        if (statusLabel == null || statusLabel.isBlank()) {
+            result = groupMemberService.getAllDirectStatus(userId);
+        } else {
+            GroupStatus groupStatus = GroupStatus.fromCode(statusLabel);
+            result = groupMemberService.getDirectStatus(userId, groupStatus);
+        }
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }
 }
