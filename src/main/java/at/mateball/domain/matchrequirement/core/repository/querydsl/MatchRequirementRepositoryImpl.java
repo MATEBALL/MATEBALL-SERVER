@@ -1,8 +1,8 @@
 package at.mateball.domain.matchrequirement.core.repository.querydsl;
 
-import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.MatchRequirement;
+import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
 import com.querydsl.core.types.Projections;
@@ -12,6 +12,7 @@ import jakarta.persistence.EntityManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class MatchRequirementRepositoryImpl implements MatchRequirementRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -78,5 +79,17 @@ public class MatchRequirementRepositoryImpl implements MatchRequirementRepositor
                         ).loe(5))
                 )
                 .fetch();
+    }
+
+    @Override
+    public Optional<MatchRequirement> findUserMatchRequirement(Long userId) {
+        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+
+        MatchRequirement userMatchRequirement = queryFactory
+                .selectFrom(matchRequirement)
+                .where(matchRequirement.user.id.eq(userId))
+                .fetchOne();
+
+        return Optional.ofNullable(userMatchRequirement);
     }
 }
