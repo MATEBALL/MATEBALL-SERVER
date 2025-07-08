@@ -25,7 +25,7 @@ public class UserController {
     @GetMapping("kakao/info")
     @CustomExceptionDescription(SwaggerResponseDescription.GET_KAKAO_INFORMATION)
     @Operation(summary = "카카오에서 받아온 사용자 정보 api")
-    public ResponseEntity<MateballResponse<KaKaoInformationRes>> getKaKaoInformation(
+    public ResponseEntity<MateballResponse<?>> getKaKaoInformation(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getUserId();
