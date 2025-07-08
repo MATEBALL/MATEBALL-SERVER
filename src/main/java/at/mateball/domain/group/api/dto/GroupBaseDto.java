@@ -5,8 +5,8 @@ import java.time.LocalDate;
 public record GroupBaseDto(
         Long id,
         String nickname,
-        Integer awayTeam,
-        Integer homeTeam,
+        String awayTeam,
+        String homeTeam,
         String stadium,
         LocalDate date
 ) {

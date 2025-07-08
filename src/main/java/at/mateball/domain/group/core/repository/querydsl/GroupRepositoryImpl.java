@@ -1,15 +1,20 @@
 package at.mateball.domain.group.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
+import at.mateball.domain.group.api.dto.GroupBaseDto;
+import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
+import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
+import java.util.Optional;
 
 public class GroupRepositoryImpl implements GroupRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -56,4 +61,46 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         return tuple != null ? DirectCreateRes.from(tuple) : null;
     }
 
+    @Override
+    public Optional<GroupCreateRes> findGroupCreateRes(Long matchId) {
+        QGroup group = QGroup.group;
+        QUser leader = QUser.user;
+        QGameInformation gameInformation = QGameInformation.gameInformation;
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QUser member = new QUser("member");
+
+        GroupBaseDto base = queryFactory
+                .select(Projections.constructor(GroupBaseDto.class,
+                        group.id,
+                        leader.nickname,
+                        gameInformation.awayTeamName,
+                        gameInformation.homeTeamName,
+                        gameInformation.stadiumName,
+                        gameInformation.gameDate))
+                .from(group)
+                .join(leader).on(group.leader.eq(leader))
+                .where(
+                        group.id.eq(matchId),
+                        group.isGroup.isTrue()
+                )
+                .fetchOne();
+
+        if (base == null) {
+            return Optional.empty();
+        }
+
+        Integer count = queryFactory
+                .select(groupMember.count().intValue())
+                .from(groupMember)
+                .fetchOne();
+
+        List<String> imgUrls = queryFactory
+                .select(member.imgUrl)
+                .from(groupMember)
+                .join(member).on(groupMember.user.eq(member))
+                .where(groupMember.group.id.eq(matchId))
+                .fetch();
+
+        return Optional.of(GroupCreateRes.from(base, count != null ? count : 0, imgUrls));
+    }
 }

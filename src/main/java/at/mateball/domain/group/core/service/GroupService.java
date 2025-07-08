@@ -1,6 +1,7 @@
 package at.mateball.domain.group.core.service;
 
 import at.mateball.domain.group.api.dto.DirectCreateRes;
+import at.mateball.domain.group.api.dto.GroupBaseDto;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.exception.BusinessException;
@@ -26,6 +27,7 @@ public class GroupService {
     }
 
     public GroupCreateRes getGroupMatching(Long userId, Long matchId) {
-
+        return groupRepository.findGroupCreateRes(matchId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
     }
 }

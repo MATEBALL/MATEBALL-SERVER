@@ -19,8 +19,8 @@ public record GroupCreateRes(
         return new GroupCreateRes(
                 base.id(),
                 base.nickname(),
-                TeamName.from(base.awayTeam()).getLabel(),
-                TeamName.from(base.homeTeam()).getLabel(),
+                base.awayTeam(),
+                base.homeTeam(),
                 base.stadium(),
                 base.date(),
                 count,
