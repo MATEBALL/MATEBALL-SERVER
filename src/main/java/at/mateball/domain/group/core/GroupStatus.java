@@ -26,4 +26,11 @@ public enum GroupStatus {
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
     }
+
+    public static GroupStatus fromCode(String label) {
+        return Arrays.stream(values())
+                .filter(g -> g.label.equals(label))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
+    }
 }

@@ -1,9 +1,13 @@
 package at.mateball.domain.groupmember.core.service;
 
-import at.mateball.domain.group.api.dto.DirectGetListRes;
 import at.mateball.domain.group.core.GroupStatus;
+import at.mateball.domain.groupmember.api.dto.DirectStatusListRes;
+import at.mateball.domain.groupmember.api.dto.DirectStatusRes;
+import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class GroupMemberService {
@@ -13,7 +17,14 @@ public class GroupMemberService {
         this.groupMemberRepository = groupMemberRepository;
     }
 
-    public DirectGetListRes getDirectStatus(Long userId, GroupStatus groupStatus) {
-        return groupMemberRepository.findDirectMatchingsByUserAndGroupStatus(userId, groupStatus);
+    public DirectStatusListRes getDirectStatus(Long userId, GroupStatus groupStatus) {
+        List<DirectStatusBaseRes> baseResList =
+                groupMemberRepository.findDirectMatchingsByUserAndGroupStatus(userId, groupStatus.getValue());
+
+        List<DirectStatusRes> mappedList = baseResList.stream()
+                .map(DirectStatusRes::from)
+                .toList();
+
+        return new DirectStatusListRes(mappedList);
     }
 }
