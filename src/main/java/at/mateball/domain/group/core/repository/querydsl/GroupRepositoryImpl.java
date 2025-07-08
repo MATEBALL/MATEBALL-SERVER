@@ -79,6 +79,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         return queryFactory
                 .select(Projections.constructor(DirectGetBaseRes.class,
                         group.id,
+                        user.id,
                         user.nickname,
                         user.birthYear,
                         user.gender,
