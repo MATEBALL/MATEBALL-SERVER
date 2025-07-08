@@ -8,6 +8,7 @@ import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.group.api.dto.DirectGetListRes;
 import at.mateball.domain.group.api.dto.DirectGetRes;
+import at.mateball.domain.group.api.dto.DirectBaseRes;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
