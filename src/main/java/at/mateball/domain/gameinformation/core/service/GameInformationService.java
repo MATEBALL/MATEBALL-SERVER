@@ -24,7 +24,7 @@ public class GameInformationService {
     private final GameInformationRepository gameInformationRepository;
 
     public GameInformationsRes getGameInformation(Long userId, LocalDate date) {
-        findUser(userId);
+//        findUser(userId);
 
         List<GameInformationRes> list = gameInformationRepository.findByGameDate(date)
                 .stream()
@@ -34,8 +34,9 @@ public class GameInformationService {
         return new GameInformationsRes(list);
     }
 
-    public User findUser(final Long userId) {
-        return userRepository.findById(userId).orElseThrow(()
-                -> new BusinessException(USER_NOT_FOUND));
-    }
+//    TODO: 50번 커밋 병합된 이후 적용
+//    public User findUser(final Long userId) {
+//        return userRepository.findById(userId).orElseThrow(()
+//                -> new BusinessException(USER_NOT_FOUND));
+//    }
 }

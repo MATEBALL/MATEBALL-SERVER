@@ -29,13 +29,13 @@ public class GameInformationController {
     @GetMapping("/game/schedule")
     @CustomExceptionDescription(SwaggerResponseDescription.GET_GAME_INFORMATION)
     @Operation(summary = "경기 정보 조회 api")
-    public ResponseEntity<MateballResponse<GameInformationsRes>> getUserInformation(
+    public ResponseEntity<MateballResponse<?>> getUserInformation(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam("gameDate") LocalDate gameDate
+            @RequestParam("date") LocalDate date
     ) {
         Long userId = userDetails.getUserId();
 
-        GameInformationsRes data = gameInformationService.getGameInformation(userId, gameDate);
+        GameInformationsRes data = gameInformationService.getGameInformation(userId, date);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
     }
