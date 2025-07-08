@@ -3,7 +3,10 @@ package at.mateball.domain.group.api.controller;
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
 import at.mateball.common.swagger.CustomExceptionDescription;
+<<<<<<< HEAD
 import at.mateball.common.swagger.SwaggerResponseDescription;
+=======
+>>>>>>> e03a4de ([feat/#54] 스웨거 연동)
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.api.dto.DirectGetListRes;
@@ -15,6 +18,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import at.mateball.common.swagger.SwaggerResponseDescription;
 
 import java.time.LocalDate;
 
