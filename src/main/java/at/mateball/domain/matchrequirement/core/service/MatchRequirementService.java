@@ -36,7 +36,6 @@ public class MatchRequirementService {
     @Transactional
     public void setMatchRequirement(Long userId, String team, String teamAllowed, String style, String genderPreference) {
 
-        findUser(userId);
         MatchRequirement matchRequirement = matchRequirementRepository.findUserMatchRequirement(userId)
                 .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
@@ -46,10 +45,5 @@ public class MatchRequirementService {
                 Style.fromLabel(style).getValue(),
                 Gender.fromLabel(genderPreference).getValue()
         );
-    }
-
-    private User findUser(final Long userId) {
-        return userRepository.findById(userId).orElseThrow(()
-                -> new BusinessException(USER_NOT_FOUND));
     }
 }
