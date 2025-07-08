@@ -1,10 +1,12 @@
 package at.mateball.domain.group.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
+import at.mateball.domain.group.api.dto.GroupGetRes;
 import at.mateball.domain.group.api.dto.base.GroupCreateBaseRes;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.api.dto.base.DirectCreateBaseRes;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
+import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.groupmember.core.QGroupMember;
@@ -17,7 +19,11 @@ import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static at.mateball.domain.user.core.QUser.user;
 
 public class GroupRepositoryImpl implements GroupRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -70,8 +76,6 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         QGameInformation game = QGameInformation.gameInformation;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
 
-        int currentYear = LocalDate.now().getYear();
-
         return queryFactory
                 .select(Projections.constructor(DirectGetBaseRes.class,
                         group.id,
@@ -102,7 +106,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     @Override
     public Optional<GroupCreateRes> findGroupCreateRes(Long matchId) {
         QGroup group = QGroup.group;
-        QUser leader = QUser.user;
+        QUser leader = user;
         QGameInformation gameInformation = QGameInformation.gameInformation;
         QGroupMember groupMember = QGroupMember.groupMember;
         QUser member = new QUser("member");
@@ -141,5 +145,70 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .fetch();
 
         return Optional.of(GroupCreateRes.from(base, count, imgUrls));
+    }
+
+    @Override
+    public List<GroupGetBaseRes> findGroupsWithBaseInfo(LocalDate date) {
+        QGroup group = QGroup.group;
+        QUser leader = user;
+        QGameInformation game = QGameInformation.gameInformation;
+
+        return queryFactory
+                .select(Projections.constructor(GroupGetBaseRes.class,
+                        group.id,
+                        leader.nickname,
+                        game.awayTeamName,
+                        game.homeTeamName,
+                        game.stadiumName,
+                        game.gameDate
+                ))
+                .from(group)
+                .join(leader).on(group.leader.eq(leader))
+                .join(game).on(group.gameInformation.eq(game))
+                .where(
+                        group.isGroup.isTrue(),
+                        game.gameDate.eq(date)
+                )
+                .fetch();
+    }
+
+    @Override
+    public Map<Long, Integer> findGroupMemberCountMap(List<Long> groupIds) {
+        QGroupMember member = QGroupMember.groupMember;
+        QUser user = QUser.user;
+
+        if (groupIds.isEmpty()) return Map.of();
+
+        return queryFactory
+                .select(member.group.id, member.count())
+                .from(member)
+                .where(member.group.id.in(groupIds))
+                .groupBy(member.group.id)
+                .fetch()
+                .stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(0, Long.class),
+                        tuple -> tuple.get(1, Long.class).intValue() + 1
+                ));
+    }
+
+    @Override
+    public Map<Long, List<String>> findGroupMemberImgMap(List<Long> groupIds) {
+        QGroupMember member = QGroupMember.groupMember;
+        QUser user = QUser.user;
+
+        if (groupIds.isEmpty()) return Map.of();
+
+        return queryFactory
+                .select(member.group.id, user.imgUrl)
+                .from(member)
+                .join(user).on(member.user.eq(user))
+                .where(member.group.id.in(groupIds))
+                .fetch()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        tuple -> tuple.get(0, Long.class),
+                        Collectors.mapping(t -> t.get(1, String.class), Collectors.toList())
+                ));
     }
 }

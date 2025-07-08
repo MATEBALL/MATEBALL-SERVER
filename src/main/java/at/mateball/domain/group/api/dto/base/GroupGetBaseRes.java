@@ -1,6 +1,7 @@
 package at.mateball.domain.group.api.dto.base;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record GroupGetBaseRes(
         Long id,
