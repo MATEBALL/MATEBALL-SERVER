@@ -31,11 +31,11 @@ public class GameInformationController {
     @Operation(summary = "경기 정보 조회 api")
     public ResponseEntity<MateballResponse<GameInformationsRes>> getUserInformation(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam("date") LocalDate gameInformationReq
+            @RequestParam("gameDate") LocalDate gameDate
     ) {
         Long userId = userDetails.getUserId();
 
-        GameInformationsRes data = gameInformationService.getGameInformation(userId, gameInformationReq);
+        GameInformationsRes data = gameInformationService.getGameInformation(userId, gameDate);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
     }
