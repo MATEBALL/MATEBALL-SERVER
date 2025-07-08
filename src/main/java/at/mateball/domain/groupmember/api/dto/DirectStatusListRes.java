@@ -1,5 +1,8 @@
 package at.mateball.domain.groupmember.api.dto;
 
-public class DirectStatusListRes
-{
+import java.util.List;
+
+public record DirectStatusListRes(
+        List<DirectStatusRes> mates) {
+
 }
