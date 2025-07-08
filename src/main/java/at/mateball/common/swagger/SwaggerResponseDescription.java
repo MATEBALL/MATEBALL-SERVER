@@ -34,6 +34,9 @@ public enum SwaggerResponseDescription {
     ),
     GET_USER_INFORMATION(
             new LinkedHashSet<>(Set.of(USER_NOT_FOUND))
+    ),
+    GET_GAME_INFORMATION(
+            new LinkedHashSet<>(Set.of(USER_NOT_FOUND))
     );
 
     private final Set<ErrorCode> commonErrorCodeList;
