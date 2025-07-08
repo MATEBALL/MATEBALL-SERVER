@@ -59,7 +59,7 @@ public class GroupService {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_DATE);
         }
 
-        List<DirectGetRes> result = groupRepository.findDirectGroupsAfterDate(date);
+        List<DirectGetRes> result = groupRepository.findDirectGroupsByDate(date);
 
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
                 .collect(Collectors.toMap(

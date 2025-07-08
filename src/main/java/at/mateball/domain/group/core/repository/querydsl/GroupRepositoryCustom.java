@@ -15,5 +15,5 @@ public interface GroupRepositoryCustom {
     DirectCreateRes findDirectCreateResults(Long userId, Long matchId);
 
     Optional<GroupCreateRes> findGroupCreateRes(Long matchId);
-    List<DirectGetRes> findDirectGroupsAfterDate(LocalDate date);
+    List<DirectGetRes> findDirectGroupsByDate(LocalDate date);
 }
