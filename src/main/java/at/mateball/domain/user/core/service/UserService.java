@@ -2,6 +2,7 @@ package at.mateball.domain.user.core.service;
 
 import at.mateball.domain.matchrequirement.core.constant.Gender;
 import at.mateball.domain.user.api.dto.response.KaKaoInformationRes;
+import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
@@ -48,5 +49,10 @@ public class UserService {
         }
 
         user.updateNickname(updatedNickname);
+    }
+
+    public UserInformationRes getUserInformation(Long userId) {
+
+        return userRepository.findUserInformation(userId);
     }
 }
