@@ -3,6 +3,7 @@ package at.mateball.domain.group.core.repository.querydsl;
 import at.mateball.domain.gameinformation.core.QGameInformation;
 import at.mateball.domain.group.api.dto.GroupBaseDto;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
+import at.mateball.domain.group.api.dto.base.DirectCreateBaseRes;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
@@ -35,8 +36,8 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         QGameInformation game = QGameInformation.gameInformation;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
 
-        Tuple tuple = queryFactory
-                .select(
+        DirectCreateBaseRes baseRes = queryFactory
+                .select(Projections.constructor(DirectCreateBaseRes.class,
                         group.id,
                         user.nickname,
                         user.birthYear,
@@ -48,18 +49,19 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                         game.stadiumName,
                         game.gameDate,
                         user.imgUrl
-                )
+                ))
                 .from(group)
                 .join(user).on(group.leader.eq(user))
                 .join(game).on(group.gameInformation.eq(game))
                 .join(matchRequirement).on(matchRequirement.user.eq(user))
                 .where(
                         user.id.eq(userId),
-                        group.id.eq(matchId)
+                        group.id.eq(matchId),
+                        group.isGroup.isFalse()
                 )
                 .fetchOne();
 
-        return tuple != null ? DirectCreateRes.from(tuple) : null;
+        return baseRes != null ? DirectCreateRes.from(baseRes) : null;
     }
 
     @Override
