@@ -6,8 +6,7 @@ import lombok.Getter;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static at.mateball.exception.code.BusinessErrorCode.DUPLICATED_NICKNAME;
-import static at.mateball.exception.code.BusinessErrorCode.USER_NOT_FOUND;
+import static at.mateball.exception.code.BusinessErrorCode.*;
 import static at.mateball.exception.code.CommonErrorCode.*;
 
 @Getter
@@ -15,6 +14,10 @@ public enum SwaggerResponseDescription {
 
     UPDATE_NICKNAME(
             new LinkedHashSet<>(Set.of(USER_NOT_FOUND, DUPLICATED_NICKNAME))
+    ),
+
+    GROUP_MATCHING(
+            new LinkedHashSet<>(Set.of(GROUP_NOT_FOUND))
     );
 
     private final Set<ErrorCode> commonErrorCodeList;
