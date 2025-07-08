@@ -14,7 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/users/")
+@RequestMapping("/v1/users")
 public class UserController {
     private final UserService userService;
 
@@ -22,7 +22,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("kakao/info")
+    @GetMapping("/kakao/info")
     @CustomExceptionDescription(SwaggerResponseDescription.GET_KAKAO_INFORMATION)
     @Operation(summary = "카카오에서 받아온 사용자 정보 api")
     public ResponseEntity<MateballResponse<?>> getKaKaoInformation(
