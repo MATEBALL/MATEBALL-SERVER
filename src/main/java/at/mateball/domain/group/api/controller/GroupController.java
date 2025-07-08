@@ -7,6 +7,7 @@ import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.DirectGetListRes;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
+import at.mateball.domain.group.api.dto.GroupGetListRes;
 import at.mateball.domain.group.core.service.GroupService;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,4 +65,16 @@ public class GroupController {
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupCreateRes));
     }
+
+    @GetMapping("/group")
+    public ResponseEntity<MateballResponse<?>> getGoups(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @NotNull @PathVariable LocalDate date
+    ) {
+        Long userId = customUserDetails.getUserId();
+        GroupGetListRes groupGetListRes = groupService.getGroups(userId, date);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupGetListRes));
+    }
+
 }
