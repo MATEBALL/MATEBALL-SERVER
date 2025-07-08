@@ -1,6 +1,7 @@
 package at.mateball.domain.group.api.dto;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
+import at.mateball.domain.group.api.dto.base.DirectCreateBaseRes;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
@@ -48,30 +49,21 @@ public record DirectCreateRes(
         @Schema(description = "이미지 URL", nullable = true)
         String imgUrl
 ) {
-    public static DirectCreateRes from(Tuple tuple) {
-        QGroup group = QGroup.group;
-        QUser user = QUser.user;
-        QGameInformation gameInformation = QGameInformation.gameInformation;
-        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
-
-        int birthYear = tuple.get(user.birthYear);
-        int currentYear = LocalDateTime.now().getYear();
-        int age = currentYear - birthYear + 1;
-
-        LocalDate gameDate = tuple.get(gameInformation.gameDate);
+    public static DirectCreateRes from(DirectCreateBaseRes baseRes) {
+        int age = LocalDate.now().getYear() - baseRes.birthYear() + 1;
 
         return new DirectCreateRes(
-                tuple.get(group.id),
-                tuple.get(user.nickname),
+                baseRes.id(),
+                baseRes.nickname(),
                 age + "세",
-                Gender.from(tuple.get(user.gender)).getLabel(),
-                TeamName.from(tuple.get(matchRequirement.team)).getLabel(),
-                Style.from(tuple.get(matchRequirement.style)).getLabel(),
-                tuple.get(gameInformation.awayTeamName),
-                tuple.get(gameInformation.homeTeamName),
-                tuple.get(gameInformation.stadiumName),
-                tuple.get(gameInformation.gameDate),
-                tuple.get(user.imgUrl)
+                baseRes.gender(),
+                TeamName.from(Integer.parseInt(baseRes.team().toString())).getLabel(),
+                Style.from(baseRes.style()).getLabel(),
+                baseRes.awayTeam(),
+                baseRes.homeTeam(),
+                baseRes.stadium(),
+                baseRes.date(),
+                baseRes.imgUrl()
         );
     }
 }
