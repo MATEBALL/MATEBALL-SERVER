@@ -18,15 +18,15 @@ public record UserInformationRes(
         @Schema(description = "사용자의 프로필 이미지")
         String imgUrl
 ) {
-    public static UserInformationRes fromBase(BaseUserInformationRes baseUserInformationRes) {
-        int age = java.time.LocalDate.now().getYear() - baseUserInformationRes.birthYear() + 1;
+    public static UserInformationRes fromBase(UserInformationBaseRes userInformationBaseRes) {
+        int age = java.time.LocalDate.now().getYear() - userInformationBaseRes.birthYear() + 1;
         return new UserInformationRes(
-                baseUserInformationRes.nickname(),
+                userInformationBaseRes.nickname(),
                 age + "세",
-                Gender.from(baseUserInformationRes.gender()).getLabel(),
-                Style.from(baseUserInformationRes.style()).getLabel(),
-                baseUserInformationRes.introduction(),
-                baseUserInformationRes.imgUrl()
+                Gender.from(userInformationBaseRes.gender()).getLabel(),
+                Style.from(userInformationBaseRes.style()).getLabel(),
+                userInformationBaseRes.introduction(),
+                userInformationBaseRes.imgUrl()
         );
     }
 }
