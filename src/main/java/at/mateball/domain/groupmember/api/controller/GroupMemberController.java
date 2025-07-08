@@ -53,7 +53,7 @@ public class GroupMemberController {
             result = groupMemberService.getAllGroupStatus(userId);
         } else {
             GroupStatus groupStatus = GroupStatus.fromCode(statusLabel);
-            result = groupMemberService.getAllGroupStatus(userId, groupStatus);
+            result = groupMemberService.getGroupStatus(userId, groupStatus);
         }
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
