@@ -18,7 +18,7 @@ public enum SwaggerResponseDescription {
             new LinkedHashSet<>(Set.of(USER_NOT_FOUND, DUPLICATED_NICKNAME))
     ),
 
-    GROUP_NOT(new LinkedHashSet<>(Set.of(GROUP_NOT_FOUND)));
+    DIRECT_MATCHING(new LinkedHashSet<>(Set.of(GROUP_NOT_FOUND)));
 
     private final Set<ErrorCode> commonErrorCodeList;
 
