@@ -1,7 +1,7 @@
 package at.mateball.domain.group.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
-import at.mateball.domain.group.api.dto.GroupBaseDto;
+import at.mateball.domain.group.api.dto.base.GroupCreateBaseRes;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.api.dto.base.DirectCreateBaseRes;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
@@ -10,7 +10,6 @@ import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -108,8 +107,8 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         QGroupMember groupMember = QGroupMember.groupMember;
         QUser member = new QUser("member");
 
-        GroupBaseDto base = queryFactory
-                .select(Projections.constructor(GroupBaseDto.class,
+        GroupCreateBaseRes base = queryFactory
+                .select(Projections.constructor(GroupCreateBaseRes.class,
                         group.id,
                         leader.nickname,
                         gameInformation.awayTeamName,
