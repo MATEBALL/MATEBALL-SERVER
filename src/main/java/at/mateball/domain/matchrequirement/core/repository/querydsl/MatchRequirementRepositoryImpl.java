@@ -12,7 +12,6 @@ import jakarta.persistence.EntityManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public class MatchRequirementRepositoryImpl implements MatchRequirementRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -82,14 +81,12 @@ public class MatchRequirementRepositoryImpl implements MatchRequirementRepositor
     }
 
     @Override
-    public Optional<MatchRequirement> findUserMatchRequirement(Long userId) {
+    public MatchRequirement findUserMatchRequirement(Long userId) {
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
 
-        MatchRequirement userMatchRequirement = queryFactory
+        return queryFactory
                 .selectFrom(matchRequirement)
                 .where(matchRequirement.user.id.eq(userId))
                 .fetchOne();
-
-        return Optional.ofNullable(userMatchRequirement);
     }
 }
