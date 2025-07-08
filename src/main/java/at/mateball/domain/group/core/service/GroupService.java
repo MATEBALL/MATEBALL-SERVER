@@ -68,7 +68,7 @@ public class GroupService {
                 ));
 
         List<ClientDirectGetRes> clientDirectGetRes = result.stream()
-                .map(res -> res.withMatchRate(matchRateMap.getOrDefault(res.id(),0 )))
+                .map(res -> res.withMatchRate(matchRateMap.getOrDefault(res.id(), 0)))
                 .map(ClientDirectGetRes::from)
                 .toList();
 

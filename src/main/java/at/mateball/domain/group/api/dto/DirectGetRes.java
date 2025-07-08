@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public record DirectGetRes(
         Long id,
         String nickname,
-        String age,
+        Integer birthYear,
         String gender,
         Integer team,
         Integer style,
@@ -20,7 +20,7 @@ public record DirectGetRes(
         return new DirectGetRes(
                 id,
                 nickname,
-                age,
+                birthYear,
                 gender,
                 team,
                 style,
