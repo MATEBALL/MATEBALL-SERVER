@@ -51,13 +51,13 @@ public class UserService {
     }
 
     public UserInformationRes getUserInformation(Long userId) {
-        findUser(userId);
+        userRepository.getUser(userId);
 
         return userRepository.findUserInformation(userId);
     }
 
     public User findUser(final Long userId) {
-        return userRepository.findById(userId).orElseThrow(()
+        return userRepository.getUser(userId).orElseThrow(()
                 -> new BusinessException(USER_NOT_FOUND));
     }
 }
