@@ -31,6 +31,9 @@ public enum SwaggerResponseDescription {
 
     GET_KAKAO_INFORMATION(
             new LinkedHashSet<>(Set.of(USER_NOT_FOUND, AGE_NOT_APPROPRIATE))
+    ),
+    GET_USER_INFORMATION(
+            new LinkedHashSet<>(Set.of(USER_NOT_FOUND))
     );
 
     private final Set<ErrorCode> commonErrorCodeList;
