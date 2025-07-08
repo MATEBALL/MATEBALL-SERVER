@@ -2,7 +2,7 @@ package at.mateball.domain.group.api.dto.base;
 
 import java.time.LocalDate;
 
-public record DirectBaseRes(
+public record DirectGetBaseRes(
         Long id,
         String nickname,
         Integer birthYear,
@@ -16,8 +16,8 @@ public record DirectBaseRes(
         Integer matchRate,
         String imgUrl
 ) {
-    public DirectBaseRes withMatchRate(Integer matchRate) {
-        return new DirectBaseRes(
+    public DirectGetBaseRes withMatchRate(Integer matchRate) {
+        return new DirectGetBaseRes(
                 id,
                 nickname,
                 birthYear,
