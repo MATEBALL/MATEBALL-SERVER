@@ -5,6 +5,7 @@ import at.mateball.common.security.CustomUserDetails;
 import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.user.api.dto.request.NicknameReq;
+import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.api.dto.response.KaKaoInformationRes;
 import at.mateball.domain.user.core.service.UserService;
 import at.mateball.exception.code.SuccessCode;
@@ -49,5 +50,17 @@ public class UserController {
         userService.updateNickname(userId, nicknameReq.nickname());
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.CREATED));
+    }
+
+    @GetMapping("/info")
+    public MateballResponse<UserInformationRes> getUserInformation(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getUserId();
+
+        UserInformationRes data = userService.getUserInformation(userId);
+
+        return MateballResponse.success(SuccessCode.OK, data);
+
     }
 }
