@@ -1,9 +1,15 @@
 package at.mateball.domain.groupmember.core.repository.querydsl;
 
+import at.mateball.domain.gameinformation.core.QGameInformation;
+import at.mateball.domain.group.core.QGroup;
+import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.core.QGroupMember;
+import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import com.querydsl.core.types.Projections;
+
 
 import java.util.List;
 import java.util.Map;
@@ -54,5 +60,42 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
                         tuple -> tuple.get(0, Long.class),
                         Collectors.mapping(t -> t.get(1, String.class), Collectors.toList())
                 ));
+    }
+
+    @Override
+    public List<DirectStatusBaseRes> findDirectMatchingsByUserAndGroupStatus(Long userId, int groupStatus) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QGroup group = QGroup.group;
+        QUser user = QUser.user;
+        QGameInformation gameInformation = QGameInformation.gameInformation;
+        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+
+        return queryFactory
+                .select(Projections.constructor(DirectStatusBaseRes.class,
+                        group.id,
+                        user.nickname,
+                        user.birthYear,
+                        user.gender,
+                        matchRequirement.team,
+                        matchRequirement.style,
+                        gameInformation.awayTeamName,
+                        gameInformation.homeTeamName,
+                        gameInformation.stadiumName,
+                        gameInformation.gameDate,
+                        groupMember.status,
+                        user.imgUrl
+                ))
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(groupMember.user, user)
+                .join(group.gameInformation, gameInformation)
+                .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.isParticipant.isTrue(),
+                        group.isGroup.isFalse(),
+                        group.status.eq(groupStatus)
+                )
+                .fetch();
     }
 }

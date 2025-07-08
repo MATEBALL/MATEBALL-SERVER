@@ -18,13 +18,12 @@ public class GroupMemberService {
     }
 
     public DirectStatusListRes getDirectStatus(Long userId, GroupStatus groupStatus) {
-        List<DirectStatusBaseRes> baseResList =
-                groupMemberRepository.findDirectMatchingsByUserAndGroupStatus(userId, groupStatus.getValue());
+        List<DirectStatusBaseRes> baseResList = groupMemberRepository.findDirectMatchingsByUserAndGroupStatus(userId, groupStatus.getValue());
 
-        List<DirectStatusRes> mappedList = baseResList.stream()
+        List<DirectStatusRes> result = baseResList.stream()
                 .map(DirectStatusRes::from)
                 .toList();
 
-        return new DirectStatusListRes(mappedList);
+        return new DirectStatusListRes(result);
     }
 }
