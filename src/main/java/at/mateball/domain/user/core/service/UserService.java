@@ -41,8 +41,7 @@ public class UserService {
 
     @Transactional
     public void updateNickname(final Long userId, final String updatedNickname) {
-        User user = userRepository.findById(userId).orElseThrow(()
-                -> new BusinessException(USER_NOT_FOUND));
+        User user = findUser(userId);
 
         if (userRepository.existsByNickname(updatedNickname)) {
             throw new BusinessException(DUPLICATED_NICKNAME);
@@ -52,7 +51,13 @@ public class UserService {
     }
 
     public UserInformationRes getUserInformation(Long userId) {
+        User user = findUser(userId);
 
         return userRepository.findUserInformation(userId);
+    }
+
+    public User findUser(final Long userId) {
+        return userRepository.findById(userId).orElseThrow(()
+                -> new BusinessException(USER_NOT_FOUND));
     }
 }
