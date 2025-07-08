@@ -1,9 +1,6 @@
 package at.mateball.domain.group.core.service;
 
-import at.mateball.domain.group.api.dto.DirectGetRes;
-import at.mateball.domain.group.api.dto.DirectCreateRes;
-import at.mateball.domain.group.api.dto.DirectGetListRes;
-import at.mateball.domain.group.api.dto.DirectBaseRes;
+import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
@@ -71,5 +68,10 @@ public class GroupService {
                 .toList();
 
         return new DirectGetListRes(directGetRes);
+    }
+
+    public GroupCreateRes getGroupMatching(Long userId, Long matchId) {
+        return groupRepository.findGroupCreateRes(matchId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
     }
 }
