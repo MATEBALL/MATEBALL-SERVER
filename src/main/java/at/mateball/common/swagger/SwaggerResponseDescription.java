@@ -24,6 +24,10 @@ public enum SwaggerResponseDescription {
 
     DIRECT_MATCH(
             new LinkedHashSet<>(Set.of(BAD_REQUEST_DATE, BAD_REQUEST_MONDAY, BAD_REQUEST_PAST))
+    ),
+
+    GROUP_MATCHING(
+            new LinkedHashSet<>(Set.of(GROUP_NOT_FOUND))
     );
 
     private final Set<ErrorCode> commonErrorCodeList;
