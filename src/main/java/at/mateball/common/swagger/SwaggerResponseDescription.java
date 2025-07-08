@@ -5,9 +5,13 @@ import lombok.Getter;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+<<<<<<< HEAD
 import static at.mateball.exception.code.BusinessErrorCode.DUPLICATED_NICKNAME;
 import static at.mateball.exception.code.BusinessErrorCode.USER_NOT_FOUND;
 import static at.mateball.exception.code.BusinessErrorCode.GROUP_NOT_FOUND;
+=======
+
+>>>>>>> 7c7106e ([feat/#33] 카카오 정보 조회 api 스웨거 연동)
 import static at.mateball.exception.code.BusinessErrorCode.*;
 import static at.mateball.exception.code.CommonErrorCode.*;
 
@@ -17,6 +21,7 @@ public enum SwaggerResponseDescription {
     UPDATE_NICKNAME(
             new LinkedHashSet<>(Set.of(USER_NOT_FOUND, DUPLICATED_NICKNAME))
     ),
+<<<<<<< HEAD
 
     DIRECT_MATCHING(
             new LinkedHashSet<>(Set.of(GROUP_NOT_FOUND))
@@ -28,6 +33,10 @@ public enum SwaggerResponseDescription {
 
     GROUP_MATCHING(
             new LinkedHashSet<>(Set.of(GROUP_NOT_FOUND))
+=======
+    GET_KAKAO_INFORMATION(
+            new LinkedHashSet<>(Set.of(USER_NOT_FOUND, AGE_NOT_APPROPRIATE))
+>>>>>>> 7c7106e ([feat/#33] 카카오 정보 조회 api 스웨거 연동)
     );
 
     private final Set<ErrorCode> commonErrorCodeList;
