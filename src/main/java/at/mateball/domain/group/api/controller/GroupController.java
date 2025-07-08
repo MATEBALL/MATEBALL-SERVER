@@ -3,6 +3,7 @@ package at.mateball.domain.group.api.controller;
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
+import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.core.service.GroupService;
 import at.mateball.exception.code.SuccessCode;
 import jakarta.validation.constraints.NotNull;
@@ -36,6 +37,8 @@ public class GroupController {
             @NotNull @PathVariable Long matchId
     ) {
         Long userId = customUserDetails.getUserId();
+        GroupCreateRes groupCreateRes = groupService.getGroupMatching(userId);
 
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupCreateRes));
     }
 }
