@@ -12,4 +12,6 @@ public interface GroupMemberRepositoryCustom {
     Map<Long, List<String>> findGroupMemberImgMap(List<Long> groupIds);
 
     List<DirectStatusBaseRes> findDirectMatchingsByUserAndGroupStatus(Long userId, int groupStatus);
+
+    List<DirectStatusBaseRes> findAllDirectMatchingsByUser(Long userId);
 }

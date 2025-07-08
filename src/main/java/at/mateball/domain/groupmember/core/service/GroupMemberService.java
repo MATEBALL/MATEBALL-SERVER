@@ -26,4 +26,14 @@ public class GroupMemberService {
 
         return new DirectStatusListRes(result);
     }
+
+    public DirectStatusListRes getAllDirectStatus(Long userId) {
+        List<DirectStatusBaseRes> baseResList = groupMemberRepository.findAllDirectMatchingsByUser(userId);
+
+        List<DirectStatusRes> mapped = baseResList.stream()
+                .map(DirectStatusRes::from)
+                .toList();
+
+        return new DirectStatusListRes(mapped);
+    }
 }
