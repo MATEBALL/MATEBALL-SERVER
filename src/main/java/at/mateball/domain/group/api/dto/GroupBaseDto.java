@@ -11,3 +11,4 @@ public record GroupBaseDto(
         LocalDate date
 ) {
 }
+

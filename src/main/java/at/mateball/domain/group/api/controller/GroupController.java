@@ -7,6 +7,7 @@ import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.api.dto.DirectGetListRes;
+import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.core.service.GroupService;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,6 +56,19 @@ public class GroupController {
     @GetMapping("/group/{matchId}")
     @CustomExceptionDescription(SwaggerResponseDescription.GROUP_MATCHING)
     @Operation(summary = "그룹 매칭 생성 결과 화면입니다.")
+    public ResponseEntity<MateballResponse<?>> getGroupMatching(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @NotNull @PathVariable Long matchId
+    ) {
+        Long userId = customUserDetails.getUserId();
+        GroupCreateRes groupCreateRes = groupService.getGroupMatching(userId, matchId);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupCreateRes));
+    }
+
+    @GetMapping("/group/{matchId}")
+    @CustomExceptionDescription(SwaggerResponseDescription.DIRECT_MATCH)
+    @Operation(summary = "그룹 매칭 생성 결과 조회")
     public ResponseEntity<MateballResponse<?>> getGroupMatching(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @NotNull @PathVariable Long matchId

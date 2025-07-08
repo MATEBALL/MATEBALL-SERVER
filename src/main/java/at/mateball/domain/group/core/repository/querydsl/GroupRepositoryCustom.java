@@ -5,6 +5,7 @@ import at.mateball.domain.group.api.dto.GroupCreateRes;
 import com.querydsl.core.Tuple;
 import at.mateball.domain.group.api.dto.DirectGetRes;
 import at.mateball.domain.group.api.dto.DirectBaseRes;
+import at.mateball.domain.group.api.dto.GroupCreateRes;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
