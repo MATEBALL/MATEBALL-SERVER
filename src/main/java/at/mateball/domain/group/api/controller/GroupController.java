@@ -29,4 +29,13 @@ public class GroupController {
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, directCreateRes));
     }
+
+    @GetMapping("/group/{matchId}")
+    public ResponseEntity<MateballResponse<?>> getGroupMatching(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @NotNull @PathVariable Long matchId
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+    }
 }
