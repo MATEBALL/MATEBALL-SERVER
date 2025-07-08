@@ -2,9 +2,12 @@ package at.mateball.domain.matchrequirement.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
+import at.mateball.common.swagger.CustomExceptionDescription;
+import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
 import at.mateball.domain.user.api.dto.request.MatchRequirementReq;
 import at.mateball.exception.code.SuccessCode;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +25,8 @@ public class MatchRequirementController {
     }
 
     @PostMapping("/match-condition")
+    @CustomExceptionDescription(SwaggerResponseDescription.UPDATE_MATCH_REQUIREMENT)
+    @Operation(summary = "매칭 조건 설정 api")
     public ResponseEntity<MateballResponse<?>> updateNickname(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody MatchRequirementReq matchRequirementReq
