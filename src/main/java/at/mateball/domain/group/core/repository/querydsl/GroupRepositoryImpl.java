@@ -1,9 +1,9 @@
 package at.mateball.domain.group.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
-import at.mateball.domain.group.api.dto.DirectBaseRes;
 import at.mateball.domain.group.api.dto.GroupBaseDto;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
+import at.mateball.domain.group.api.dto.base.DirectBaseRes;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.groupmember.core.QGroupMember;

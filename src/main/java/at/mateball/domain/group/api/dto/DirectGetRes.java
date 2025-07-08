@@ -1,5 +1,6 @@
 package at.mateball.domain.group.api.dto;
 
+import at.mateball.domain.group.api.dto.base.DirectBaseRes;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
 import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.team.core.TeamName;
