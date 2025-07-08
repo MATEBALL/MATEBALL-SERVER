@@ -1,6 +1,6 @@
 package at.mateball.domain.user.api.dto.response;
 
-public record BaseUserInformationRes(
+public record UserInformationBaseRes(
         String nickname,
         Integer birthYear,
         String gender,

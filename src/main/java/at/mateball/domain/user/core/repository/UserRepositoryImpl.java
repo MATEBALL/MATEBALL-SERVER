@@ -1,7 +1,7 @@
 package at.mateball.domain.user.core.repository;
 
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
-import at.mateball.domain.user.api.dto.response.BaseUserInformationRes;
+import at.mateball.domain.user.api.dto.response.UserInformationBaseRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
@@ -28,7 +28,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
         var baseUserInformation = queryFactory
                 .select(Projections.constructor(
-                        BaseUserInformationRes.class,
+                        UserInformationBaseRes.class,
                         user.nickname,
                         user.birthYear,
                         user.gender,
