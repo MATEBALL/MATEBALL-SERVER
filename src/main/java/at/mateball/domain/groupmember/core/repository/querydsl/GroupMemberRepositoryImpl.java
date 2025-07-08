@@ -3,6 +3,7 @@ package at.mateball.domain.groupmember.core.repository.querydsl;
 import at.mateball.domain.gameinformation.core.QGameInformation;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
@@ -131,6 +132,65 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
                         groupMember.user.id.eq(userId),
                         groupMember.isParticipant.isTrue(),
                         group.isGroup.isFalse()
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<GroupStatusBaseRes> findGroupMatchingsByUser(Long userId) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QGroup group = QGroup.group;
+        QUser user = QUser.user;
+        QGameInformation gameInformation = QGameInformation.gameInformation;
+
+        return queryFactory
+                .select(Projections.constructor(GroupStatusBaseRes.class,
+                        group.id,
+                        user.nickname,
+                        gameInformation.awayTeamName,
+                        gameInformation.homeTeamName,
+                        gameInformation.stadiumName,
+                        gameInformation.gameDate,
+                        groupMember.status
+                ))
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(groupMember.user, user)
+                .join(group.gameInformation, gameInformation)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.isParticipant.isTrue(),
+                        group.isGroup.isTrue()
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<GroupStatusBaseRes> findGroupMatchingsByUserAndStatus(Long userId, int groupStatus) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QGroup group = QGroup.group;
+        QUser user = QUser.user;
+        QGameInformation gameInformation = QGameInformation.gameInformation;
+
+        return queryFactory
+                .select(Projections.constructor(GroupStatusBaseRes.class,
+                        group.id,
+                        user.nickname,
+                        gameInformation.awayTeamName,
+                        gameInformation.homeTeamName,
+                        gameInformation.stadiumName,
+                        gameInformation.gameDate,
+                        groupMember.status
+                ))
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(groupMember.user, user)
+                .join(group.gameInformation, gameInformation)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.isParticipant.isTrue(),
+                        group.isGroup.isTrue(),
+                        group.status.eq(groupStatus)
                 )
                 .fetch();
     }

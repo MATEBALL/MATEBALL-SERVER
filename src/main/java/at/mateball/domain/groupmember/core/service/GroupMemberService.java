@@ -11,6 +11,7 @@ import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GroupMemberService {
@@ -42,6 +43,30 @@ public class GroupMemberService {
 
     public GroupStatusListRes getAllGroupStatus(Long userId) {
         List<GroupStatusBaseRes> baseResList = groupMemberRepository.findGroupMatchingsByUser(userId);
+        return mapWithCountsAndImages(baseResList);
+    }
 
+    public GroupStatusListRes getGroupStatus(Long userId, GroupStatus status) {
+        List<GroupStatusBaseRes> baseResList = groupMemberRepository.findGroupMatchingsByUserAndStatus(userId, status.getValue());
+        return mapWithCountsAndImages(baseResList);
+    }
+
+    private GroupStatusListRes mapWithCountsAndImages(List<GroupStatusBaseRes> baseResList) {
+        List<Long> groupIds = baseResList.stream()
+                .map(GroupStatusBaseRes::id)
+                .toList();
+
+        Map<Long, Integer> countMap = groupMemberRepository.findGroupMemberCountMap(groupIds);
+        Map<Long, List<String>> imgMap = groupMemberRepository.findGroupMemberImgMap(groupIds);
+
+        List<GroupStatusRes> result = baseResList.stream()
+                .map(res -> GroupStatusRes.from(
+                        res,
+                        countMap.getOrDefault(res.id(), 0),
+                        imgMap.getOrDefault(res.id(), List.of())
+                ))
+                .toList();
+
+        return new GroupStatusListRes(result);
     }
 }
