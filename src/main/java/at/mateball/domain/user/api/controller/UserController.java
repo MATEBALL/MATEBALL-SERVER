@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    @CustomExceptionDescription(SwaggerResponseDescription.UPDATE_NICKNAME)
+    @CustomExceptionDescription(SwaggerResponseDescription.GET_USER_INFORMATION)
     @Operation(summary = "내 정보 조회 api")
     public ResponseEntity<MateballResponse<UserInformationRes>> getUserInformation(
             @AuthenticationPrincipal CustomUserDetails userDetails
