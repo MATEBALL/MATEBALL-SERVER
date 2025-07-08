@@ -71,8 +71,8 @@ public class GroupController {
     }
 
     @GetMapping("/group/{matchId}")
-    @CustomExceptionDescription(SwaggerResponseDescription.DIRECT_MATCH)
-    @Operation(summary = "그룹 매칭 생성 결과 조회")
+    @CustomExceptionDescription(SwaggerResponseDescription.GROUP_MATCHING)
+    @Operation(summary = "그룹 매칭 생성 결과 화면입니다.")
     public ResponseEntity<MateballResponse<?>> getGroupMatching(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @NotNull @PathVariable Long matchId
