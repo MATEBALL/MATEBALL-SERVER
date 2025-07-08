@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public record DirectGetBaseRes(
         Long id,
+        Long leaderId,
         String nickname,
         Integer birthYear,
         String gender,
@@ -19,6 +20,7 @@ public record DirectGetBaseRes(
     public DirectGetBaseRes withMatchRate(Integer matchRate) {
         return new DirectGetBaseRes(
                 id,
+                leaderId,
                 nickname,
                 birthYear,
                 gender,

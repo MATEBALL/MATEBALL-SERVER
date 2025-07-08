@@ -15,11 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static at.mateball.domain.groupmember.core.QGroupMember.groupMember;
 
 @Service
 public class GroupService {
@@ -70,8 +69,9 @@ public class GroupService {
                 ));
 
         List<DirectGetRes> directGetRes = result.stream()
-                .map(res -> res.withMatchRate(matchRateMap.getOrDefault(res.id(), 0)))
+                .map(res -> res.withMatchRate(matchRateMap.getOrDefault(res.leaderId(), 0)))
                 .map(DirectGetRes::from)
+                .sorted(Comparator.comparingInt(DirectGetRes::matchRate).reversed())
                 .toList();
 
         return new DirectGetListRes(directGetRes);
@@ -122,6 +122,7 @@ public class GroupService {
                     int avg = Math.round((float) score / count);
                     return GroupGetRes.from(base, avg, count, imgs);
                 })
+                .sorted(Comparator.comparingInt(GroupGetRes::matchRate).reversed())
                 .toList();
 
         return new GroupGetListRes(result);
