@@ -23,7 +23,7 @@ public class GroupController {
     }
 
     @GetMapping("/direct/{matchId}")
-    @CustomExceptionDescription(SwaggerResponseDescription.GROUP_NOT)
+    @CustomExceptionDescription(SwaggerResponseDescription.DIRECT_MATCHING)
     @Operation(summary = "일대일 매칭 생성 결과 조회")
     public ResponseEntity<MateballResponse<?>> getDirectMatching(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
