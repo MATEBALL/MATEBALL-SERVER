@@ -46,19 +46,21 @@ public record ClientDirectGetRes(
         String imgUrl
 ) {
     public static ClientDirectGetRes from(DirectGetRes raw) {
-        return new ClientDirectGetRes(
-                raw.id(),
-                raw.nickname(),
-                raw.age(),
-                Gender.from(raw.gender()).getLabel(),
-                TeamName.from(raw.team()).getLabel(),
-                Style.from(raw.style()).getLabel(),
-                raw.awayTeam(),
-                raw.homeTeam(),
-                raw.stadium(),
-                raw.date(),
-                raw.matchRate(),
-                raw.imgUrl()
-        );
+            int age = LocalDate.now().getYear() - raw.birthYear() + 1;
+
+            return new ClientDirectGetRes(
+                    raw.id(),
+                    raw.nickname(),
+                    age + "세",
+                    Gender.from(raw.gender()).getLabel(),
+                    TeamName.from(raw.team()).getLabel(),
+                    Style.from(raw.style()).getLabel(),
+                    raw.awayTeam(),
+                    raw.homeTeam(),
+                    raw.stadium(),
+                    raw.date(),
+                    raw.matchRate(),
+                    raw.imgUrl()
+            );
     }
 }
