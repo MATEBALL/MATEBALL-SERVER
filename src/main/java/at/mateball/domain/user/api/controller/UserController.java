@@ -55,7 +55,7 @@ public class UserController {
     @GetMapping("/info")
     @CustomExceptionDescription(SwaggerResponseDescription.GET_USER_INFORMATION)
     @Operation(summary = "내 정보 조회 api")
-    public ResponseEntity<MateballResponse<UserInformationRes>> getUserInformation(
+    public ResponseEntity<MateballResponse<?>> getUserInformation(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getUserId();
