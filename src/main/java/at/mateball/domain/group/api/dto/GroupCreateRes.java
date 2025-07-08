@@ -1,6 +1,7 @@
 package at.mateball.domain.group.api.dto;
 
 
+import at.mateball.domain.group.api.dto.base.GroupCreateBaseRes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
@@ -32,7 +33,7 @@ public record GroupCreateRes(
         @Schema(description = "이미지 URL", nullable = true)
         List<String> imgUrl
 ) {
-    public static GroupCreateRes from(GroupBaseDto base, Integer count, List<String> imgUrls) {
+    public static GroupCreateRes from(GroupCreateBaseRes base, Integer count, List<String> imgUrls) {
         return new GroupCreateRes(
                 base.id(),
                 base.nickname(),
