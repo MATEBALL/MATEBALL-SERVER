@@ -1,6 +1,5 @@
 package at.mateball.domain.matchrequirement.core.constant;
 
-import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import lombok.Getter;
@@ -26,6 +25,13 @@ public enum Gender {
     public static Gender from(String raw) {
         return Arrays.stream(values())
                 .filter(g -> g.raw.equalsIgnoreCase(raw))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
+    }
+
+    public static Gender fromLabel(String label) {
+        return Arrays.stream(values())
+                .filter(e -> e.label.equalsIgnoreCase(label))
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
     }
