@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static at.mateball.domain.group.core.validator.DateValidator.validate;
+
 @Service
 public class GroupService {
     private final GroupRepository groupRepository;
@@ -44,24 +46,7 @@ public class GroupService {
     }
 
     public DirectGetListRes getDirects(Long userId, LocalDate date) {
-        LocalDate today = LocalDate.now();
-
-        if (date.getDayOfWeek() == DayOfWeek.MONDAY) {
-            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MONDAY);
-        }
-
-        if (date.isBefore(today)) {
-            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_PAST);
-        }
-
-        LocalDate minAvailableDate = today.plusDays(2);
-        if (minAvailableDate.getDayOfWeek() == DayOfWeek.MONDAY) {
-            minAvailableDate = today.plusDays(3);
-        }
-
-        if (date.isBefore(minAvailableDate)) {
-            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_DATE);
-        }
+        validate(date);
 
         List<DirectGetBaseRes> result = groupRepository.findDirectGroupsByDate(date);
 
@@ -86,24 +71,7 @@ public class GroupService {
     }
 
     public GroupGetListRes getGroups(Long userId, LocalDate date) {
-        LocalDate today = LocalDate.now();
-
-        if (date.getDayOfWeek() == DayOfWeek.MONDAY) {
-            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MONDAY);
-        }
-
-        if (date.isBefore(today)) {
-            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_PAST);
-        }
-
-        LocalDate minAvailableDate = today.plusDays(2);
-        if (minAvailableDate.getDayOfWeek() == DayOfWeek.MONDAY) {
-            minAvailableDate = today.plusDays(3);
-        }
-
-        if (date.isBefore(minAvailableDate)) {
-            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_DATE);
-        }
+        validate(date);
 
         List<GroupGetBaseRes> baseList = groupRepository.findGroupsWithBaseInfo(date);
         List<Long> groupIds = baseList.stream().map(GroupGetBaseRes::id).toList();
