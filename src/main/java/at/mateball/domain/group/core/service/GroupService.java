@@ -1,15 +1,14 @@
 package at.mateball.domain.group.core.service;
 
+import at.mateball.domain.group.api.dto.ClientDirectGetRes;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.DirectGetListRes;
 import at.mateball.domain.group.api.dto.DirectGetRes;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
-import at.mateball.domain.user.core.QUser;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
-import com.querydsl.core.Tuple;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -39,7 +38,6 @@ public class GroupService {
     }
 
     public DirectGetListRes getDirects(Long userId, LocalDate date) {
-        LocalDate baseDate;
         LocalDate today = LocalDate.now();
 
         if (date.getDayOfWeek() == DayOfWeek.MONDAY) {
@@ -59,9 +57,7 @@ public class GroupService {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_DATE);
         }
 
-        baseDate = date;
-
-        List<Tuple> tuples = groupRepository.findDirectGroupsAfterDate(baseDate);
+        List<DirectGetRes> result = groupRepository.findDirectGroupsAfterDate(date);
 
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
                 .collect(Collectors.toMap(
@@ -69,14 +65,11 @@ public class GroupService {
                         MatchingScoreDto::totalScore
                 ));
 
-        List<DirectGetRes> result = tuples.stream()
-                .map(tuple -> {
-                    Long targetUserId = tuple.get(QUser.user.id);
-                    int matchRate = matchRateMap.getOrDefault(targetUserId, 0);
-                    return DirectGetRes.from(tuple, matchRate);
-                })
+        List<ClientDirectGetRes> clientDirectGetRes = result.stream()
+                .map(res -> res.withMatchRate(matchRateMap.getOrDefault(res.id(),0 )))
+                .map(ClientDirectGetRes::from)
                 .toList();
 
-        return new DirectGetListRes(result);
+        return new DirectGetListRes(clientDirectGetRes);
     }
 }
