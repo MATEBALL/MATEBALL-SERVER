@@ -4,7 +4,7 @@ import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.DirectGetRes;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.DirectGetListRes;
-import at.mateball.domain.group.api.dto.base.DirectBaseRes;
+import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
@@ -58,7 +58,7 @@ public class GroupService {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_DATE);
         }
 
-        List<DirectBaseRes> result = groupRepository.findDirectGroupsByDate(date);
+        List<DirectGetBaseRes> result = groupRepository.findDirectGroupsByDate(date);
 
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
                 .collect(Collectors.toMap(
