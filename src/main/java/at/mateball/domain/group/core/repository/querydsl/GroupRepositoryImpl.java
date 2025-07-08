@@ -1,7 +1,7 @@
 package at.mateball.domain.group.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
-import at.mateball.domain.group.api.dto.DirectGetRes;
+import at.mateball.domain.group.api.dto.DirectBaseRes;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
@@ -59,7 +59,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     }
 
     @Override
-    public List<DirectGetRes> findDirectGroupsByDate(LocalDate date) {
+    public List<DirectBaseRes> findDirectGroupsByDate(LocalDate date) {
         QGroup group = QGroup.group;
         QUser user = QUser.user;
         QGameInformation game = QGameInformation.gameInformation;
@@ -68,7 +68,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         int currentYear = LocalDate.now().getYear();
 
         return queryFactory
-                .select(Projections.constructor(DirectGetRes.class,
+                .select(Projections.constructor(DirectBaseRes.class,
                         group.id,
                         user.nickname,
                         user.birthYear,
