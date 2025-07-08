@@ -51,7 +51,7 @@ public class UserService {
     }
 
     public UserInformationRes getUserInformation(Long userId) {
-        User user = findUser(userId);
+        findUser(userId);
 
         return userRepository.findUserInformation(userId);
     }
