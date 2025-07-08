@@ -56,7 +56,7 @@ public record DirectCreateRes(
                 baseRes.id(),
                 baseRes.nickname(),
                 age + "세",
-                baseRes.gender(),
+                Gender.from(baseRes.gender()).getLabel(),
                 TeamName.from(Integer.parseInt(baseRes.team().toString())).getLabel(),
                 Style.from(baseRes.style()).getLabel(),
                 baseRes.awayTeam(),
