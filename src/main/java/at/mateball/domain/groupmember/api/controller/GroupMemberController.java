@@ -2,6 +2,7 @@ package at.mateball.domain.groupmember.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
+import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.groupmember.api.dto.DirectStatusListRes;
 import at.mateball.domain.groupmember.core.service.GroupMemberService;
 import at.mateball.exception.code.SuccessCode;
@@ -24,10 +25,10 @@ public class GroupMemberController {
     @GetMapping("/match-stage/direct")
     public ResponseEntity<MateballResponse<?>> getDirectStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam String status
-    ) {
+            @RequestParam("status")GroupStatus groupStatus
+            ) {
         Long userId = userDetails.getUserId();
-        DirectStatusListRes directStatusListRes = groupMemberService.getDirectStatus(userId, status);
+        DirectStatusListRes directStatusListRes = groupMemberService.getDirectStatus(userId, groupStatus);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, directStatusListRes));
     }
