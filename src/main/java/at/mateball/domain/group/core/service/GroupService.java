@@ -7,6 +7,8 @@ import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.api.dto.DirectGetListRes;
 import at.mateball.domain.group.api.dto.DirectBaseRes;
 import at.mateball.domain.group.api.dto.*;
+import at.mateball.domain.group.api.dto.DirectCreateRes;
+import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
