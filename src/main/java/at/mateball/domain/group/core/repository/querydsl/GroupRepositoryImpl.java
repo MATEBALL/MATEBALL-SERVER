@@ -28,12 +28,10 @@ import java.util.stream.Collectors;
 public class GroupRepositoryImpl implements GroupRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final EntityManager entityManager;
-    private final MatchRequirementService matchRequirementService;
 
-    public GroupRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager, MatchRequirementService matchRequirementService) {
+    public GroupRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager) {
         this.queryFactory = queryFactory;
         this.entityManager = entityManager;
-        this.matchRequirementService = matchRequirementService;
     }
 
     @Override
