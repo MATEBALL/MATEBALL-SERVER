@@ -37,7 +37,7 @@ public class GroupController {
             @NotNull @PathVariable Long matchId
     ) {
         Long userId = customUserDetails.getUserId();
-        GroupCreateRes groupCreateRes = groupService.getGroupMatching(userId);
+        GroupCreateRes groupCreateRes = groupService.getGroupMatching(userId, matchId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupCreateRes));
     }
