@@ -1,4 +1,4 @@
-package at.mateball.domain.group.api.dto;
+package at.mateball.domain.group.api.dto.base;
 
 import java.time.LocalDate;
 

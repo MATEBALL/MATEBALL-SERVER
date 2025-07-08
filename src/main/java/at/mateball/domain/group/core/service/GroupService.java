@@ -1,6 +1,10 @@
 package at.mateball.domain.group.core.service;
 
 import at.mateball.domain.group.api.dto.*;
+import at.mateball.domain.group.api.dto.DirectGetRes;
+import at.mateball.domain.group.api.dto.DirectCreateRes;
+import at.mateball.domain.group.api.dto.DirectGetListRes;
+import at.mateball.domain.group.api.dto.base.DirectBaseRes;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
