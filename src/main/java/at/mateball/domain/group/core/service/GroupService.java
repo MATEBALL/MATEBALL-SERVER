@@ -5,6 +5,7 @@ import at.mateball.domain.group.api.dto.DirectGetRes;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.DirectGetListRes;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
+import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
@@ -17,6 +18,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static at.mateball.domain.groupmember.core.QGroupMember.groupMember;
 
 @Service
 public class GroupService {
@@ -77,5 +80,50 @@ public class GroupService {
     public GroupCreateRes getGroupMatching(Long userId, Long matchId) {
         return groupRepository.findGroupCreateRes(matchId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+    }
+
+    public GroupGetListRes getGroups(Long userId, LocalDate date) {
+        LocalDate today = LocalDate.now();
+
+        if (date.getDayOfWeek() == DayOfWeek.MONDAY) {
+            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MONDAY);
+        }
+
+        if (date.isBefore(today)) {
+            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_PAST);
+        }
+
+        LocalDate minAvailableDate = today.plusDays(2);
+        if (minAvailableDate.getDayOfWeek() == DayOfWeek.MONDAY) {
+            minAvailableDate = today.plusDays(3);
+        }
+
+        if (date.isBefore(minAvailableDate)) {
+            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_DATE);
+        }
+
+        List<GroupGetBaseRes> baseList = groupRepository.findGroupsWithBaseInfo(date);
+        List<Long> groupIds = baseList.stream().map(GroupGetBaseRes::id).toList();
+
+        Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
+                .collect(Collectors.toMap(
+                        MatchingScoreDto::targetUserId,
+                        MatchingScoreDto::totalScore
+                ));
+
+        Map<Long, Integer> countMap = groupRepository.findGroupMemberCountMap(groupIds);
+        Map<Long, List<String>> imgMap = groupRepository.findGroupMemberImgMap(groupIds);
+
+        List<GroupGetRes> result = baseList.stream()
+                .map(base -> {
+                    int count = countMap.getOrDefault(base.id(), 1);
+                    List<String> imgs = imgMap.getOrDefault(base.id(), List.of());
+                    int score = matchRateMap.getOrDefault(base.id(), 0);
+                    int avg = Math.round((float) score / count);
+                    return GroupGetRes.from(base, avg, count, imgs);
+                })
+                .toList();
+
+        return new GroupGetListRes(result);
     }
 }

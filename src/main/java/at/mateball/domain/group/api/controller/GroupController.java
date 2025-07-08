@@ -69,7 +69,7 @@ public class GroupController {
     @GetMapping("/group")
     public ResponseEntity<MateballResponse<?>> getGoups(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @NotNull @PathVariable LocalDate date
+            @NotNull @RequestParam LocalDate date
     ) {
         Long userId = customUserDetails.getUserId();
         GroupGetListRes groupGetListRes = groupService.getGroups(userId, date);
