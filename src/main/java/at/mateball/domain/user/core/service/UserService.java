@@ -27,7 +27,7 @@ public class UserService {
         int currentYear = LocalDateTime.now().getYear();
         int birthYear = user.getBirthYear();
 
-        int LIMIT_AGE = 19;
+        final int LIMIT_AGE = 19;
         int age = currentYear - birthYear + 1;
         if (age < LIMIT_AGE) {
             throw new BusinessException(AGE_NOT_APPROPRIATE);
