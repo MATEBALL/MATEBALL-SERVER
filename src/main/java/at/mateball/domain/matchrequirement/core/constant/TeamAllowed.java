@@ -1,6 +1,5 @@
 package at.mateball.domain.matchrequirement.core.constant;
 
-import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import lombok.Getter;
@@ -23,6 +22,13 @@ public enum TeamAllowed {
     public static TeamAllowed from(int value) {
         return Arrays.stream(values())
                 .filter(g -> g.value == value)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
+    }
+
+    public static TeamAllowed fromLabel(String label) {
+        return Arrays.stream(values())
+                .filter(e -> e.label.equalsIgnoreCase(label))
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
     }
