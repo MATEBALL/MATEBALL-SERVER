@@ -101,4 +101,8 @@ public class GroupMemberService {
 
         return new GroupStatusListRes(result);
     }
+
+    public GroupMemberCountRes countGroupMember(final Long matchId) {
+        return groupMemberRepository.countGroupMember(matchId);
+    }
 }

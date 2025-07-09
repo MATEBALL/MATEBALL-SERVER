@@ -1,6 +1,7 @@
 package at.mateball.domain.groupmember.core.repository.querydsl;
 
 
+import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
@@ -20,6 +21,8 @@ public interface GroupMemberRepositoryCustom {
     List<GroupStatusBaseRes> findGroupMatchingsByUser(Long userId);
 
     List<GroupStatusBaseRes> findGroupMatchingsByUserAndStatus(Long userId, int groupStatus);
+
+    GroupMemberCountRes countGroupMember(Long groupId);
 
     List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId);
 }
