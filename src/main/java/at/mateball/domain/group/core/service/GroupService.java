@@ -91,7 +91,7 @@ public class GroupService {
     }
 
     private void validateRequest(Long userId, Group group) {
-        int limit = group.isGroup() ? DIRECT_LIMIT : GROUP_LIMIT;
+        int limit = group.isGroup() ? GROUP_LIMIT : DIRECT_LIMIT;
         long count = groupMemberRepository.countMatchingRequests(userId, group.isGroup());
 
         if (count >= limit) {
