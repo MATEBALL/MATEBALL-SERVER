@@ -1,20 +1,19 @@
 package at.mateball.domain.group.core.service;
 
 import at.mateball.domain.group.api.dto.*;
-import at.mateball.domain.group.api.dto.DirectGetRes;
-import at.mateball.domain.group.api.dto.DirectCreateRes;
-import at.mateball.domain.group.api.dto.DirectGetListRes;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
+import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.repository.GroupRepository;
+import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -26,13 +25,16 @@ import static at.mateball.domain.group.core.validator.DateValidator.validate;
 @Service
 public class GroupService {
     private final GroupRepository groupRepository;
-    private final MatchRequirementService matchRequirementService;
     private final GroupMemberRepository groupMemberRepository;
+    private final MatchRequirementService matchRequirementService;
 
-    public GroupService(GroupRepository groupRepository, MatchRequirementService matchRequirementService, GroupMemberRepository groupMemberRepository) {
+    private final static int DIRECT_LIMIT = 3;
+    private final static int GROUP_LIMIT = 2;
+
+    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService) {
         this.groupRepository = groupRepository;
-        this.matchRequirementService = matchRequirementService;
         this.groupMemberRepository = groupMemberRepository;
+        this.matchRequirementService = matchRequirementService;
     }
 
     public DirectCreateRes getDirectMatching(Long userId, Long matchId) {
@@ -68,6 +70,48 @@ public class GroupService {
     public GroupCreateRes getGroupMatching(Long userId, Long matchId) {
         return groupRepository.findGroupCreateRes(userId, matchId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+    }
+
+    @Transactional
+    public void requestMatching(Long userId, Long matchId) {
+        Group group = groupRepository.findById(matchId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        validateRequest(userId, group);
+
+        groupMemberRepository.createGroupMember(userId, matchId);
+
+        if (group.isGroup()) {
+            groupMemberRepository.updateStatusForAllParticipants(group.getId(), GroupMemberStatus.NEW_REQUEST.getValue());
+        } else {
+            groupMemberRepository.updateLeaderStatus(
+                    group.getLeader().getId(), group.getId(), GroupMemberStatus.NEW_REQUEST.getValue()
+            );
+        }
+    }
+
+    private void validateRequest(Long userId, Group group) {
+        int limit = group.isGroup() ? DIRECT_LIMIT : GROUP_LIMIT;
+        long count = groupMemberRepository.countMatchingRequests(userId, group.isGroup());
+
+        if (count >= limit) {
+            throw new BusinessException(
+                    group.isGroup() ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
+                            : BusinessErrorCode.EXCEED_DIRECT_MATCHING_LIMIT
+            );
+        }
+
+        boolean hasPendingRequest = groupMemberRepository.isPendingRequestExists(
+                group.getId(),
+                List.of(
+                        GroupMemberStatus.NEW_REQUEST.getValue(),
+                        GroupMemberStatus.AWAITING_APPROVAL.getValue()
+                )
+        );
+
+        if (hasPendingRequest) {
+            throw new BusinessException(BusinessErrorCode.ALREADY_HAS_PENDING_REQUEST);
+        }
     }
 
     public GroupGetListRes getGroups(Long userId, LocalDate date) {
