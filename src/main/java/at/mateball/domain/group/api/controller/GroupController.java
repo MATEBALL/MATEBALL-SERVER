@@ -66,6 +66,18 @@ public class GroupController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupCreateRes));
     }
 
+    @PostMapping("/match-request/{matchId}")
+    public ResponseEntity<MateballResponse<?>> requestMatching(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @NotNull @PathVariable Long matchId
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        groupService.requestMatching(userId, matchId);
+
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.CREATED));
+    }
+
     @GetMapping("/group")
     public ResponseEntity<MateballResponse<?>> getGroups(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
