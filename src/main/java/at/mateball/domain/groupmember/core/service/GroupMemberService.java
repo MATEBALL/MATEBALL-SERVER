@@ -52,6 +52,10 @@ public class GroupMemberService {
     }
 
     private GroupStatusListRes mapWithCountsAndImages(List<GroupStatusBaseRes> baseResList) {
+        if (baseResList.isEmpty()) {
+            return new GroupStatusListRes(List.of());
+        }
+
         List<Long> groupIds = baseResList.stream()
                 .map(GroupStatusBaseRes::id)
                 .toList();
