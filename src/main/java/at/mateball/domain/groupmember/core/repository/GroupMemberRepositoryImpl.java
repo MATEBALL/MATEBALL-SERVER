@@ -1,7 +1,6 @@
 package at.mateball.domain.groupmember.core.repository;
 
 import at.mateball.domain.group.core.Group;
-import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.QGroupMember;
@@ -87,5 +86,18 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         groupMember.isParticipant.isTrue()
                 )
                 .execute();
+    }
+
+    @Override
+    public boolean hasPreviousFailedRequest(Long userId, Long matchId, GroupMemberStatus status) {
+        return queryFactory
+                .selectOne()
+                .from(groupMember)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.group.id.eq(matchId),
+                        groupMember.status.eq(status.getValue())
+                )
+                .fetchFirst() != null;
     }
 }
