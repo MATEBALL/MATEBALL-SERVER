@@ -1,10 +1,8 @@
 package at.mateball.domain.groupmember.core.service;
 
 import at.mateball.domain.group.core.GroupStatus;
-import at.mateball.domain.groupmember.api.dto.DirectStatusListRes;
-import at.mateball.domain.groupmember.api.dto.DirectStatusRes;
-import at.mateball.domain.groupmember.api.dto.GroupStatusListRes;
-import at.mateball.domain.groupmember.api.dto.GroupStatusRes;
+import at.mateball.domain.groupmember.api.dto.*;
+import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
@@ -49,6 +47,10 @@ public class GroupMemberService {
     public GroupStatusListRes getGroupStatus(Long userId, GroupStatus status) {
         List<GroupStatusBaseRes> baseResList = groupMemberRepository.findGroupMatchingsByUserAndStatus(userId, status.getValue());
         return mapWithCountsAndImages(baseResList);
+    }
+
+    public DetailMatchingListRes getDetailMatching(Long userId, Long matchId) {
+        List<DetailMatchingBaseRes> baseResList
     }
 
     private GroupStatusListRes mapWithCountsAndImages(List<GroupStatusBaseRes> baseResList) {

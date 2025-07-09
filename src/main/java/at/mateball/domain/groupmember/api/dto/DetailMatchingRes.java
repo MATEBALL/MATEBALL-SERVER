@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public record DetailMatchingRes(
         Long id,
         String nickname,
-        String agd,
+        String age,
         String gender,
         String team,
         String style,
