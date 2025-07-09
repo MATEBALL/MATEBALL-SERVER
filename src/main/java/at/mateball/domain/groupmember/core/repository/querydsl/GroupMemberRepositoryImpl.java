@@ -33,13 +33,16 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
         return queryFactory
                 .select(member.group.id, member.count())
                 .from(member)
-                .where(member.group.id.in(groupIds))
+                .where(
+                        member.group.id.in(groupIds),
+                        member.isParticipant.isTrue()
+                )
                 .groupBy(member.group.id)
                 .fetch()
                 .stream()
                 .collect(Collectors.toMap(
                         tuple -> tuple.get(0, Long.class),
-                        tuple -> tuple.get(1, Long.class).intValue() + 1
+                        tuple -> tuple.get(1, Long.class).intValue()
                 ));
     }
 
@@ -54,7 +57,10 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
                 .select(member.group.id, user.imgUrl)
                 .from(member)
                 .join(user).on(member.user.eq(user))
-                .where(member.group.id.in(groupIds))
+                .where(
+                        member.group.id.in(groupIds),
+                        member.isParticipant.isTrue()
+                )
                 .fetch()
                 .stream()
                 .collect(Collectors.groupingBy(
