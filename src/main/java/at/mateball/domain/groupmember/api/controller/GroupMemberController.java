@@ -60,7 +60,7 @@ public class GroupMemberController {
     }
 
     @GetMapping("/num-count/{matchId}")
-    public ResponseEntity<MateballResponse<?>> getGroups(
+    public ResponseEntity<MateballResponse<?>> countGroupMember(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @NotNull @PathVariable Long matchId
     ) {
