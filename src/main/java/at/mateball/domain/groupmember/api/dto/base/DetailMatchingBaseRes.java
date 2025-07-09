@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public record DetailMatchingBaseRes(
         Long id,
+        Long userId,
         String nickname,
         Integer birthYear,
         String gender,

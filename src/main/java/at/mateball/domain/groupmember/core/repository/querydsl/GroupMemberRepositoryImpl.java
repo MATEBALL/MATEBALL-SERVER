@@ -213,6 +213,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
         return queryFactory
                 .select(Projections.constructor(DetailMatchingBaseRes.class,
                         group.id,
+                        user.id,
                         user.nickname,
                         user.birthYear,
                         user.gender,
