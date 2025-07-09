@@ -21,5 +21,5 @@ public interface GroupMemberRepositoryCustom {
 
     List<GroupStatusBaseRes> findGroupMatchingsByUserAndStatus(Long userId, int groupStatus);
 
-    List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long matchId);
+    List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId);
 }
