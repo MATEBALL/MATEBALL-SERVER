@@ -58,7 +58,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .join(game).on(group.gameInformation.eq(game))
                 .join(matchRequirement).on(matchRequirement.user.eq(user))
                 .where(
-                        user.id.eq(userId),
+                        group.leader.id.eq(userId),
                         group.id.eq(matchId),
                         group.isGroup.isFalse()
                 )
