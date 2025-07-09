@@ -48,7 +48,7 @@ public class GroupService {
     public DirectGetListRes getDirects(Long userId, LocalDate date) {
         validate(date);
 
-        List<DirectGetBaseRes> result = groupRepository.findDirectGroupsByDate(date);
+        List<DirectGetBaseRes> result = groupRepository.findDirectGroupsByDate(userId, date);
 
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
                 .collect(Collectors.toMap(

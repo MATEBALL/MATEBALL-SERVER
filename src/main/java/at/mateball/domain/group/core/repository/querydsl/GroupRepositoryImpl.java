@@ -13,6 +13,7 @@ import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
@@ -67,12 +68,12 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     }
 
     @Override
-    public List<DirectGetBaseRes> findDirectGroupsByDate(LocalDate date) {
+    public List<DirectGetBaseRes> findDirectGroupsByDate(Long userId,LocalDate date) {
         QGroup group = QGroup.group;
         QUser user = QUser.user;
         QGameInformation game = QGameInformation.gameInformation;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
-
+        QGroupMember groupMember = QGroupMember.groupMember;
         return queryFactory
                 .select(Projections.constructor(DirectGetBaseRes.class,
                         group.id,
@@ -94,8 +95,18 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .join(game).on(group.gameInformation.eq(game))
                 .join(matchRequirement).on(matchRequirement.user.eq(user))
                 .where(
+                        group.isGroup.isFalse(),
+                        group.leader.id.ne(userId),
                         game.gameDate.eq(date),
-                        group.isGroup.isFalse()
+                        JPAExpressions
+                                .selectOne()
+                                .from(groupMember)
+                                .where(
+                                        groupMember.group.id.eq(group.id),
+                                        groupMember.status.in(2, 3, 4, 5, 6)
+                                )
+                                .notExists()
+
                 )
                 .orderBy(game.gameDate.asc())
                 .fetch();
