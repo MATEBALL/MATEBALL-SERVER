@@ -6,17 +6,24 @@ import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
+import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
+import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
+import at.mateball.exception.BusinessException;
+import at.mateball.exception.code.BusinessErrorCode;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupMemberService {
     private final GroupMemberRepository groupMemberRepository;
+    private final MatchRequirementService matchRequirementService;
 
-    public GroupMemberService(GroupMemberRepository groupMemberRepository) {
+    public GroupMemberService(GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService) {
         this.groupMemberRepository = groupMemberRepository;
+        this.matchRequirementService = matchRequirementService;
     }
 
     public DirectStatusListRes getDirectStatus(Long userId, GroupStatus groupStatus) {
@@ -50,7 +57,26 @@ public class GroupMemberService {
     }
 
     public DetailMatchingListRes getDetailMatching(Long userId, Long matchId) {
-        List<DetailMatchingBaseRes> baseResList
+        List<DetailMatchingBaseRes> baseResList = groupMemberRepository.findGroupMatesByMatchId(matchId);
+
+        if (baseResList == null || baseResList.isEmpty()) {
+            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
+        }
+
+        Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
+                .collect(Collectors.toMap(
+                        MatchingScoreDto::targetUserId,
+                        MatchingScoreDto::totalScore
+                ));
+
+        List<DetailMatchingRes> result = baseResList.stream()
+                .map(base -> {
+                    Integer matchRate = matchRateMap.getOrDefault(base.id(), 0);
+                    return DetailMatchingRes.from(base, matchRate);
+                })
+                .toList();
+
+        return new DetailMatchingListRes(result);
     }
 
     private GroupStatusListRes mapWithCountsAndImages(List<GroupStatusBaseRes> baseResList) {

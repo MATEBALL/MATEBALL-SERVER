@@ -2,6 +2,7 @@ package at.mateball.domain.groupmember.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
 import at.mateball.domain.group.core.QGroup;
+import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
 import at.mateball.domain.groupmember.core.QGroupMember;
@@ -198,6 +199,38 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
                         group.isGroup.isTrue(),
                         group.status.eq(groupStatus)
                 )
+                .fetch();
+    }
+
+    @Override
+    public List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long matchId) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QUser user = QUser.user;
+        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+        QGroup group = QGroup.group;
+        QGameInformation game = QGameInformation.gameInformation;
+
+        return queryFactory
+                .select(Projections.constructor(DetailMatchingBaseRes.class,
+                        group.id,
+                        user.nickname,
+                        user.birthYear,
+                        user.gender,
+                        matchRequirement.team,
+                        matchRequirement.style,
+                        user.introduction,
+                        game.awayTeamName,
+                        game.homeTeamName,
+                        game.stadiumName,
+                        game.gameDate,
+                        user.imgUrl
+                ))
+                .from(groupMember)
+                .join(groupMember.user, user)
+                .join(groupMember.group, group)
+                .join(group.gameInformation, game)
+                .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
+                .where(group.id.eq(matchId))
                 .fetch();
     }
 }
