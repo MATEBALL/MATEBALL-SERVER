@@ -8,6 +8,7 @@ import at.mateball.domain.groupmember.api.dto.DirectStatusListRes;
 import at.mateball.domain.groupmember.api.dto.GroupStatusListRes;
 import at.mateball.domain.groupmember.core.service.GroupMemberService;
 import at.mateball.exception.code.SuccessCode;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -57,10 +58,10 @@ public class GroupMemberController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }
 
-    @GetMapping("/match-detail")
+    @GetMapping("/match-detail/{matchId}")
     public ResponseEntity<MateballResponse<?>> getDetailMatching(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable Long matchId
+            @NotNull @PathVariable Long matchId
     ) {
         Long userId = userDetails.getUserId();
         DetailMatchingListRes detailMatchingListRes = groupMemberService.getDetailMatching(userId, matchId);
