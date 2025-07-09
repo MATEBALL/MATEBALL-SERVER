@@ -103,6 +103,9 @@ public class GroupMemberService {
     }
 
     public GroupMemberCountRes countGroupMember(final Long matchId) {
+        groupRepository.findById(matchId).orElseThrow(() ->
+                new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
         return groupMemberRepository.countGroupMember(matchId);
     }
 }
