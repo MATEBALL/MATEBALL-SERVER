@@ -27,8 +27,8 @@ public record DetailMatchingRes(
 
         return new DetailMatchingRes(
                 base.id(),
-                age + "세",
                 base.nickname(),
+                age + "세",
                 Gender.from(base.gender()).getLabel(),
                 TeamName.from(base.team()).getLabel(),
                 Style.from(base.style()).getLabel(),
