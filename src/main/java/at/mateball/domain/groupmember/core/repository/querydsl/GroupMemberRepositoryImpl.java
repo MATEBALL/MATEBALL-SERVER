@@ -203,7 +203,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
     }
 
     @Override
-    public List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long matchId) {
+    public List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId) {
         QGroupMember groupMember = QGroupMember.groupMember;
         QUser user = QUser.user;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
@@ -232,7 +232,9 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
                 .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
                 .where(
                         group.id.eq(matchId),
-                        groupMember.isParticipant.isTrue()
+                        groupMember.isParticipant.isTrue(),
+                        groupMember.status.eq(1),
+                        user.id.ne(userId)
                 )
                 .fetch();
     }

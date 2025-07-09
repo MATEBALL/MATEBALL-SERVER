@@ -57,7 +57,7 @@ public class GroupMemberService {
     }
 
     public DetailMatchingListRes getDetailMatching(Long userId, Long matchId) {
-        List<DetailMatchingBaseRes> baseResList = groupMemberRepository.findGroupMatesByMatchId(matchId);
+        List<DetailMatchingBaseRes> baseResList = groupMemberRepository.findGroupMatesByMatchId(userId, matchId);
 
         if (baseResList == null || baseResList.isEmpty()) {
             throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
