@@ -8,7 +8,7 @@ import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@DataJpaTest
 @ActiveProfiles("test")
 @Transactional
 @Slf4j
@@ -31,12 +31,12 @@ class MatchRequirementRepositoryTest {
     @Test
     void 매칭_점수_계산_정상작동_테스트() {
         // given
-        User userA = new User(12345L, "M", 1997);
+        User userA = new User(12345L, "male", 1997);
         entityManager.persist(userA);
         MatchRequirement reqA = new MatchRequirement(userA, 1, 1, 1, 3);
         entityManager.persist(reqA);
 
-        User userB = new User(67890L, "F", 1998);
+        User userB = new User(67890L, "female", 1998);
         entityManager.persist(userB);
         MatchRequirement reqB = new MatchRequirement(userB, 1, 1, 1, 3);
         entityManager.persist(reqB);
