@@ -1,6 +1,8 @@
 package at.mateball.domain.groupmember.core.repository;
 
+import at.mateball.domain.gameinformation.core.QGameInformation;
 import at.mateball.domain.group.core.Group;
+import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.QGroupMember;
@@ -8,6 +10,7 @@ import at.mateball.domain.user.core.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
@@ -16,6 +19,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     private final EntityManager entityManager;
 
     QGroupMember groupMember = QGroupMember.groupMember;
+    QGroup group = QGroup.group;
 
     public GroupMemberRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager) {
         this.queryFactory = queryFactory;
@@ -23,13 +27,60 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public void createGroupMember(Long userId, Long matchId) {
-        User user = entityManager.getReference(User.class, userId);
-        Group group = entityManager.getReference(Group.class, matchId);
+    public boolean existsRequest(Long userId, Long groupId) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(groupMember)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.group.id.eq(groupId),
+                        groupMember.status.eq(GroupMemberStatus.AWAITING_APPROVAL.getValue())
+                )
+                .fetchFirst();
 
-        GroupMember groupMember = new GroupMember(user, group, false, GroupMemberStatus.AWAITING_APPROVAL.getValue());
+        return result != null;
+    }
 
-        entityManager.persist(groupMember);
+    @Override
+    public boolean isPendingRequestExists(Long matchId, List<Integer> status) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(groupMember)
+                .where(
+                        groupMember.group.id.eq(matchId),
+                        groupMember.status.in(status)
+                )
+                .fetchFirst();
+        return result != null;
+    }
+
+    @Override
+    public boolean hasNonFailedRequestOnSameDate(Long userId, LocalDate date) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(group.gameInformation, QGameInformation.gameInformation)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        QGameInformation.gameInformation.gameDate.eq(date),
+                        groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue())
+                )
+                .fetchFirst();
+        return result != null;
+    }
+
+    @Override
+    public boolean hasPreviousFailedRequest(Long userId, Long matchId, GroupMemberStatus status) {
+        return queryFactory
+                .selectOne()
+                .from(groupMember)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.group.id.eq(matchId),
+                        groupMember.status.eq(status.getValue())
+                )
+                .fetchFirst() != null;
     }
 
     @Override
@@ -52,16 +103,13 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public boolean isPendingRequestExists(Long matchId, List<Integer> status) {
-        Integer result = queryFactory
-                .selectOne()
-                .from(groupMember)
-                .where(
-                        groupMember.group.id.eq(matchId),
-                        groupMember.status.in(status)
-                )
-                .fetchFirst();
-        return result != null;
+    public void createGroupMember(Long userId, Long matchId) {
+        User user = entityManager.getReference(User.class, userId);
+        Group group = entityManager.getReference(Group.class, matchId);
+
+        GroupMember groupMember = new GroupMember(user, group, false, GroupMemberStatus.AWAITING_APPROVAL.getValue());
+
+        entityManager.persist(groupMember);
     }
 
     @Override
@@ -86,18 +134,5 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         groupMember.isParticipant.isTrue()
                 )
                 .execute();
-    }
-
-    @Override
-    public boolean hasPreviousFailedRequest(Long userId, Long matchId, GroupMemberStatus status) {
-        return queryFactory
-                .selectOne()
-                .from(groupMember)
-                .where(
-                        groupMember.user.id.eq(userId),
-                        groupMember.group.id.eq(matchId),
-                        groupMember.status.eq(status.getValue())
-                )
-                .fetchFirst() != null;
     }
 }
