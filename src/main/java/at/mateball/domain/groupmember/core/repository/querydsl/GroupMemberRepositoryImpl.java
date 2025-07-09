@@ -230,7 +230,10 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
                 .join(groupMember.group, group)
                 .join(group.gameInformation, game)
                 .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
-                .where(group.id.eq(matchId))
+                .where(
+                        group.id.eq(matchId),
+                        groupMember.isParticipant.isTrue()
+                )
                 .fetch();
     }
 }
