@@ -103,7 +103,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                                 .from(groupMember)
                                 .where(
                                         groupMember.group.id.eq(group.id),
-                                        groupMember.status.in(2, 3, 4, 5, 6)
+                                        groupMember.status.ne(1)
                                 )
                                 .notExists()
 
@@ -113,7 +113,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     }
 
     @Override
-    public Optional<GroupCreateRes> findGroupCreateRes(Long matchId) {
+    public Optional<GroupCreateRes> findGroupCreateRes(Long userId, Long matchId) {
         QGroup group = QGroup.group;
         QUser leader = user;
         QGameInformation gameInformation = QGameInformation.gameInformation;
@@ -132,7 +132,8 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .join(leader).on(group.leader.eq(leader))
                 .where(
                         group.id.eq(matchId),
-                        group.isGroup.isTrue()
+                        group.isGroup.isTrue(),
+                        group.leader.id.eq(userId)
                 )
                 .fetchOne();
 
@@ -161,6 +162,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         QGroup group = QGroup.group;
         QUser leader = user;
         QGameInformation game = QGameInformation.gameInformation;
+        QGroupMember groupMember = QGroupMember.groupMember;
 
         return queryFactory
                 .select(Projections.constructor(GroupGetBaseRes.class,
@@ -176,7 +178,15 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .join(game).on(group.gameInformation.eq(game))
                 .where(
                         group.isGroup.isTrue(),
-                        game.gameDate.eq(date)
+                        game.gameDate.eq(date),
+                        JPAExpressions
+                                .selectOne()
+                                .from(groupMember)
+                                .where(
+                                        groupMember.group.id.eq(group.id),
+                                        groupMember.status.ne(1)
+                                )
+                                .notExists()
                 )
                 .fetch();
     }

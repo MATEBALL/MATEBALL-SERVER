@@ -66,7 +66,7 @@ public class GroupService {
     }
 
     public GroupCreateRes getGroupMatching(Long userId, Long matchId) {
-        return groupRepository.findGroupCreateRes(matchId)
+        return groupRepository.findGroupCreateRes(userId, matchId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
     }
 

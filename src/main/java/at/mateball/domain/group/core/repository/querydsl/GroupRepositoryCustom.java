@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface GroupRepositoryCustom {
     DirectCreateRes findDirectCreateResults(Long userId, Long matchId);
 
-    Optional<GroupCreateRes> findGroupCreateRes(Long matchId);
+    Optional<GroupCreateRes> findGroupCreateRes(Long userId, Long matchId);
 
     List<DirectGetBaseRes> findDirectGroupsByDate(Long userId, LocalDate date);
 
