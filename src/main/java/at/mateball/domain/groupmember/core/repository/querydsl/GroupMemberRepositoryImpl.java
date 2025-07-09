@@ -1,8 +1,8 @@
 package at.mateball.domain.groupmember.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
-import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.group.core.QGroup;
+import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
+public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     public GroupMemberRepositoryImpl(EntityManager entityManager) {
@@ -209,7 +209,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
         Long count = queryFactory
                 .select(groupMember.count())
                 .from(groupMember)
-                .where(groupMember.group.id.eq(groupId))
+                .where(groupMember.group.id.eq(groupId), groupMember.isParticipant.isTrue())
                 .fetchOne();
 
         return new GroupMemberCountRes(count != null ? count.intValue() : 0);
