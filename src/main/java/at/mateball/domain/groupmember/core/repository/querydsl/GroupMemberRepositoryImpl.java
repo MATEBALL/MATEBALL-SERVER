@@ -1,6 +1,7 @@
 package at.mateball.domain.groupmember.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
+import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
@@ -8,10 +9,9 @@ import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import com.querydsl.core.types.Projections;
-
 
 import java.util.List;
 import java.util.Map;
@@ -200,6 +200,19 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom{
                         group.status.eq(groupStatus)
                 )
                 .fetch();
+    }
+
+    @Override
+    public GroupMemberCountRes countGroupMember(Long groupId) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+
+        Long count = queryFactory
+                .select(groupMember.count())
+                .from(groupMember)
+                .where(groupMember.group.id.eq(groupId))
+                .fetchOne();
+
+        return new GroupMemberCountRes(count != null ? count.intValue() : 0);
     }
 
     @Override
