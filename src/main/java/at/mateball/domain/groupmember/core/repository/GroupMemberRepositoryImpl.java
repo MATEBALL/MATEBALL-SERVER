@@ -24,9 +24,9 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public void createGroupMember(Long userId, Long groupId) {
+    public void createGroupMember(Long userId, Long matchId) {
         User user = entityManager.getReference(User.class, userId);
-        Group group = entityManager.getReference(Group.class, groupId);
+        Group group = entityManager.getReference(Group.class, matchId);
 
         GroupMember groupMember = new GroupMember(user, group, false, GroupMemberStatus.AWAITING_APPROVAL.getValue());
 
@@ -53,12 +53,12 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public boolean isPendingRequestExists(Long groupId, List<Integer> statuses) {
+    public boolean isPendingRequestExists(Long matchId, List<Integer> statuses) {
         Integer result = queryFactory
                 .selectOne()
                 .from(groupMember)
                 .where(
-                        groupMember.group.id.eq(groupId),
+                        groupMember.group.id.eq(matchId),
                         groupMember.status.in(statuses)
                 )
                 .fetchFirst();
@@ -66,24 +66,24 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public void updateLeaderStatus(Long userId, Long groupId, int status) {
+    public void updateLeaderStatus(Long userId, Long matchId, int status) {
         queryFactory
                 .update(groupMember)
                 .set(groupMember.status, status)
                 .where(
                         groupMember.user.id.eq(userId),
-                        groupMember.group.id.eq(groupId)
+                        groupMember.group.id.eq(matchId)
                 )
                 .execute();
     }
 
     @Override
-    public void updateStatusForAllParticipants(Long groupId, int status) {
+    public void updateStatusForAllParticipants(Long matchId, int status) {
         queryFactory
                 .update(groupMember)
                 .set(groupMember.status, status)
                 .where(
-                        groupMember.group.id.eq(groupId),
+                        groupMember.group.id.eq(matchId),
                         groupMember.isParticipant.isTrue()
                 )
                 .execute();
