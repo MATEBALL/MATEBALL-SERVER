@@ -91,6 +91,16 @@ public class GroupService {
     }
 
     private void validateRequest(Long userId, Group group) {
+        boolean hasFailed = groupMemberRepository.hasPreviousFailedRequest(
+                userId,
+                group.getId(),
+                GroupMemberStatus.MATCH_FAILED
+        );
+
+        if (hasFailed) {
+            throw new BusinessException(BusinessErrorCode.ALREADY_FAILED_REQUEST);
+        }
+
         int limit = group.isGroup() ? GROUP_LIMIT : DIRECT_LIMIT;
         long count = groupMemberRepository.countMatchingRequests(userId, group.isGroup());
 

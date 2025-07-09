@@ -17,6 +17,7 @@ public enum BusinessErrorCode implements ErrorCode {
     EXCEED_GROUP_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "그룹 매칭은 최대 2개까지만 가능합니다."),
     EXCEED_DIRECT_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "1대1 매칭은 최대 3개까지만 가능합니다."),
     ALREADY_HAS_PENDING_REQUEST(HttpStatus.BAD_REQUEST, "이미 요청이 존재하는 매칭입니다."),
+    ALREADY_FAILED_REQUEST(HttpStatus.BAD_REQUEST, "이미 요청이 실패한 매칭입니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED,"만료된 토큰입니다."),
