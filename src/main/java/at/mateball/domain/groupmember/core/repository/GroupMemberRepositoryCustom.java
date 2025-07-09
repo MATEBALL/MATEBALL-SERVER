@@ -3,13 +3,13 @@ package at.mateball.domain.groupmember.core.repository;
 import java.util.List;
 
 public interface GroupMemberRepositoryCustom {
-    void createGroupMember(Long userId,Long groupId);
+    void createGroupMember(Long userId,Long matchId);
 
     long countMatchingRequests(Long userId, boolean isGroup);
 
-    void updateLeaderStatus(Long userId, Long groupId, int status);
+    void updateLeaderStatus(Long userId, Long matchId, int status);
 
-    void updateStatusForAllParticipants(Long groupId, int status);
+    void updateStatusForAllParticipants(Long matchId, int status);
 
-    boolean isPendingRequestExists(Long groupId, List<Integer> statuses);
+    boolean isPendingRequestExists(Long matchId, List<Integer> statuses);
 }
