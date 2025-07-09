@@ -53,13 +53,13 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public boolean isPendingRequestExists(Long matchId, List<Integer> statuses) {
+    public boolean isPendingRequestExists(Long matchId, List<Integer> status) {
         Integer result = queryFactory
                 .selectOne()
                 .from(groupMember)
                 .where(
                         groupMember.group.id.eq(matchId),
-                        groupMember.status.in(statuses)
+                        groupMember.status.in(status)
                 )
                 .fetchFirst();
         return result != null;

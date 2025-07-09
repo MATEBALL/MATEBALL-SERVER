@@ -11,5 +11,5 @@ public interface GroupMemberRepositoryCustom {
 
     void updateStatusForAllParticipants(Long matchId, int status);
 
-    boolean isPendingRequestExists(Long matchId, List<Integer> statuses);
+    boolean isPendingRequestExists(Long matchId, List<Integer> status);
 }
