@@ -166,31 +166,10 @@ public class GroupService {
     public void permitRequest(Long userId, Long groupId) {
         Group group = validateRequest(userId, groupId);
 
-        boolean isGroup = group.isGroup();
-        Long requesterId = groupMemberRepository.findRequesterId(groupId);
-
-        if (!isGroup) {
-            groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.MATCHED.getValue());
-            groupMemberRepository.updateStatusAndParticipant(requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
-            groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
-            return;
-        }
-
-        groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.AWAITING_APPROVAL.getValue());
-
-        long totalGroupMembers = groupMemberRepository.countTotalGroupMembersExceptRequester(groupId);
-        long approvedCount = groupMemberRepository.countMembersWithStatus(groupId, GroupMemberStatus.AWAITING_APPROVAL);
-        if (approvedCount < totalGroupMembers) {
-            return;
-        }
-
-        groupMemberRepository.updateStatusAndParticipant(requesterId, groupId, GroupMemberStatus.APPROVED.getValue());
-        groupMemberRepository.updateStatusForApprovedMembers(groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
-
-        long participantCount = groupMemberRepository.countParticipants(groupId);
-        if (participantCount == TOTAL_GROUP_MEMBER) {
-            groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
-            groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+        if (!group.isGroup()) {
+            processDirect(userId, groupId);
+        } else {
+            processGroup(userId, groupId);
         }
     }
 
@@ -205,10 +184,39 @@ public class GroupService {
         if (!groupMemberRepository.isUserParticipant(userId, groupId)) {
             throw new BusinessException(BusinessErrorCode.NOT_GROUP_MEMBER);
         }
-
         return group;
     }
 
+    private void processDirect(Long userId, Long groupId) {
+        Long requesterId = groupMemberRepository.findRequesterId(groupId);
+
+        groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.MATCHED.getValue());
+        groupMemberRepository.updateStatusAndParticipant(requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
+        groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+    }
+
+    private void processGroup(Long userId, Long groupId) {
+        Long requesterId = groupMemberRepository.findRequesterId(groupId);
+
+        groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.AWAITING_APPROVAL.getValue());
+
+        long totalGroupMembers = groupMemberRepository.countTotalGroupMembersExceptRequester(groupId);
+        long approvedCount = groupMemberRepository.countMembersWithStatus(groupId, GroupMemberStatus.AWAITING_APPROVAL);
+
+        if (approvedCount < totalGroupMembers) {
+            return;
+        }
+
+        groupMemberRepository.updateStatusAndParticipant(requesterId, groupId, GroupMemberStatus.APPROVED.getValue());
+        groupMemberRepository.updateStatusForApprovedMembers(groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
+
+        long participantCount = groupMemberRepository.countParticipants(groupId);
+
+        if (participantCount == TOTAL_GROUP_MEMBER) {
+            groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
+            groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+        }
+    }
     @Transactional
     public void rejectRequest(Long userId, Long matchId) {
         List<GroupMemberBaseRes> members = groupMemberRepository.getGroupMember(matchId);
