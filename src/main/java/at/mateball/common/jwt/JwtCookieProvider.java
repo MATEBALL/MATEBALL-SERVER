@@ -68,8 +68,8 @@ public class JwtCookieProvider {
     private ResponseCookie createCookie(String name, String value, long maxAge, HttpServletRequest request) {
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(isSecure(request))
-                .sameSite(getSameSite(request))
+                .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(Duration.ofMillis(maxAge))
                 .build();
@@ -78,8 +78,8 @@ public class JwtCookieProvider {
     private ResponseCookie deleteCookie(String name, HttpServletRequest request) {
         return ResponseCookie.from(name, "")
                 .httpOnly(true)
-                .secure(isSecure(request))
-                .sameSite(getSameSite(request))
+                .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(0)
                 .build();
