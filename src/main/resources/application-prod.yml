@@ -24,7 +24,7 @@ kakao:
     client-secret: ${KAKAO_CLIENT_SECRET}
     client-authentication-method: client_secret_post
     authorization-grant-type: authorization_code
-    redirect-uri: http://localhost:5173/auth
+    redirect-uri: https://localhost:5173/auth
     scope:
       - birthday
       - gender
