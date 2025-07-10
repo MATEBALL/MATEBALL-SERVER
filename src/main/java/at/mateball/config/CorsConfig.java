@@ -15,10 +15,8 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
                 "https://api.mateball.co.kr",
                 "https://mateball.co.kr",
-                "http://localhost:5173",
                 "https://localhost:5173"
         ));
 
