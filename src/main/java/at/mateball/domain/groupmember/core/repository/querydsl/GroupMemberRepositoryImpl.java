@@ -370,4 +370,14 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 )
                 .execute();
     }
+
+
+    @Override
+    public void updateAllGroupMembersStatus(Long groupId, int status) {
+        queryFactory
+                .update(groupMember)
+                .set(groupMember.status, status)
+                .where(groupMember.group.id.eq(groupId))
+                .execute();
+    }
 }

@@ -43,4 +43,6 @@ public interface GroupMemberRepositoryCustom {
     void updateLeaderStatus(Long userId, Long matchId, int status);
 
     void updateStatusForAllParticipants(Long matchId, int status);
+
+    void updateAllGroupMembersStatus(Long groupId, int status);
 }
