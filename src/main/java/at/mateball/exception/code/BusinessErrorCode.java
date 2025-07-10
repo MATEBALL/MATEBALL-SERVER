@@ -20,7 +20,7 @@ public enum BusinessErrorCode implements ErrorCode {
     DUPLICATE_REQUEST_ON_SAME_DATE(HttpStatus.BAD_REQUEST, "같은 날짜의 경기에는 하나의 매칭 요청만 생성할 수 있습니다."),
     INVALID_NICKNAME_LENGTH(HttpStatus.BAD_REQUEST, "닉네임은 2자 이상 6자 이하로 입력해야 합니다."),
     NICKNAME_CONTAINS_WHITESPACE(HttpStatus.BAD_REQUEST, "닉네임에 공백이 포함될 수 없습니다."),
-    INVALID_NICKNAME_CHARACTER(HttpStatus.BAD_REQUEST, "닉네임은 한글 또는 영어만 사용할 수 있으며, 혼용 및 특수문자는 불가합니다."),
+    INVALID_NICKNAME_CHARACTER(HttpStatus.BAD_REQUEST, "닉네임은 한글 또는 영어만 사용할 수 있으며, 특수문자는 사용할 수 없습니다."),
     NOT_GROUP_MEMBER(HttpStatus.FORBIDDEN, "요청을 처리할 권한이 없습니다. 그룹의 참가자가 아닙니다."),
 
     // 401 UNAUTHORIZED
