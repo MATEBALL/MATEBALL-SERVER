@@ -69,7 +69,7 @@ public class JwtCookieProvider {
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
                 .secure(false)
-                .sameSite("None")
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(Duration.ofMillis(maxAge))
                 .build();
@@ -79,7 +79,7 @@ public class JwtCookieProvider {
         return ResponseCookie.from(name, "")
                 .httpOnly(true)
                 .secure(false)
-                .sameSite("None")
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(0)
                 .build();
