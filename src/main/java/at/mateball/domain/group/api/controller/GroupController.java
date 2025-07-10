@@ -89,4 +89,8 @@ public class GroupController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupGetListRes));
     }
 
+/*    @PatchMapping("/match-stage/{matchId}")
+    public ResponseEntity<MateballResponse<?>> updateStatus(
+            @AuthenticationPrincipal CustomUserDetails u
+    )*/
 }
