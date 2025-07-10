@@ -6,6 +6,7 @@ import at.mateball.domain.user.api.dto.response.KaKaoInformationRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
+import at.mateball.domain.user.core.validator.NicknameValidator;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -44,12 +45,13 @@ public class UserService {
 
     @Transactional
     public void updateNickname(final Long userId, final String updatedNickname) {
-        User user = findUser(userId);
+        NicknameValidator.validate(updatedNickname);
 
         if (userRepository.existsByNickname(updatedNickname)) {
             throw new BusinessException(DUPLICATED_NICKNAME);
         }
 
+        User user = findUser(userId);
         user.updateNickname(updatedNickname);
     }
 
