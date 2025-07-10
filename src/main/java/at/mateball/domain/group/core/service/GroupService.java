@@ -32,6 +32,7 @@ public class GroupService {
 
     private final static int DIRECT_LIMIT = 3;
     private final static int GROUP_LIMIT = 2;
+    private final static int TOTAL_GROUP_MEMBER = 4;
 
     public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService) {
         this.groupRepository = groupRepository;
@@ -196,7 +197,7 @@ public class GroupService {
         groupMemberRepository.updateStatusForApprovedMembers(groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
 
         long participantCount = groupMemberRepository.countParticipants(groupId);
-        if (participantCount == 4) {
+        if (participantCount == TOTAL_GROUP_MEMBER) {
             groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
             groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
         }
