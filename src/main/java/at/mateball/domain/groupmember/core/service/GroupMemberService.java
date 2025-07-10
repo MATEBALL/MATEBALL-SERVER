@@ -1,6 +1,7 @@
 package at.mateball.domain.groupmember.core.service;
 
 import at.mateball.domain.group.core.GroupStatus;
+import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.groupmember.api.dto.*;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
@@ -18,10 +19,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class GroupMemberService {
+    private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final MatchRequirementService matchRequirementService;
 
-    public GroupMemberService(GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService) {
+    public GroupMemberService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService) {
+        this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.matchRequirementService = matchRequirementService;
     }
