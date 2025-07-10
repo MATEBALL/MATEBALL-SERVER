@@ -41,11 +41,11 @@ public class JwtCookieProvider {
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.MISSING_TOKEN));
     }
 
-    public List<ResponseCookie> createAllCookies(LoginResult result, HttpServletRequest request) {
+    public List<ResponseCookie> createAllCookies(LoginResult result) {
         return List.of(
-                createCookie(ACCESS_TOKEN_NAME, result.accessToken(), jwtProperties.accessExpiration(), request),
-                createCookie(REFRESH_TOKEN_NAME, result.refreshToken(), jwtProperties.refreshExpiration(), request),
-                createCookie(KAKAO_TOKEN_NAME, result.kakaoAccessToken(), jwtProperties.kakaoExpiration(), request)
+                createCookie(ACCESS_TOKEN_NAME, result.accessToken(), jwtProperties.accessExpiration()),
+                createCookie(REFRESH_TOKEN_NAME, result.refreshToken(), jwtProperties.refreshExpiration()),
+                createCookie(KAKAO_TOKEN_NAME, result.kakaoAccessToken(), jwtProperties.kakaoExpiration())
         );
     }
 
@@ -65,11 +65,11 @@ public class JwtCookieProvider {
                 .findFirst();
     }
 
-    private ResponseCookie createCookie(String name, String value, long maxAge, HttpServletRequest request) {
+    private ResponseCookie createCookie(String name, String value, long maxAge) {
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(false)
-                .sameSite("Lax")
+                .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(Duration.ofMillis(maxAge))
                 .build();
@@ -78,8 +78,8 @@ public class JwtCookieProvider {
     private ResponseCookie deleteCookie(String name, HttpServletRequest request) {
         return ResponseCookie.from(name, "")
                 .httpOnly(true)
-                .secure(false)
-                .sameSite("Lax")
+                .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(0)
                 .build();
