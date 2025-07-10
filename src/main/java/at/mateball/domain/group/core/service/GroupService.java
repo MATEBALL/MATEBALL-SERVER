@@ -4,6 +4,7 @@ import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
 import at.mateball.domain.group.core.Group;
+import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
@@ -158,4 +159,15 @@ public class GroupService {
 
         return new GroupGetListRes(result);
     }
+
+    @Transactional
+    public void rejectRequest(Long userId, Long matchId) {
+        groupRepository.findById(matchId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        groupMemberRepository.updateAllGroupMembersStatus(matchId, GroupMemberStatus.MATCH_FAILED.getValue());
+
+        groupRepository.updateGroupStatus(matchId, GroupStatus.FAILED.getValue());
+    }
+
 }
