@@ -12,6 +12,7 @@ import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -110,5 +111,14 @@ public class GroupMemberService {
                 new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
 
         return groupMemberRepository.countGroupMember(matchId);
+    }
+
+    @Transactional
+    public void updateStatus(Long userId, Long matchId) {
+        boolean updated = groupMemberRepository.updateMyStatusFromApprovedToRequest(userId, matchId);
+
+        if (!updated) {
+            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
+        }
     }
 }
