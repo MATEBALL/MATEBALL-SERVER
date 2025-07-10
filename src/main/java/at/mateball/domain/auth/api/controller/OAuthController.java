@@ -31,8 +31,6 @@ public class OAuthController {
 
         LoginUserInfo userInfo = new LoginUserInfo(
                 result.userId(),
-                result.gender(),
-                result.birthyear(),
                 result.email()
         );
 

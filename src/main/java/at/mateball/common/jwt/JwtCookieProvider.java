@@ -93,7 +93,8 @@ public class JwtCookieProvider {
     private boolean isLocalhost(String host) {
         return "localhost".equals(host)
                 || "127.0.0.1".equals(host)
-                || "::1".equals(host);
+                || "::1".equals(host)
+                || "5173".equals(host);
     }
 
     private String getSameSite(HttpServletRequest request) {

@@ -6,7 +6,7 @@ public record DirectGetBaseRes(
         Long id,
         Long leaderId,
         String nickname,
-        int birthYear,
+        Integer birthYear,
         String gender,
         Integer team,
         Integer style,

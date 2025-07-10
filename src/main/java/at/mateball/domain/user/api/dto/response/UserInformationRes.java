@@ -19,14 +19,30 @@ public record UserInformationRes(
         String imgUrl
 ) {
     public static UserInformationRes fromBase(UserInformationBaseRes userInformationBaseRes) {
-        int age = java.time.LocalDate.now().getYear() - userInformationBaseRes.birthYear() + 1;
+        if (userInformationBaseRes == null) {
+            return new UserInformationRes(
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+
+        Integer birthYear = userInformationBaseRes.birthYear();
+        String age = (birthYear != null)
+                ? (java.time.LocalDate.now().getYear() - birthYear + 1) + "세"
+                : null;
+
         return new UserInformationRes(
                 userInformationBaseRes.nickname(),
-                age + "세",
+                age,
                 Gender.from(userInformationBaseRes.gender()).getLabel(),
                 Style.from(userInformationBaseRes.style()).getLabel(),
                 userInformationBaseRes.introduction(),
                 userInformationBaseRes.imgUrl()
         );
     }
+
 }

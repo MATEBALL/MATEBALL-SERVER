@@ -46,22 +46,26 @@ public record DirectGetRes(
         @Schema(description = "이미지 URL", nullable = true)
         String imgUrl
 ) {
-    public static DirectGetRes from(DirectGetBaseRes raw) {
-            int age = LocalDate.now().getYear() - raw.birthYear() + 1;
+        public static DirectGetRes from(DirectGetBaseRes raw) {
+                String age = null;
 
-            return new DirectGetRes(
-                    raw.id(),
-                    raw.nickname(),
-                    age + "세",
-                    Gender.from(raw.gender()).getLabel(),
-                    TeamName.from(raw.team()).getLabel(),
-                    Style.from(raw.style()).getLabel(),
-                    raw.awayTeam(),
-                    raw.homeTeam(),
-                    raw.stadium(),
-                    raw.date(),
-                    raw.matchRate(),
-                    raw.imgUrl()
-            );
-    }
+                if (raw.birthYear() != null) {
+                        age = (LocalDate.now().getYear() - raw.birthYear() + 1) + "세";
+                }
+
+                return new DirectGetRes(
+                        raw.id(),
+                        raw.nickname(),
+                        age,
+                        Gender.from(raw.gender()).getLabel(),
+                        TeamName.from(raw.team()).getLabel(),
+                        Style.from(raw.style()).getLabel(),
+                        raw.awayTeam(),
+                        raw.homeTeam(),
+                        raw.stadium(),
+                        raw.date(),
+                        raw.matchRate(),
+                        raw.imgUrl()
+                );
+        }
 }

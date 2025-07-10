@@ -35,7 +35,10 @@ public class MatchRequirementRepositoryImpl implements MatchRequirementRepositor
                 .setParameter("id", userId)
                 .getSingleResult();
 
-        int birthYearA = user.getBirthYear();
+        Integer birthYearA = user.getBirthYear();
+        if (birthYearA == null) {
+            return List.of();
+        }
         int teamA = reqA.getTeam();
         int allowA = reqA.getTeamAllowed();
         int styleA = reqA.getStyle();

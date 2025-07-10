@@ -23,12 +23,15 @@ public record DetailMatchingRes(
         Integer matchRate
 ) {
     public static DetailMatchingRes from(DetailMatchingBaseRes base, Integer matchRate) {
-        int age = LocalDate.now().getYear() - base.birthYear() + 1;
+        String age = null;
+        if (base.birthYear() != null) {
+            age = (LocalDate.now().getYear() - base.birthYear() + 1) + "세";
+        }
 
         return new DetailMatchingRes(
                 base.id(),
                 base.nickname(),
-                age + "세",
+                age,
                 Gender.from(base.gender()).getLabel(),
                 TeamName.from(base.team()).getLabel(),
                 Style.from(base.style()).getLabel(),
@@ -41,4 +44,5 @@ public record DetailMatchingRes(
                 matchRate
         );
     }
+
 }
