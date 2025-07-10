@@ -2,6 +2,7 @@ package at.mateball.domain.groupmember.core.repository;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
 import at.mateball.domain.group.core.Group;
+import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.GroupMemberStatus;
@@ -91,11 +92,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .where(
                         groupMember.user.id.eq(userId),
                         groupMember.group.isGroup.eq(isGroup),
-                        groupMember.status.in(
-                                GroupMemberStatus.PENDING_REQUEST.getValue(),
-                                GroupMemberStatus.NEW_REQUEST.getValue(),
-                                GroupMemberStatus.AWAITING_APPROVAL.getValue()
-                        )
+                        group.status.eq(GroupStatus.PENDING.getValue())
                 )
                 .fetchOne();
 
