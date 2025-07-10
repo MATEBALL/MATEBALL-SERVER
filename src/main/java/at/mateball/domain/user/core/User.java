@@ -50,8 +50,8 @@ public class User {
         this.birthYear = birthYear;
     }*/
 
-    public User(Long id, String email) {
-        this.id = id;
+    public User(Long kakaoUserId, String email) {
+        this.kakaoUserId = kakaoUserId;
         this.email = email;
     }
 
