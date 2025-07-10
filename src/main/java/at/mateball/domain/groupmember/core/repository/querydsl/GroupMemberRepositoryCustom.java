@@ -43,4 +43,22 @@ public interface GroupMemberRepositoryCustom {
     void updateLeaderStatus(Long userId, Long matchId, int status);
 
     void updateStatusForAllParticipants(Long matchId, int status);
+
+    void updateMemberStatus(Long userId, Long groupId, int status);
+
+    void updateStatusAndParticipant(Long userId, Long groupId, int status);
+
+    void updateStatusForApprovedMembers(Long groupId, int status);
+
+    void updateStatusForAllMembers(Long groupId, int status);
+
+    long countParticipants(Long groupId);
+
+    long countTotalGroupMembersExceptRequester(Long groupId);
+
+    long countMembersWithStatus(Long groupId, GroupMemberStatus status);
+
+    Long findRequesterId(Long groupId);
+
+    boolean isUserParticipant(Long userId, Long groupId);
 }

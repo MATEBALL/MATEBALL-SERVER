@@ -25,11 +25,9 @@ import static at.mateball.domain.user.core.QUser.user;
 
 public class GroupRepositoryImpl implements GroupRepositoryCustom {
     private final JPAQueryFactory queryFactory;
-    private final EntityManager entityManager;
 
     public GroupRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager) {
         this.queryFactory = queryFactory;
-        this.entityManager = entityManager;
     }
 
     @Override
@@ -196,5 +194,16 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                                 .notExists()
                 )
                 .fetch();
+    }
+
+    @Override
+    public void updateGroupStatus(Long groupId, int status) {
+        QGroup group = QGroup.group;
+
+        queryFactory
+                .update(group)
+                .set(group.status, status)
+                .where(group.id.eq(groupId))
+                .execute();
     }
 }
