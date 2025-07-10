@@ -3,7 +3,7 @@ package at.mateball.domain.group.core.service;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
-import at.mateball.domain.group.api.dto.base.GroupMemberStatusCounts;
+import at.mateball.domain.group.api.dto.base.GroupMemberStatusCountRes;
 import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
@@ -201,7 +201,7 @@ public class GroupService {
 
         groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.AWAITING_APPROVAL.getValue());
 
-        GroupMemberStatusCounts counts = groupMemberRepository.countGroupMemberStatus(groupId);
+        GroupMemberStatusCountRes counts = groupMemberRepository.countGroupMemberStatus(groupId);
 
         long totalGroupMembers = counts.totalParticipants();
         long awaitingApprovalCount = counts.awaitingApprovalCount();
