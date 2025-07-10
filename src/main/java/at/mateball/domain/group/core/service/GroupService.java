@@ -164,16 +164,7 @@ public class GroupService {
 
     @Transactional
     public void permitRequest(Long userId, Long groupId) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
-
-        if (GroupStatus.from(group.getStatus()) == GroupStatus.COMPLETED) {
-            throw new BusinessException(BusinessErrorCode.ALREADY_COMPLETED_GROUP);
-        }
-
-        if (!groupMemberRepository.isUserParticipant(userId, groupId)) {
-            throw new BusinessException(BusinessErrorCode.NOT_GROUP_MEMBER);
-        }
+        Group group = validateRequest(userId, groupId);
 
         boolean isGroup = group.isGroup();
         Long requesterId = groupMemberRepository.findRequesterId(groupId);
@@ -201,6 +192,21 @@ public class GroupService {
             groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
             groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
         }
+    }
+
+    private Group validateRequest(Long userId, Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        if (GroupStatus.from(group.getStatus()) == GroupStatus.COMPLETED) {
+            throw new BusinessException(BusinessErrorCode.ALREADY_COMPLETED_GROUP);
+        }
+
+        if (!groupMemberRepository.isUserParticipant(userId, groupId)) {
+            throw new BusinessException(BusinessErrorCode.NOT_GROUP_MEMBER);
+        }
+
+        return group;
     }
 
     @Transactional
