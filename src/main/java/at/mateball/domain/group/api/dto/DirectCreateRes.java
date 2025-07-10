@@ -49,21 +49,26 @@ public record DirectCreateRes(
         @Schema(description = "이미지 URL", nullable = true)
         String imgUrl
 ) {
-    public static DirectCreateRes from(DirectCreateBaseRes baseRes) {
-        int age = LocalDate.now().getYear() - baseRes.birthYear() + 1;
+        public static DirectCreateRes from(DirectCreateBaseRes baseRes) {
+                String age = null;
 
-        return new DirectCreateRes(
-                baseRes.id(),
-                baseRes.nickname(),
-                age + "세",
-                Gender.from(baseRes.gender()).getLabel(),
-                TeamName.from(Integer.parseInt(baseRes.team().toString())).getLabel(),
-                Style.from(baseRes.style()).getLabel(),
-                baseRes.awayTeam(),
-                baseRes.homeTeam(),
-                baseRes.stadium(),
-                baseRes.date(),
-                baseRes.imgUrl()
-        );
-    }
+                if (baseRes.birthYear() != null) {
+                        age = (LocalDate.now().getYear() - baseRes.birthYear() + 1) + "세";
+                }
+
+                return new DirectCreateRes(
+                        baseRes.id(),
+                        baseRes.nickname(),
+                        age,
+                        Gender.from(baseRes.gender()).getLabel(),
+                        TeamName.from(Integer.parseInt(baseRes.team().toString())).getLabel(),
+                        Style.from(baseRes.style()).getLabel(),
+                        baseRes.awayTeam(),
+                        baseRes.homeTeam(),
+                        baseRes.stadium(),
+                        baseRes.date(),
+                        baseRes.imgUrl()
+                );
+        }
+
 }

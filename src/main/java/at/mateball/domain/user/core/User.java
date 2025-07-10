@@ -23,7 +23,7 @@ public class User {
     private String gender;
 
     @Column(nullable = true)
-    private int birthYear;
+    private Integer birthYear;
 
     @Column(nullable = true, length = 45)
     private String nickname;
