@@ -1,6 +1,7 @@
 package at.mateball.domain.groupmember.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
+import at.mateball.domain.group.api.dto.base.GroupMemberStatusCounts;
 import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.QGroup;
@@ -15,6 +16,7 @@ import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -420,28 +422,31 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public long countTotalGroupMembersExceptRequester(Long groupId) {
-        Long result = queryFactory.select(groupMember.count())
+    public GroupMemberStatusCounts countGroupMemberStatus(Long groupId) {
+        List<Tuple> result = queryFactory
+                .select(groupMember.status, groupMember.count())
                 .from(groupMember)
-                .where(
-                        groupMember.group.id.eq(groupId),
-                        groupMember.isParticipant.isTrue()
-                )
-                .fetchOne();
-        return result != null ? result : 0L;
-    }
+                .where(groupMember.group.id.eq(groupId), groupMember.isParticipant.isTrue())
+                .groupBy(groupMember.status)
+                .fetch();
 
-    @Override
-    public long countMembersWithStatus(Long groupId, GroupMemberStatus status) {
-        Long result = queryFactory.select(groupMember.count())
-                .from(groupMember)
-                .where(
-                        groupMember.group.id.eq(groupId),
-                        groupMember.status.eq(status.getValue()),
-                        groupMember.isParticipant.isTrue()
-                )
-                .fetchOne();
-        return result != null ? result : 0L;
+        long totalParticipants = 0L;
+        long awaitingApprovalCount = 0L;
+        long approvedCount = 0L;
+
+        for (Tuple tuple : result) {
+            int status = tuple.get(groupMember.status);
+            long count = tuple.get(groupMember.count());
+
+            totalParticipants += count;
+            if (status == GroupMemberStatus.AWAITING_APPROVAL.getValue()) {
+                awaitingApprovalCount = count;
+            } else if (status == GroupMemberStatus.APPROVED.getValue()) {
+                approvedCount = count;
+            }
+        }
+
+        return new GroupMemberStatusCounts(totalParticipants, awaitingApprovalCount, approvedCount);
     }
 
     @Override
