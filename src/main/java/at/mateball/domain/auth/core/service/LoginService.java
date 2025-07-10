@@ -11,7 +11,6 @@ import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,10 +28,10 @@ public class LoginService {
     private final RedirectUriResolver redirectUriResolver;
 
     @Transactional
-    public LoginResult login(LoginCommand command, HttpServletRequest request) {
-        String redirectUri = redirectUriResolver.resolve(request);
+    public LoginResult login(LoginCommand loginCommand) {
+        String redirectUri = "https://localhost:5173/auth";
+        KakaoTokenRes kakaoToken = oauthClientApi.fetchToken(loginCommand.code(), redirectUri);
 
-        KakaoTokenRes kakaoToken = oauthClientApi.fetchToken(command.code(), redirectUri);
         if (kakaoToken == null || kakaoToken.accessToken() == null) {
             throw new BusinessException(BusinessErrorCode.KAKAO_TOKEN_FETCH_FAILED);
         }
@@ -49,7 +48,6 @@ public class LoginService {
         String refreshToken = jwtTokenGenerator.generateRefreshToken(user.getId());
 
         tokenService.save(user.getId(), refreshToken);
-
         log.info("카카오 로그인 성공 - userId: {}", user.getId());
 
         return new LoginResult(
