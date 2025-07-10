@@ -91,6 +91,14 @@ public class GroupService {
     }
 
     private void validateRequest(Long userId, Group group) {
+
+        boolean hasFailed = groupMemberRepository.hasPreviousFailedRequest(
+                userId, group.getId(), GroupMemberStatus.MATCH_FAILED
+        );
+        if (hasFailed) {
+            throw new BusinessException(BusinessErrorCode.ALREADY_FAILED_REQUEST);
+        }
+
         boolean alreadyRequested = groupMemberRepository.existsRequest(userId, group.getId());
         if (alreadyRequested) {
             throw new BusinessException(BusinessErrorCode.DUPLICATED_REQUEST);
@@ -110,13 +118,6 @@ public class GroupService {
         LocalDate gameDate = group.getGameInformation().getGameDate();
         if (groupMemberRepository.hasNonFailedRequestOnSameDate(userId, gameDate)) {
             throw new BusinessException(BusinessErrorCode.DUPLICATE_REQUEST_ON_SAME_DATE);
-        }
-
-        boolean hasFailed = groupMemberRepository.hasPreviousFailedRequest(
-                userId, group.getId(), GroupMemberStatus.MATCH_FAILED
-        );
-        if (hasFailed) {
-            throw new BusinessException(BusinessErrorCode.ALREADY_FAILED_REQUEST);
         }
 
         int limit = group.isGroup() ? GROUP_LIMIT : DIRECT_LIMIT;
