@@ -89,6 +89,18 @@ public class GroupController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupGetListRes));
     }
 
+    @PatchMapping("/match-accept/{matchId}")
+    public ResponseEntity<MateballResponse<?>> permitRequest(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @NotNull @PathVariable Long matchId
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        groupService.permitRequest(userId, matchId);
+
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
+    }
+
     @PatchMapping("/match-reject/{matchId}")
     public ResponseEntity<MateballResponse<?>> rejectRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,

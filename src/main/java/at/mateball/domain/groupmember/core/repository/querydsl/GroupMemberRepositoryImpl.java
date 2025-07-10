@@ -374,6 +374,101 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
+    public void updateMemberStatus(Long userId, Long groupId, int status) {
+        queryFactory.update(groupMember)
+                .set(groupMember.status, status)
+                .where(groupMember.user.id.eq(userId), groupMember.group.id.eq(groupId))
+                .execute();
+    }
+
+    @Override
+    public void updateStatusAndParticipant(Long userId, Long groupId, int status) {
+        queryFactory.update(groupMember)
+                .set(groupMember.status, status)
+                .set(groupMember.isParticipant, true)
+                .where(groupMember.user.id.eq(userId), groupMember.group.id.eq(groupId))
+                .execute();
+    }
+
+    @Override
+    public void updateStatusForApprovedMembers(Long groupId, int status) {
+        queryFactory.update(groupMember)
+                .set(groupMember.status, status)
+                .where(
+                        groupMember.group.id.eq(groupId),
+                        groupMember.status.eq(GroupMemberStatus.AWAITING_APPROVAL.getValue()),
+                        groupMember.isParticipant.isTrue()
+                )
+                .execute();
+    }
+
+    @Override
+    public void updateStatusForAllMembers(Long groupId, int status) {
+        queryFactory.update(groupMember)
+                .set(groupMember.status, status)
+                .where(groupMember.group.id.eq(groupId))
+                .execute();
+    }
+
+    @Override
+    public long countParticipants(Long groupId) {
+        Long result = queryFactory.select(groupMember.count())
+                .from(groupMember)
+                .where(groupMember.group.id.eq(groupId), groupMember.isParticipant.isTrue())
+                .fetchOne();
+        return result != null ? result : 0L;
+    }
+
+    @Override
+    public long countTotalGroupMembersExceptRequester(Long groupId) {
+        Long result = queryFactory.select(groupMember.count())
+                .from(groupMember)
+                .where(
+                        groupMember.group.id.eq(groupId),
+                        groupMember.isParticipant.isTrue()
+                )
+                .fetchOne();
+        return result != null ? result : 0L;
+    }
+
+    @Override
+    public long countMembersWithStatus(Long groupId, GroupMemberStatus status) {
+        Long result = queryFactory.select(groupMember.count())
+                .from(groupMember)
+                .where(
+                        groupMember.group.id.eq(groupId),
+                        groupMember.status.eq(status.getValue()),
+                        groupMember.isParticipant.isTrue()
+                )
+                .fetchOne();
+        return result != null ? result : 0L;
+    }
+
+    @Override
+    public Long findRequesterId(Long groupId) {
+        return queryFactory.select(groupMember.user.id)
+                .from(groupMember)
+                .where(
+                        groupMember.group.id.eq(groupId),
+                        groupMember.isParticipant.isFalse()
+                )
+                .fetchFirst();
+    }
+
+    @Override
+    public boolean isUserParticipant(Long userId, Long groupId) {
+        Integer result = queryFactory.selectOne()
+                .from(groupMember)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.group.id.eq(groupId),
+                        groupMember.isParticipant.isTrue()
+                )
+                .fetchFirst();
+        return result != null;
+    }
+
+    @Override
     public List<GroupMemberBaseRes> getGroupMember(Long groupId) {
         return queryFactory
                 .select(Projections.constructor(

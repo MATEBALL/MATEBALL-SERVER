@@ -18,10 +18,10 @@ public enum BusinessErrorCode implements ErrorCode {
     EXCEED_DIRECT_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "1대1 매칭은 최대 3개까지만 가능합니다."),
     ALREADY_HAS_PENDING_REQUEST(HttpStatus.BAD_REQUEST, "이미 요청이 존재하는 매칭입니다."),
     DUPLICATE_REQUEST_ON_SAME_DATE(HttpStatus.BAD_REQUEST, "같은 날짜의 경기에는 하나의 매칭 요청만 생성할 수 있습니다."),
+    ALREADY_COMPLETED_GROUP(HttpStatus.BAD_REQUEST, "이미 매칭이 완료된 그룹입니다."),
     INVALID_NICKNAME_LENGTH(HttpStatus.BAD_REQUEST, "닉네임은 2자 이상 6자 이하로 입력해야 합니다."),
     NICKNAME_CONTAINS_WHITESPACE(HttpStatus.BAD_REQUEST, "닉네임에 공백이 포함될 수 없습니다."),
     INVALID_NICKNAME_CHARACTER(HttpStatus.BAD_REQUEST, "닉네임은 한글 또는 영어만 사용할 수 있으며, 특수문자는 사용할 수 없습니다."),
-    NOT_GROUP_MEMBER(HttpStatus.FORBIDDEN, "요청을 처리할 권한이 없습니다. 그룹의 참가자가 아닙니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
@@ -33,6 +33,7 @@ public enum BusinessErrorCode implements ErrorCode {
 
     // 403 FORBIDDEN
     AGE_NOT_APPROPRIATE(HttpStatus.FORBIDDEN, "만 19세 이상부터 가입이 가능합니다."),
+    NOT_GROUP_MEMBER(HttpStatus.FORBIDDEN, "요청을 처리할 권한이 없습니다. 그룹의 참가자가 아닙니다."),
 
     // 404 NOT FOUND
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "요청에 해당하는 토큰이 존재하지 않습니다."),

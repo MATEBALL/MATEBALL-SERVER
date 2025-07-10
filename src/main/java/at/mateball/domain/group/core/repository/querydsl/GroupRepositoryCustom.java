@@ -7,7 +7,6 @@ import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface GroupRepositoryCustom {
@@ -18,6 +17,8 @@ public interface GroupRepositoryCustom {
     List<DirectGetBaseRes> findDirectGroupsByDate(Long userId, LocalDate date);
 
     List<GroupGetBaseRes> findGroupsWithBaseInfo(LocalDate date);
+
+    void updateGroupStatus(Long groupId, int status);
 
     List<Long> findGroupIdsByGameDate(LocalDate date);
 

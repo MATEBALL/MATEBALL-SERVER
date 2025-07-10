@@ -4,6 +4,7 @@ import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
 import at.mateball.domain.group.core.Group;
+import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
@@ -158,6 +159,47 @@ public class GroupService {
                 .toList();
 
         return new GroupGetListRes(result);
+    }
+
+    @Transactional
+    public void permitRequest(Long userId, Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        if (GroupStatus.from(group.getStatus()) == GroupStatus.COMPLETED) {
+            throw new BusinessException(BusinessErrorCode.ALREADY_COMPLETED_GROUP);
+        }
+
+        if (!groupMemberRepository.isUserParticipant(userId, groupId)) {
+            throw new BusinessException(BusinessErrorCode.NOT_GROUP_MEMBER);
+        }
+
+        boolean isGroup = group.isGroup();
+        Long requesterId = groupMemberRepository.findRequesterId(groupId);
+
+        if (!isGroup) {
+            groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.MATCHED.getValue());
+            groupMemberRepository.updateStatusAndParticipant(requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
+            groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+            return;
+        }
+
+        groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.AWAITING_APPROVAL.getValue());
+
+        long totalGroupMembers = groupMemberRepository.countTotalGroupMembersExceptRequester(groupId);
+        long approvedCount = groupMemberRepository.countMembersWithStatus(groupId, GroupMemberStatus.AWAITING_APPROVAL);
+        if (approvedCount < totalGroupMembers) {
+            return;
+        }
+
+        groupMemberRepository.updateStatusAndParticipant(requesterId, groupId, GroupMemberStatus.APPROVED.getValue());
+        groupMemberRepository.updateStatusForApprovedMembers(groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
+
+        long participantCount = groupMemberRepository.countParticipants(groupId);
+        if (participantCount == 4) {
+            groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
+            groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+        }
     }
 
     @Transactional
