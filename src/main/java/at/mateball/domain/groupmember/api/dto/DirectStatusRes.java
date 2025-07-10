@@ -22,12 +22,15 @@ public record DirectStatusRes(
         String imgUrl
 ) {
     public static DirectStatusRes from(DirectStatusBaseRes baseRes) {
-        int age = LocalDate.now().getYear() - baseRes.birthYear() + 1;
+        String age = null;
+        if (baseRes.birthYear() != null) {
+            age = (LocalDate.now().getYear() - baseRes.birthYear() + 1) + "세";
+        }
 
         return new DirectStatusRes(
                 baseRes.id(),
                 baseRes.nickname(),
-                age + "세",
+                age,
                 Gender.from(baseRes.gender()).getLabel(),
                 TeamName.from(baseRes.team()).getLabel(),
                 Style.from(baseRes.style()).getLabel(),
