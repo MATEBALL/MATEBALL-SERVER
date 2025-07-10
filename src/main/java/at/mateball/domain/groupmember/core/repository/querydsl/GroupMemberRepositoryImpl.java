@@ -398,4 +398,18 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .where(groupMember.group.id.eq(groupId))
                 .execute();
     }
+
+    public boolean updateMyStatusFromApprovedToRequest(Long userId, Long matchId) {
+        long updatedCount = queryFactory
+                .update(groupMember)
+                .set(groupMember.status, GroupMemberStatus.PENDING_REQUEST.getValue())
+                .where(
+                        groupMember.group.id.eq(matchId),
+                        groupMember.user.id.eq(userId),
+                        groupMember.status.eq(GroupMemberStatus.APPROVED.getValue())
+                )
+                .execute();
+
+        return updatedCount > 0;
+    }
 }

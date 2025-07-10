@@ -48,4 +48,5 @@ public interface GroupMemberRepositoryCustom {
     List<GroupMemberBaseRes> getGroupMember(Long groupId);
 
     void updateAllGroupMemberStatus(Long groupId, Long requesterId);
+    boolean updateMyStatusFromApprovedToRequest(Long userId, Long matchId);
 }
