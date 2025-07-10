@@ -9,15 +9,15 @@ public class NicknameValidator {
 
     private static final Pattern KOREAN_ONLY = Pattern.compile("^[가-힣]+$");
     private static final Pattern ENGLISH_ONLY = Pattern.compile("^[a-zA-Z]+$");
-    private static final int MIN_NiCKNAME_LENGTH = 2;
-    private static final int MAX_NiCKNAME_LENGTH = 6;
+    private static final int MIN_NICKNAME_LENGTH = 2;
+    private static final int MAX_NICKNAME_LENGTH = 6;
 
     public static void validate(String nickname) {
         if (nickname == null || nickname.isBlank()) {
             throw new BusinessException(BusinessErrorCode.INVALID_NICKNAME_LENGTH);
         }
 
-        if (nickname.length() < MIN_NiCKNAME_LENGTH || nickname.length() > MAX_NiCKNAME_LENGTH) {
+        if (nickname.length() < MIN_NICKNAME_LENGTH || nickname.length() > MAX_NICKNAME_LENGTH) {
             throw new BusinessException(BusinessErrorCode.INVALID_NICKNAME_LENGTH);
         }
 
