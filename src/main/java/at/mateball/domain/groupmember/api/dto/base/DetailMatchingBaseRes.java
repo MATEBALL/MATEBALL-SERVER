@@ -6,7 +6,7 @@ public record DetailMatchingBaseRes(
         Long id,
         Long userId,
         String nickname,
-        Integer birthYear,
+        int birthYear,
         String gender,
         Integer team,
         Integer style,

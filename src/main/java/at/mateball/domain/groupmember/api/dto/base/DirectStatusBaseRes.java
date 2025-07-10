@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public record DirectStatusBaseRes(
         Long id,
         String nickname,
-        Integer birthYear,
+        int birthYear,
         String gender,
         Integer team,
         Integer style,

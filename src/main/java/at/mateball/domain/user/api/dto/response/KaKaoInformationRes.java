@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 public record KaKaoInformationRes(
         @NotNull
         @Schema(description = "사용자의 생년월일")
-        Integer birthYear,
+        int birthYear,
         @NotBlank
         @Schema(description = "사용자의 성별")
         String gender
