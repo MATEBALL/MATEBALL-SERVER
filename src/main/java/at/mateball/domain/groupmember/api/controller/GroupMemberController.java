@@ -81,4 +81,15 @@ public class GroupMemberController {
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, detailMatchingListRes));
     }
+
+    @PatchMapping("/match-stage/{matchId}")
+    public ResponseEntity<MateballResponse<?>> updateStatus(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @NotNull @PathVariable Long matchId
+    ) {
+        Long userId = userDetails.getUserId();
+        groupMemberService.updateStatus(userId, matchId);
+
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
+    }
 }
