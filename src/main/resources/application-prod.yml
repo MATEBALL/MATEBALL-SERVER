@@ -37,5 +37,5 @@ jwt:
 
 auth:
   redirect-uri:
-    local: http://localhost:5173/auth
+    local: https://localhost:5173/auth
     prod: https://mateball.co.kr/auth/login
