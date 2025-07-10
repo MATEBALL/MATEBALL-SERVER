@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Optional;
 
-public record KakaoUserRes(
+/*public record KakaoUserRes(
         Long id,
         @JsonProperty("kakao_account") KakaoAccount kakaoAccount
 ) {
@@ -23,6 +23,17 @@ public record KakaoUserRes(
                             }
                         })
                         .orElse(null)
+        );
+    }
+}*/
+public record KakaoUserRes(
+        Long id,
+        @JsonProperty("kakao_account") KakaoAccount kakaoAccount
+) {
+    public User toEntity() {
+        return new User(
+                id,
+                kakaoAccount.email()
         );
     }
 }

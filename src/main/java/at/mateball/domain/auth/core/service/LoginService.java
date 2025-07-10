@@ -58,7 +58,8 @@ public class LoginService {
                 kakaoToken.accessToken(),
                 user.getId(),
                 user.getGender(),
-                user.getBirthYear()
+                user.getBirthYear(),
+                user.getEmail()
         );
     }
 }

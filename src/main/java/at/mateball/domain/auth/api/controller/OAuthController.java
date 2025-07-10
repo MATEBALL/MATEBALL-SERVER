@@ -32,7 +32,8 @@ public class OAuthController {
         LoginResult result = loginService.login(new LoginCommand(code), request);
         List<ResponseCookie> cookies = jwtCookieProvider.createAllCookies(result, request);
 
-        LoginUserInfo userInfo = new LoginUserInfo(result.userId(), result.gender(), result.birthyear());
+        /*LoginUserInfo userInfo = new LoginUserInfo(result.userId(), result.gender(), result.birthyear());*/
+        LoginUserInfo userInfo = new LoginUserInfo(result.userId(), result.gender(), result.birthyear(), result.email());
 
         return withCookies(cookies).body(MateballResponse.success(SuccessCode.OK, userInfo));
     }

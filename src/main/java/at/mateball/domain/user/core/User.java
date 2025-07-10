@@ -19,10 +19,10 @@ public class User {
     @Column(nullable = false)
     private Long kakaoUserId;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String gender;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int birthYear;
 
     @Column(nullable = true, length = 45)
@@ -34,6 +34,9 @@ public class User {
     @Column(nullable = true, length = 500)
     private String imgUrl;
 
+    @Column(nullable = true)
+    private String email;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchRequirement> matchRequirements = new ArrayList<>();
 
@@ -41,10 +44,15 @@ public class User {
 
     }
 
-    public User(Long kakaoUserId, String gender, int birthYear) {
+/*    public User(Long kakaoUserId, String gender, int birthYear) {
         this.kakaoUserId = kakaoUserId;
         this.gender = gender;
         this.birthYear = birthYear;
+    }*/
+
+    public User(Long id, String email) {
+        this.id = id;
+        this.email = email;
     }
 
     public void updateNickname(final String nickname) {
