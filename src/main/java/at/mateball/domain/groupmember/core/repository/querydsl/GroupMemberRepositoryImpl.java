@@ -1,28 +1,40 @@
 package at.mateball.domain.groupmember.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
+import at.mateball.domain.group.core.Group;
+import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.QGroup;
+import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
+import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
+import at.mateball.domain.user.core.User;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     private final JPAQueryFactory queryFactory;
+    private final EntityManager entityManager;
 
-    public GroupMemberRepositoryImpl(EntityManager entityManager) {
-        this.queryFactory = new JPAQueryFactory(entityManager);
+    QGroupMember groupMember = QGroupMember.groupMember;
+    QGroup group = QGroup.group;
+
+    public GroupMemberRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager) {
+        this.queryFactory = queryFactory;
+        this.entityManager = entityManager;
     }
+
 
     @Override
     public Map<Long, Integer> findGroupMemberCountMap(List<Long> groupIds) {
@@ -251,5 +263,111 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         user.id.ne(userId)
                 )
                 .fetch();
+    }
+
+    @Override
+    public boolean existsRequest(Long userId, Long groupId) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(groupMember)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.group.id.eq(groupId),
+                        groupMember.status.eq(GroupMemberStatus.AWAITING_APPROVAL.getValue())
+                )
+                .fetchFirst();
+
+        return result != null;
+    }
+
+    @Override
+    public boolean isPendingRequestExists(Long matchId, List<Integer> status) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(groupMember)
+                .where(
+                        groupMember.group.id.eq(matchId),
+                        groupMember.status.in(status)
+                )
+                .fetchFirst();
+        return result != null;
+    }
+
+    @Override
+    public boolean hasNonFailedRequestOnSameDate(Long userId, LocalDate date) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(group.gameInformation, QGameInformation.gameInformation)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        QGameInformation.gameInformation.gameDate.eq(date),
+                        groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue())
+                )
+                .fetchFirst();
+        return result != null;
+    }
+
+    @Override
+    public boolean hasPreviousFailedRequest(Long userId, Long matchId, GroupMemberStatus status) {
+        return queryFactory
+                .selectOne()
+                .from(groupMember)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.group.id.eq(matchId),
+                        groupMember.status.eq(status.getValue())
+                )
+                .fetchFirst() != null;
+    }
+
+    @Override
+    public long countMatchingRequests(Long userId, boolean isGroup) {
+        Long result = queryFactory
+                .select(groupMember.count())
+                .from(groupMember)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.group.isGroup.eq(isGroup),
+                        group.status.eq(GroupStatus.PENDING.getValue())
+                )
+                .fetchOne();
+
+        return result != null ? result : 0L;
+    }
+
+    @Override
+    public void createGroupMember(Long userId, Long matchId) {
+        User user = entityManager.getReference(User.class, userId);
+        Group group = entityManager.getReference(Group.class, matchId);
+
+        GroupMember groupMember = new GroupMember(user, group, false, GroupMemberStatus.AWAITING_APPROVAL.getValue());
+
+        entityManager.persist(groupMember);
+    }
+
+    @Override
+    public void updateLeaderStatus(Long userId, Long matchId, int status) {
+        queryFactory
+                .update(groupMember)
+                .set(groupMember.status, status)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.group.id.eq(matchId)
+                )
+                .execute();
+    }
+
+    @Override
+    public void updateStatusForAllParticipants(Long matchId, int status) {
+        queryFactory
+                .update(groupMember)
+                .set(groupMember.status, status)
+                .where(
+                        groupMember.group.id.eq(matchId),
+                        groupMember.isParticipant.isTrue()
+                )
+                .execute();
     }
 }

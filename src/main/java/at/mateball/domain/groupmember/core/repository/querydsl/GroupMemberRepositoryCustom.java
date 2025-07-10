@@ -1,11 +1,13 @@
 package at.mateball.domain.groupmember.core.repository.querydsl;
 
 
+import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -25,4 +27,20 @@ public interface GroupMemberRepositoryCustom {
     GroupMemberCountRes countGroupMember(Long groupId);
 
     List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId);
+
+    boolean existsRequest(Long userId, Long groupId);
+
+    boolean isPendingRequestExists(Long matchId, List<Integer> status);
+
+    boolean hasNonFailedRequestOnSameDate(Long userId, LocalDate date);
+
+    boolean hasPreviousFailedRequest(Long userId, Long matchId, GroupMemberStatus status);
+
+    long countMatchingRequests(Long userId, boolean isGroup);
+
+    void createGroupMember(Long userId, Long matchId);
+
+    void updateLeaderStatus(Long userId, Long matchId, int status);
+
+    void updateStatusForAllParticipants(Long matchId, int status);
 }
