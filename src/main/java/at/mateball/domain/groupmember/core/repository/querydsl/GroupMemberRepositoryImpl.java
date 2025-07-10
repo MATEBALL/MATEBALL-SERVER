@@ -1,7 +1,7 @@
 package at.mateball.domain.groupmember.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
-import at.mateball.domain.group.api.dto.base.GroupMemberStatusCounts;
+import at.mateball.domain.group.api.dto.base.GroupMemberStatusCountRes;
 import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.QGroup;
@@ -422,7 +422,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public GroupMemberStatusCounts countGroupMemberStatus(Long groupId) {
+    public GroupMemberStatusCountRes countGroupMemberStatus(Long groupId) {
         List<Tuple> result = queryFactory
                 .select(groupMember.status, groupMember.count())
                 .from(groupMember)
@@ -446,7 +446,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
             }
         }
 
-        return new GroupMemberStatusCounts(totalParticipants, awaitingApprovalCount, approvedCount);
+        return new GroupMemberStatusCountRes(totalParticipants, awaitingApprovalCount, approvedCount);
     }
 
     @Override
