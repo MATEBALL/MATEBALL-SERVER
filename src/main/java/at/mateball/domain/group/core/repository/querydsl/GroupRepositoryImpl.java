@@ -1,14 +1,13 @@
 package at.mateball.domain.group.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
-import at.mateball.domain.group.api.dto.base.GroupCreateBaseRes;
+import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.api.dto.base.DirectCreateBaseRes;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
+import at.mateball.domain.group.api.dto.base.GroupCreateBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
-import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.QGroup;
-import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
@@ -17,7 +16,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,11 +25,9 @@ import static at.mateball.domain.user.core.QUser.user;
 
 public class GroupRepositoryImpl implements GroupRepositoryCustom {
     private final JPAQueryFactory queryFactory;
-    private final EntityManager entityManager;
 
-    public GroupRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager) {
+    public GroupRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
-        this.entityManager = entityManager;
     }
 
     @Override
@@ -70,7 +66,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     }
 
     @Override
-    public List<DirectGetBaseRes> findDirectGroupsByDate(Long userId,LocalDate date) {
+    public List<DirectGetBaseRes> findDirectGroupsByDate(Long userId, LocalDate date) {
         QGroup group = QGroup.group;
         QUser user = QUser.user;
         QGameInformation game = QGameInformation.gameInformation;
@@ -198,6 +194,17 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                                 .notExists()
                 )
                 .fetch();
+    }
+
+    @Override
+    public void updateGroupStatus(Long groupId, int status) {
+        QGroup group = QGroup.group;
+
+        queryFactory
+                .update(group)
+                .set(group.status, status)
+                .where(group.id.eq(groupId))
+                .execute();
     }
 
     @Override
