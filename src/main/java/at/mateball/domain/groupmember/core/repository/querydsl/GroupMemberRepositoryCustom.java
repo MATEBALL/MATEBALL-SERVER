@@ -1,7 +1,6 @@
 package at.mateball.domain.groupmember.core.repository.querydsl;
 
 
-import at.mateball.domain.group.api.dto.base.GroupMemberStatusCountRes;
 import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.base.*;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
@@ -43,21 +42,17 @@ public interface GroupMemberRepositoryCustom {
 
     void updateMemberStatus(Long userId, Long groupId, int status);
 
-    void updateStatusAndParticipant(Long userId, Long groupId, int status);
-
     void updateStatusForApprovedMembers(Long groupId, int status);
 
     void updateStatusForAllMembers(Long groupId, int status);
 
-    long countParticipants(Long groupId);
-
-    GroupMemberStatusCountRes countGroupMemberStatus(Long groupId);
-
-    Long findRequesterId(Long groupId);
-
     boolean isUserParticipant(Long userId, Long groupId);
 
     List<PermitRequestBaseRes> findPermitValidationData(Long userId, LocalDate date);
+
+    void updateStatusAfterRequestApproval(Long groupId, Long requesterId, int approvedStatus);
+
+    List<GroupMemberInfoDto> findAllGroupMemberInfo(Long groupId);
 
     List<GroupMemberBaseRes> getGroupMember(Long groupId);
 
