@@ -7,9 +7,12 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class GroupMatchFailScheduler {
     private final GroupMatchFailScheduler groupMatchFailScheduler;
+
+    public GroupMatchFailScheduler(GroupMatchFailScheduler groupMatchFailScheduler) {
+        this.groupMatchFailScheduler = groupMatchFailScheduler;
+    }
 
     @Scheduled(cron = "0 0 3 * * *")
     public void run() {
