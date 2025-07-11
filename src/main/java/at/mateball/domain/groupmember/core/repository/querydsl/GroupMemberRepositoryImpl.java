@@ -8,6 +8,7 @@ import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
 import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.QGroupMember;
@@ -15,6 +16,7 @@ import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
@@ -372,26 +374,27 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public boolean isGroupMember(Long groupId, Long userId) {
-        Integer result = queryFactory
-                .selectOne()
+    public List<GroupMemberBaseRes> getGroupMember(Long groupId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        GroupMemberBaseRes.class,
+                        groupMember.user.id,
+                        groupMember.status
+                ))
                 .from(groupMember)
-                .join(groupMember.group, group)
-                .where(
-                        groupMember.group.id.eq(groupId),
-                        groupMember.user.id.eq(userId),
-                        groupMember.isParticipant.isTrue()
-                )
-                .fetchFirst();
-
-        return result != null;
+                .where(groupMember.group.id.eq(groupId))
+                .fetch();
     }
 
     @Override
-    public void updateAllGroupMembersStatus(Long groupId, int status) {
+    public void updateAllGroupMemberStatus(Long groupId, Long requesterId) {
         queryFactory
                 .update(groupMember)
-                .set(groupMember.status, status)
+                .set(groupMember.status,
+                        Expressions.cases()
+                                .when(groupMember.user.id.eq(requesterId)).then(GroupMemberStatus.MATCH_FAILED.getValue())
+                                .otherwise(GroupMemberStatus.PENDING_REQUEST.getValue())
+                )
                 .where(groupMember.group.id.eq(groupId))
                 .execute();
     }

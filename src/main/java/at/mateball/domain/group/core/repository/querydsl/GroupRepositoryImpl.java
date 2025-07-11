@@ -197,13 +197,4 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 )
                 .fetch();
     }
-
-    @Override
-    public void updateGroupStatus(Long groupId, int status) {
-        queryFactory
-                .update(QGroup.group)
-                .set(QGroup.group.status, status)
-                .where(QGroup.group.id.eq(groupId))
-                .execute();
-    }
 }
