@@ -8,6 +8,7 @@ import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.groupmember.GroupMemberStatus;
+import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
@@ -95,40 +96,46 @@ public class GroupService {
     }
 
     private void validatePermitRequest(Long userId, Group group) {
+        LocalDate gameDate = group.getGameInformation().getGameDate();
+        boolean isGroup = group.isGroup();
 
-        boolean hasFailed = groupMemberRepository.hasPreviousFailedRequest(
-                userId, group.getId(), GroupMemberStatus.MATCH_FAILED
-        );
-        if (hasFailed) {
+        List<PermitRequestBaseRes> permitRequestBaseRes =
+                groupMemberRepository.findPermitValidationData(userId, gameDate);
+
+        if (permitRequestBaseRes.stream().anyMatch(dto ->
+                dto.groupId().equals(group.getId()) &&
+                        dto.status() == GroupMemberStatus.MATCH_FAILED.getValue()
+        )) {
             throw new BusinessException(BusinessErrorCode.ALREADY_FAILED_REQUEST);
         }
 
-        boolean alreadyRequested = groupMemberRepository.existsRequest(userId, group.getId());
-        if (alreadyRequested) {
+        if (permitRequestBaseRes.stream().anyMatch(dto ->
+                dto.groupId().equals(group.getId()) &&
+                        dto.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue()
+        )) {
             throw new BusinessException(BusinessErrorCode.DUPLICATED_REQUEST);
         }
 
-        boolean hasPendingRequest = groupMemberRepository.isPendingRequestExists(
-                group.getId(),
-                List.of(
-                        GroupMemberStatus.NEW_REQUEST.getValue(),
-                        GroupMemberStatus.AWAITING_APPROVAL.getValue()
-                )
-        );
-        if (hasPendingRequest) {
+        if (permitRequestBaseRes.stream().anyMatch(dto ->
+                dto.groupId().equals(group.getId()) &&
+                        dto.groupStatus() == GroupMemberStatus.AWAITING_APPROVAL.getValue()
+        )) {
             throw new BusinessException(BusinessErrorCode.ALREADY_HAS_PENDING_REQUEST);
         }
 
-        LocalDate gameDate = group.getGameInformation().getGameDate();
-        if (groupMemberRepository.hasNonFailedRequestOnSameDate(userId, gameDate)) {
+        if (permitRequestBaseRes.stream().anyMatch(dto ->
+                dto.status() != GroupMemberStatus.MATCH_FAILED.getValue()
+        )) {
             throw new BusinessException(BusinessErrorCode.DUPLICATE_REQUEST_ON_SAME_DATE);
         }
 
-        int limit = group.isGroup() ? GROUP_LIMIT : DIRECT_LIMIT;
-        long count = groupMemberRepository.countMatchingRequests(userId, group.isGroup());
-        if (count >= limit) {
+        long pendingRequestCount = permitRequestBaseRes.stream()
+                .filter(dto -> dto.isGroup() == isGroup && dto.groupStatus() == GroupStatus.PENDING.getValue())
+                .count();
+        int requestLimit = isGroup ? GROUP_LIMIT : DIRECT_LIMIT;
+        if (pendingRequestCount >= requestLimit) {
             throw new BusinessException(
-                    group.isGroup() ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
+                    isGroup ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
                             : BusinessErrorCode.EXCEED_DIRECT_MATCHING_LIMIT
             );
         }
