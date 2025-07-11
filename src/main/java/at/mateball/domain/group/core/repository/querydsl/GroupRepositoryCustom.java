@@ -18,4 +18,10 @@ public interface GroupRepositoryCustom {
     List<DirectGetBaseRes> findDirectGroupsByDate(Long userId, LocalDate date);
 
     List<GroupGetBaseRes> findGroupsWithBaseInfo(LocalDate date);
+
+    List<Long> findGroupIdsByGameDate(LocalDate date);
+
+    int bulkUpdateGroupStatusToFailed(List<Long> groupIds);
+
+    int bulkUpdateGroupMemberStatusToMatchFailed(List<Long> groupIds);
 }

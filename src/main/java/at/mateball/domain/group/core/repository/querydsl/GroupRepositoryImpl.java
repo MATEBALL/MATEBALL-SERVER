@@ -6,8 +6,10 @@ import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.api.dto.base.DirectCreateBaseRes;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
+import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
+import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
@@ -196,5 +198,40 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                                 .notExists()
                 )
                 .fetch();
+    }
+
+    @Override
+    public List<Long> findGroupIdsByGameDate(LocalDate targetDate) {
+        QGroup group = QGroup.group;
+        QGameInformation game = QGameInformation.gameInformation;
+
+        return queryFactory
+                .select(group.id)
+                .from(group)
+                .join(group.gameInformation, game).on(game.gameDate.eq(targetDate))
+                .fetch();
+    }
+
+    @Override
+    public int bulkUpdateGroupStatusToFailed(List<Long> groupIds) {
+        QGroup group = QGroup.group;
+        QGroupMember groupMember = QGroupMember.groupMember;
+
+        return (int) queryFactory
+                .update(group)
+                .set(groupMember.status, GroupMemberStatus.MATCH_FAILED.getValue())
+                .where(group.id.in(groupIds))
+                .execute();
+    }
+
+    @Override
+    public int bulkUpdateGroupMemberStatusToMatchFailed(List<Long> groupIds) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+
+        return (int) queryFactory
+                .update(groupMember)
+                .set(groupMember.status, GroupMemberStatus.MATCH_FAILED.getValue())
+                .where(groupMember.group.id.in(groupIds))
+                .execute();
     }
 }
