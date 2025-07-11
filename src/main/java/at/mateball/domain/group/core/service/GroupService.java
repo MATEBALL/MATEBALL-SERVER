@@ -210,49 +210,38 @@ public class GroupService {
     }
 
     private void processGroup(Long userId, Long groupId) {
-        // 1. 수락 누른 사람은 상태 변경
         groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.AWAITING_APPROVAL.getValue());
         List<GroupMatchBaseRes> members = groupMemberRepository.findAllGroupMemberInfo(groupId);
 
-        // 2. 요청자 찾기 (참여자가 아니고 -- 상태인 사람)
         Long requesterId = members.stream()
                 .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() && !m.isParticipant())
                 .map(GroupMatchBaseRes::userId)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
 
-        // 3. 전체 멤버 수 (요청자 + 기존 참여자)
         long totalParticipants = members.stream()
                 .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() || m.status() == GroupMemberStatus.NEW_REQUEST.getValue())
                 .count();
 
-        // 4. 현재까지 수락한 사람 수
         long awaitingApprovals = members.stream()
                 .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() && m.isParticipant())
                 .count();
 
-        System.out.println("전체 멤버 수: " + totalParticipants + " 현재까지 수락한 사람의 수: " + awaitingApprovals);
-
-        if (awaitingApprovals < totalParticipants-1 ) {
+        if (awaitingApprovals < totalParticipants - 1) {
             return;
         }
 
-        // 5. 전원이 수락했을 때 → 요청자 승인 + 참여자 변경
         groupMemberRepository.updateStatusAfterRequestApproval(
                 groupId, requesterId, GroupMemberStatus.APPROVED.getValue()
         );
 
-        // 6. 기존 수락자들은 요청 대기 상태로 변경
         groupMemberRepository.updateStatusForApprovedMembers(groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
 
-        // 7. 참여자 수 계산 (요청자까지 포함)
         long participantCount = members.stream()
                 .filter(GroupMatchBaseRes::isParticipant)
-                .count() ;
+                .count();
 
-        System.out.println("참여자 수: " + participantCount);
-
-        if (participantCount +1 == TOTAL_GROUP_MEMBER) {
+        if (participantCount + 1 == TOTAL_GROUP_MEMBER) {
             groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
             groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
         }
