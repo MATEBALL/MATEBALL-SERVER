@@ -120,7 +120,7 @@ public class GroupService {
 
         if (permitRequestBaseRes.stream().anyMatch(dto ->
                 dto.groupId().equals(group.getId()) &&
-                        dto.groupStatus() == GroupMemberStatus.AWAITING_APPROVAL.getValue()
+                        dto.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue()
         )) {
             throw new BusinessException(BusinessErrorCode.ALREADY_HAS_PENDING_REQUEST);
         }
