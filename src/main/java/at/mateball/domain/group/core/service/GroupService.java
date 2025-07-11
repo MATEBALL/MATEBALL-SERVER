@@ -162,12 +162,13 @@ public class GroupService {
 
     @Transactional
     public void rejectRequest(Long userId, Long matchId) {
-        groupRepository.findById(matchId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        boolean exists = groupMemberRepository.existsParticipantInGroupWithGroupCheck(matchId, userId);
+        if (!exists) {
+            throw new BusinessException(BusinessErrorCode.NOT_GROUP_MEMBER);
+        }
 
         groupMemberRepository.updateAllGroupMembersStatus(matchId, GroupMemberStatus.MATCH_FAILED.getValue());
-
         groupRepository.updateGroupStatus(matchId, GroupStatus.FAILED.getValue());
     }
-
 }
