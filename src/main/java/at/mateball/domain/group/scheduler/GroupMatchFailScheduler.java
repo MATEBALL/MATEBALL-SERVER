@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class GroupMatchFailScheduler {
-    private final GroupMatchFailScheduler groupMatchFailScheduler;
+    private final GroupMatchFailService groupMatchFailService;
 
-    public GroupMatchFailScheduler(GroupMatchFailScheduler groupMatchFailScheduler) {
-        this.groupMatchFailScheduler = groupMatchFailScheduler;
+    public GroupMatchFailScheduler(GroupMatchFailService groupMatchFailService) {
+        this.groupMatchFailService = groupMatchFailService;
     }
 
     @Scheduled(cron = "0 0 3 * * *")
     public void run() {
         try {
-            groupMatchFailScheduler.failExpiredGroups();
+            groupMatchFailService.failExpiredGroups();
         } catch (Exception exception) {
             log.error("그룹 매칭 실패 처리 중 예외 발생", exception);
         }
