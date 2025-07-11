@@ -44,5 +44,7 @@ public interface GroupMemberRepositoryCustom {
 
     void updateStatusForAllParticipants(Long matchId, int status);
 
+    boolean existsParticipantInGroupWithGroupCheck(Long groupId, Long userId);
+
     void updateAllGroupMembersStatus(Long groupId, int status);
 }

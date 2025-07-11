@@ -371,6 +371,21 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .execute();
     }
 
+    @Override
+    public boolean existsParticipantInGroupWithGroupCheck(Long groupId, Long userId) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .where(
+                        group.id.eq(groupId),
+                        groupMember.user.id.eq(userId),
+                        groupMember.isParticipant.isTrue()
+                )
+                .fetchFirst();
+
+        return result != null;
+    }
 
     @Override
     public void updateAllGroupMembersStatus(Long groupId, int status) {
