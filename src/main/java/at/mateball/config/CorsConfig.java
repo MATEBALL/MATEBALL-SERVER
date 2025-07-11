@@ -17,7 +17,7 @@ public class CorsConfig {
         configuration.setAllowedOrigins(List.of(
                 "https://api.mateball.co.kr",
                 "https://mateball.co.kr",
-                "https://localhost:5173"
+                "http://localhost:5173"
         ));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
