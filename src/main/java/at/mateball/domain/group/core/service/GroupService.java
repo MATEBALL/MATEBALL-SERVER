@@ -80,7 +80,7 @@ public class GroupService {
         Group group = groupRepository.findById(matchId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
 
-        validateRequest(userId, group);
+        validatePermitRequest(userId, group);
 
         groupMemberRepository.createGroupMember(userId, matchId);
 
@@ -93,7 +93,7 @@ public class GroupService {
         }
     }
 
-    private void validateRequest(Long userId, Group group) {
+    private void validatePermitRequest(Long userId, Group group) {
 
         boolean hasFailed = groupMemberRepository.hasPreviousFailedRequest(
                 userId, group.getId(), GroupMemberStatus.MATCH_FAILED
@@ -164,7 +164,7 @@ public class GroupService {
 
     @Transactional
     public void permitRequest(Long userId, Long groupId) {
-        Group group = validateRequest(userId, groupId);
+        Group group = validatePermitRequest(userId, groupId);
 
         if (!group.isGroup()) {
             processDirect(userId, groupId);
@@ -173,7 +173,7 @@ public class GroupService {
         }
     }
 
-    private Group validateRequest(Long userId, Long groupId) {
+    private Group validatePermitRequest(Long userId, Long groupId) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
 
