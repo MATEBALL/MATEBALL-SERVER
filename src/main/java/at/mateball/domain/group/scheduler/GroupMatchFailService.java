@@ -21,8 +21,10 @@ public class GroupMatchFailService {
     @Transactional
     public void failExpiredGroups() {
         LocalDate date = calculateTargetDate(LocalDate.now());
+        log.info("[스케줄러 테스트] 기준 날짜 = {}", date);
 
         List<Long> matchId = groupRepository.findGroupIdsByGameDate(date);
+        log.info("[스케줄러 테스트] 해당 날짜 그룹 수 = {}", matchId.size());
 
         if (matchId.isEmpty()) {
             log.info("처리 대상 그룹 없음 - 기준일 : {}", date);
