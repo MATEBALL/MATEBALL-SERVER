@@ -8,6 +8,7 @@ import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.groupmember.GroupMemberStatus;
+import at.mateball.domain.groupmember.api.dto.base.DirectMatchMemberDto;
 import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
@@ -196,10 +197,15 @@ public class GroupService {
     }
 
     private void processDirect(Long userId, Long groupId) {
-        Long requesterId = groupMemberRepository.findRequesterId(groupId);
+        List<DirectMatchMemberDto> members = groupMemberRepository.findDirectMatchMembers(groupId);
 
-        groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.MATCHED.getValue());
-        groupMemberRepository.updateStatusAndParticipant(requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
+        Long requesterId = members.stream()
+                .filter(m -> m.status() == GroupMemberStatus.NEW_REQUEST.getValue())
+                .map(DirectMatchMemberDto::userId)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
+
+        groupMemberRepository.updateStatusesForDirectMatching(userId, requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
         groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
     }
 
