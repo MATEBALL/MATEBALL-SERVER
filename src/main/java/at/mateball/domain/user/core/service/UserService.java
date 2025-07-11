@@ -1,6 +1,7 @@
 package at.mateball.domain.user.core.service;
 
 import at.mateball.domain.matchrequirement.core.constant.Gender;
+import at.mateball.domain.user.api.dto.request.UserInfoReq;
 import at.mateball.domain.user.api.dto.response.KaKaoInformationRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.User;
@@ -59,5 +60,11 @@ public class UserService {
     public User findUser(final Long userId) {
         return userRepository.getUser(userId).orElseThrow(()
                 -> new BusinessException(USER_NOT_FOUND));
+    }
+
+
+    @Transactional
+    public void createUserInfo(Long userId, String gender, int birthYear) {
+
     }
 }
