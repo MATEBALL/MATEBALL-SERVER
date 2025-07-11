@@ -30,7 +30,7 @@ public interface GroupMemberRepositoryCustom {
 
     List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId);
 
-    List<DirectMatchMemberDto> findDirectMatchMembers(Long groupId);
+    List<DirectMatchBaseRes> findDirectMatchMembers(Long groupId);
 
     void createGroupMember(Long userId, Long matchId);
 
@@ -52,7 +52,7 @@ public interface GroupMemberRepositoryCustom {
 
     void updateStatusAfterRequestApproval(Long groupId, Long requesterId, int approvedStatus);
 
-    List<GroupMemberInfoDto> findAllGroupMemberInfo(Long groupId);
+    List<GroupMatchBaseRes> findAllGroupMemberInfo(Long groupId);
 
     List<GroupMemberBaseRes> getGroupMember(Long groupId);
 

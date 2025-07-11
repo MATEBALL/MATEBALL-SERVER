@@ -1,7 +1,6 @@
 package at.mateball.domain.groupmember.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
-import at.mateball.domain.group.api.dto.base.GroupMemberStatusCountRes;
 import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.GroupMemberStatus;
@@ -12,7 +11,6 @@ import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -300,10 +298,10 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public List<DirectMatchMemberDto> findDirectMatchMembers(Long groupId) {
+    public List<DirectMatchBaseRes> findDirectMatchMembers(Long groupId) {
         return queryFactory
                 .select(Projections.constructor(
-                        DirectMatchMemberDto.class,
+                        DirectMatchBaseRes.class,
                         groupMember.user.id,
                         groupMember.status
                 ))
@@ -394,9 +392,9 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public List<GroupMemberInfoDto> findAllGroupMemberInfo(Long groupId) {
+    public List<GroupMatchBaseRes> findAllGroupMemberInfo(Long groupId) {
         return queryFactory
-                .select(Projections.constructor(GroupMemberInfoDto.class,
+                .select(Projections.constructor(GroupMatchBaseRes.class,
                         groupMember.user.id,
                         groupMember.status,
                         groupMember.isParticipant
