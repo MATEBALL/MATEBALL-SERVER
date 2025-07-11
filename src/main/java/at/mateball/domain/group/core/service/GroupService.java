@@ -7,8 +7,8 @@ import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.groupmember.GroupMemberStatus;
-import at.mateball.domain.groupmember.api.dto.base.DirectMatchMemberDto;
-import at.mateball.domain.groupmember.api.dto.base.GroupMemberInfoDto;
+import at.mateball.domain.groupmember.api.dto.base.DirectMatchBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.GroupMatchBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
@@ -197,11 +197,11 @@ public class GroupService {
     }
 
     private void processDirect(Long userId, Long groupId) {
-        List<DirectMatchMemberDto> members = groupMemberRepository.findDirectMatchMembers(groupId);
+        List<DirectMatchBaseRes> members = groupMemberRepository.findDirectMatchMembers(groupId);
 
         Long requesterId = members.stream()
                 .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue())
-                .map(DirectMatchMemberDto::userId)
+                .map(DirectMatchBaseRes::userId)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
 
@@ -212,12 +212,12 @@ public class GroupService {
     private void processGroup(Long userId, Long groupId) {
         // 1. 수락 누른 사람은 상태 변경
         groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.AWAITING_APPROVAL.getValue());
-        List<GroupMemberInfoDto> members = groupMemberRepository.findAllGroupMemberInfo(groupId);
+        List<GroupMatchBaseRes> members = groupMemberRepository.findAllGroupMemberInfo(groupId);
 
         // 2. 요청자 찾기 (참여자가 아니고 -- 상태인 사람)
         Long requesterId = members.stream()
                 .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() && !m.isParticipant())
-                .map(GroupMemberInfoDto::userId)
+                .map(GroupMatchBaseRes::userId)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
 
@@ -247,7 +247,7 @@ public class GroupService {
 
         // 7. 참여자 수 계산 (요청자까지 포함)
         long participantCount = members.stream()
-                .filter(GroupMemberInfoDto::isParticipant)
+                .filter(GroupMatchBaseRes::isParticipant)
                 .count() ;
 
         System.out.println("참여자 수: " + participantCount);
