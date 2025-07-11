@@ -11,6 +11,7 @@ import at.mateball.domain.user.api.dto.response.KaKaoInformationRes;
 import at.mateball.domain.user.core.service.UserService;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -69,10 +70,10 @@ public class UserController {
     @PostMapping("/v1/users/info")
     public ResponseEntity<MateballResponse<?>> createUserInfo(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestBody UserInfoReq userInfoReq
+            @Valid @RequestBody UserInfoReq userInfoReq
     ) {
         Long userId = customUserDetails.getUserId();
-        userService.createUserInfo(userId, userInfoReq);
+        userService.createUserInfo(userId, userInfoReq.gender(), userInfoReq.birthYear());
 
         return ResponseEntity.ofNullable(MateballResponse.successWithNoData(SuccessCode.OK));
     }
