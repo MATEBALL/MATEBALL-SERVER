@@ -3,12 +3,12 @@ package at.mateball.domain.group.core.service;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
-import at.mateball.domain.group.api.dto.base.GroupMemberStatusCountRes;
 import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.base.DirectMatchMemberDto;
+import at.mateball.domain.groupmember.api.dto.base.GroupMemberInfoDto;
 import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
@@ -200,7 +200,7 @@ public class GroupService {
         List<DirectMatchMemberDto> members = groupMemberRepository.findDirectMatchMembers(groupId);
 
         Long requesterId = members.stream()
-                .filter(m -> m.status() == GroupMemberStatus.NEW_REQUEST.getValue())
+                .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue())
                 .map(DirectMatchMemberDto::userId)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
@@ -210,25 +210,49 @@ public class GroupService {
     }
 
     private void processGroup(Long userId, Long groupId) {
-        Long requesterId = groupMemberRepository.findRequesterId(groupId);
-
+        // 1. 수락 누른 사람은 상태 변경
         groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.AWAITING_APPROVAL.getValue());
+        List<GroupMemberInfoDto> members = groupMemberRepository.findAllGroupMemberInfo(groupId);
 
-        GroupMemberStatusCountRes counts = groupMemberRepository.countGroupMemberStatus(groupId);
+        // 2. 요청자 찾기 (참여자가 아니고 -- 상태인 사람)
+        Long requesterId = members.stream()
+                .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() && !m.isParticipant())
+                .map(GroupMemberInfoDto::userId)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
 
-        Long totalGroupMembers = counts.totalParticipants();
-        Long awaitingApprovalCount = counts.awaitingApprovalCount();
+        // 3. 전체 멤버 수 (요청자 + 기존 참여자)
+        long totalParticipants = members.stream()
+                .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() || m.status() == GroupMemberStatus.NEW_REQUEST.getValue())
+                .count();
 
-        if (awaitingApprovalCount < totalGroupMembers) {
+        // 4. 현재까지 수락한 사람 수
+        long awaitingApprovals = members.stream()
+                .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() && m.isParticipant())
+                .count();
+
+        System.out.println("전체 멤버 수: " + totalParticipants + " 현재까지 수락한 사람의 수: " + awaitingApprovals);
+
+        if (awaitingApprovals < totalParticipants-1 ) {
             return;
         }
 
-        groupMemberRepository.updateStatusAndParticipant(requesterId, groupId, GroupMemberStatus.APPROVED.getValue());
+        // 5. 전원이 수락했을 때 → 요청자 승인 + 참여자 변경
+        groupMemberRepository.updateStatusAfterRequestApproval(
+                groupId, requesterId, GroupMemberStatus.APPROVED.getValue()
+        );
+
+        // 6. 기존 수락자들은 요청 대기 상태로 변경
         groupMemberRepository.updateStatusForApprovedMembers(groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
 
-        Long participantCount = groupMemberRepository.countParticipants(groupId);
+        // 7. 참여자 수 계산 (요청자까지 포함)
+        long participantCount = members.stream()
+                .filter(GroupMemberInfoDto::isParticipant)
+                .count() ;
 
-        if (participantCount == TOTAL_GROUP_MEMBER) {
+        System.out.println("참여자 수: " + participantCount);
+
+        if (participantCount +1 == TOTAL_GROUP_MEMBER) {
             groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
             groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
         }

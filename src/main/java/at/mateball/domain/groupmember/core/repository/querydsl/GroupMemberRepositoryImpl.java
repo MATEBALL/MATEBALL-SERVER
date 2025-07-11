@@ -337,15 +337,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public void updateStatusAndParticipant(Long userId, Long groupId, int status) {
-        queryFactory.update(groupMember)
-                .set(groupMember.status, status)
-                .set(groupMember.isParticipant, true)
-                .where(groupMember.user.id.eq(userId), groupMember.group.id.eq(groupId))
-                .execute();
-    }
-
-    @Override
     public void updateStatusForApprovedMembers(Long groupId, int status) {
         queryFactory.update(groupMember)
                 .set(groupMember.status, status)
@@ -363,54 +354,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .set(groupMember.status, status)
                 .where(groupMember.group.id.eq(groupId))
                 .execute();
-    }
-
-    @Override
-    public long countParticipants(Long groupId) {
-        Long result = queryFactory.select(groupMember.count())
-                .from(groupMember)
-                .where(groupMember.group.id.eq(groupId), groupMember.isParticipant.isTrue())
-                .fetchOne();
-        return result != null ? result : 0L;
-    }
-
-    @Override
-    public GroupMemberStatusCountRes countGroupMemberStatus(Long groupId) {
-        List<Tuple> result = queryFactory
-                .select(groupMember.status, groupMember.count())
-                .from(groupMember)
-                .where(groupMember.group.id.eq(groupId), groupMember.isParticipant.isTrue())
-                .groupBy(groupMember.status)
-                .fetch();
-
-        long totalParticipants = 0L;
-        long awaitingApprovalCount = 0L;
-        long approvedCount = 0L;
-
-        for (Tuple tuple : result) {
-            int status = tuple.get(groupMember.status);
-            long count = tuple.get(groupMember.count());
-
-            totalParticipants += count;
-            if (status == GroupMemberStatus.AWAITING_APPROVAL.getValue()) {
-                awaitingApprovalCount = count;
-            } else if (status == GroupMemberStatus.APPROVED.getValue()) {
-                approvedCount = count;
-            }
-        }
-
-        return new GroupMemberStatusCountRes(totalParticipants, awaitingApprovalCount, approvedCount);
-    }
-
-    @Override
-    public Long findRequesterId(Long groupId) {
-        return queryFactory.select(groupMember.user.id)
-                .from(groupMember)
-                .where(
-                        groupMember.group.id.eq(groupId),
-                        groupMember.isParticipant.isFalse()
-                )
-                .fetchFirst();
     }
 
     @Override
@@ -448,6 +391,37 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         gameInfo.gameDate.eq(date)
                 )
                 .fetch();
+    }
+
+    @Override
+    public List<GroupMemberInfoDto> findAllGroupMemberInfo(Long groupId) {
+        return queryFactory
+                .select(Projections.constructor(GroupMemberInfoDto.class,
+                        groupMember.user.id,
+                        groupMember.status,
+                        groupMember.isParticipant
+                ))
+                .from(groupMember)
+                .where(groupMember.group.id.eq(groupId))
+                .fetch();
+    }
+
+    @Override
+    public void updateStatusAfterRequestApproval(Long groupId, Long requesterId, int approvedStatus) {
+        queryFactory
+                .update(groupMember)
+                .set(groupMember.status,
+                        Expressions.cases()
+                                .when(groupMember.user.id.eq(requesterId)).then(approvedStatus)
+                                .otherwise(groupMember.status)
+                )
+                .set(groupMember.isParticipant,
+                        Expressions.cases()
+                                .when(groupMember.user.id.eq(requesterId)).then(true)
+                                .otherwise(groupMember.isParticipant)
+                )
+                .where(groupMember.group.id.eq(groupId))
+                .execute();
     }
 
     @Override
