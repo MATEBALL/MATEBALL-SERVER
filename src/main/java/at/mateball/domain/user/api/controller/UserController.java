@@ -5,6 +5,7 @@ import at.mateball.common.security.CustomUserDetails;
 import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.user.api.dto.request.NicknameReq;
+import at.mateball.domain.user.api.dto.request.UserInfoReq;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.api.dto.response.KaKaoInformationRes;
 import at.mateball.domain.user.core.service.UserService;
@@ -63,5 +64,16 @@ public class UserController {
         UserInformationRes data = userService.getUserInformation(userId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
+    }
+
+    @PostMapping("/v1/users/info")
+    public ResponseEntity<MateballResponse<?>> createUserInfo(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestBody UserInfoReq userInfoReq
+    ) {
+        Long userId = customUserDetails.getUserId();
+        userService.createUserInfo(userId, userInfoReq);
+
+        return ResponseEntity.ofNullable(MateballResponse.successWithNoData(SuccessCode.OK));
     }
 }
