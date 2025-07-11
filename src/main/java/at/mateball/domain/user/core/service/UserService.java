@@ -7,6 +7,7 @@ import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
+import at.mateball.exception.code.BusinessErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,10 @@ public class UserService {
 
     @Transactional
     public void createUserInfo(Long userId, String gender, int birthYear) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
+        Gender genderStatus = Gender.fromLabel(gender);
+        user.updateGenderAndBirthYear(genderStatus, birthYear);
     }
 }

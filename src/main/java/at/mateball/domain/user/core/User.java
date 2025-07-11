@@ -1,6 +1,7 @@
 package at.mateball.domain.user.core;
 
 import at.mateball.domain.matchrequirement.core.MatchRequirement;
+import at.mateball.domain.matchrequirement.core.constant.Gender;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -65,5 +66,10 @@ public class User {
 
     public void updateImgUrl(final String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public void updateGenderAndBirthYear(Gender gender, int birthYear) {
+        this.gender = gender.getRaw();
+        this.birthYear = birthYear;
     }
 }
