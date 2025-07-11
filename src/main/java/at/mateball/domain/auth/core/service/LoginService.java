@@ -29,7 +29,7 @@ public class LoginService {
 
     @Transactional
     public LoginResult login(LoginCommand loginCommand) {
-        String redirectUri = "https://localhost:5173/auth";
+        String redirectUri = "http://localhost:5173/auth";
         KakaoTokenRes kakaoToken = oauthClientApi.fetchToken(loginCommand.code(), redirectUri);
 
         if (kakaoToken == null || kakaoToken.accessToken() == null) {
