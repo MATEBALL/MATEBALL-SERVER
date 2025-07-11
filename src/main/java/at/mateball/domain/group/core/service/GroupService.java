@@ -6,6 +6,7 @@ import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
 import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
+import at.mateball.domain.group.core.validator.GroupValidator;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.base.DirectMatchBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupMatchBaseRes;
@@ -173,27 +174,20 @@ public class GroupService {
 
     @Transactional
     public void permitRequest(Long userId, Long groupId) {
-        Group group = validatePermitRequest(userId, groupId);
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        if (!groupMemberRepository.isUserParticipant(userId, groupId)) {
+            throw new BusinessException(BusinessErrorCode.NOT_GROUP_MEMBER);
+        }
+
+        GroupValidator.validate(group);
 
         if (!group.isGroup()) {
             processDirect(userId, groupId);
         } else {
             processGroup(userId, groupId);
         }
-    }
-
-    private Group validatePermitRequest(Long userId, Long groupId) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
-
-        if (GroupStatus.from(group.getStatus()) == GroupStatus.COMPLETED) {
-            throw new BusinessException(BusinessErrorCode.ALREADY_COMPLETED_GROUP);
-        }
-
-        if (!groupMemberRepository.isUserParticipant(userId, groupId)) {
-            throw new BusinessException(BusinessErrorCode.NOT_GROUP_MEMBER);
-        }
-        return group;
     }
 
     private void processDirect(Long userId, Long groupId) {
