@@ -49,13 +49,36 @@ public class JwtCookieProvider {
         );
     }
 
-    public List<ResponseCookie> deleteAllCookies(HttpServletRequest request) {
+/*    public List<ResponseCookie> deleteAllCookies(HttpServletRequest request) {
         return List.of(
                 deleteCookie(ACCESS_TOKEN_NAME, request),
                 deleteCookie(REFRESH_TOKEN_NAME, request),
                 deleteCookie(KAKAO_TOKEN_NAME, request)
         );
+    }*/
+
+    private ResponseCookie deleteCookieByDomain(String name, String domain) {
+        return ResponseCookie.from(name, "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .domain(domain)
+                .build();
     }
+
+    public List<ResponseCookie> deleteAllCookies(HttpServletRequest request) {
+        return List.of(
+                deleteCookieByDomain(ACCESS_TOKEN_NAME, ".mateball.co.kr"),
+                deleteCookieByDomain(ACCESS_TOKEN_NAME, "dev.mateball.co.kr"),
+                deleteCookieByDomain(REFRESH_TOKEN_NAME, ".mateball.co.kr"),
+                deleteCookieByDomain(REFRESH_TOKEN_NAME, "dev.mateball.co.kr"),
+                deleteCookieByDomain(KAKAO_TOKEN_NAME, ".mateball.co.kr"),
+                deleteCookieByDomain(KAKAO_TOKEN_NAME, "dev.mateball.co.kr")
+        );
+    }
+
 
     private Optional<String> extractCookie(HttpServletRequest request, String name) {
         if (request.getCookies() == null) return Optional.empty();
