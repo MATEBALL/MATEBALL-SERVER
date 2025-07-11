@@ -219,11 +219,11 @@ public class GroupService {
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
 
-        long totalParticipants = members.stream()
+        Long totalParticipants = members.stream()
                 .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() || m.status() == GroupMemberStatus.NEW_REQUEST.getValue())
                 .count();
 
-        long awaitingApprovals = members.stream()
+        Long awaitingApprovals = members.stream()
                 .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() && m.isParticipant())
                 .count();
 
@@ -237,7 +237,7 @@ public class GroupService {
 
         groupMemberRepository.updateStatusForApprovedMembers(groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
 
-        long participantCount = members.stream()
+        Long participantCount = members.stream()
                 .filter(GroupMatchBaseRes::isParticipant)
                 .count();
 
