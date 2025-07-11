@@ -9,11 +9,19 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RedirectUriResolver {
 
-    private final AuthProperties authProperties;
+    private static final String LOCAL_IDENTIFIER = "localhost";
+    private static final String LOCAL_REDIRECT_URI = "http://localhost:5173/auth";
+    private static final String PROD_REDIRECT_URI = "https://mateball.co.kr/auth";
 
     public String resolve(HttpServletRequest request) {
-        return RequestUtils.isLocalOrigin(request)
-                ? authProperties.getLocal()
-                : authProperties.getProd();
+        return isLocalRequest(request) ? LOCAL_REDIRECT_URI : PROD_REDIRECT_URI;
+    }
+
+    public boolean isLocalRequest(HttpServletRequest request) {
+        String origin = request.getHeader("Origin");
+        String referer = request.getHeader("Referer");
+        String base = origin != null ? origin : referer;
+
+        return base != null && base.contains(LOCAL_IDENTIFIER);
     }
 }
