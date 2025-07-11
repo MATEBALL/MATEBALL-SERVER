@@ -2,8 +2,8 @@ package at.mateball.domain.groupmember.core.repository.querydsl;
 
 
 import at.mateball.domain.group.api.dto.base.GroupMemberStatusCountRes;
-import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
+import at.mateball.domain.groupmember.api.dto.base.*;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
@@ -31,21 +31,15 @@ public interface GroupMemberRepositoryCustom {
 
     List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId);
 
-    boolean existsRequest(Long userId, Long groupId);
-
-    boolean isPendingRequestExists(Long matchId, List<Integer> status);
-
-    boolean hasNonFailedRequestOnSameDate(Long userId, LocalDate date);
-
-    boolean hasPreviousFailedRequest(Long userId, Long matchId, GroupMemberStatus status);
-
-    long countMatchingRequests(Long userId, boolean isGroup);
+    List<DirectMatchMemberDto> findDirectMatchMembers(Long groupId);
 
     void createGroupMember(Long userId, Long matchId);
 
     void updateLeaderStatus(Long userId, Long matchId, int status);
 
     void updateStatusForAllParticipants(Long matchId, int status);
+
+    void updateStatusesForDirectMatching(Long userId, Long requesterId, Long groupId, int status);
 
     void updateMemberStatus(Long userId, Long groupId, int status);
 
