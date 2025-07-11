@@ -4,9 +4,9 @@ import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
 import at.mateball.domain.group.core.Group;
-import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.groupmember.GroupMemberStatus;
+import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
@@ -162,13 +162,20 @@ public class GroupService {
 
     @Transactional
     public void rejectRequest(Long userId, Long matchId) {
+        List<GroupMemberBaseRes> members = groupMemberRepository.getGroupMember(matchId);
 
-        boolean isGroupMember = groupMemberRepository.isGroupMember(matchId, userId);
+        boolean isGroupMember = members.stream()
+                .anyMatch(member -> member.userId().equals(userId));
         if (!isGroupMember) {
             throw new BusinessException(BusinessErrorCode.NOT_GROUP_MEMBER);
         }
 
-        groupMemberRepository.updateAllGroupMembersStatus(matchId, GroupMemberStatus.MATCH_FAILED.getValue());
-        groupRepository.updateGroupStatus(matchId, GroupStatus.FAILED.getValue());
+        Long requesterId = members.stream()
+                .filter(member -> member.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue())
+                .map(GroupMemberBaseRes::userId)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
+
+        groupMemberRepository.updateAllGroupMemberStatus(matchId, requesterId);
     }
 }

@@ -5,6 +5,7 @@ import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
 
 import java.time.LocalDate;
@@ -44,7 +45,7 @@ public interface GroupMemberRepositoryCustom {
 
     void updateStatusForAllParticipants(Long matchId, int status);
 
-    boolean isGroupMember(Long groupId, Long userId);
+    List<GroupMemberBaseRes> getGroupMember(Long groupId);
 
-    void updateAllGroupMembersStatus(Long groupId, int status);
+    void updateAllGroupMemberStatus(Long groupId, Long requesterId);
 }
