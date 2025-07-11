@@ -372,13 +372,13 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public boolean existsParticipantInGroupWithGroupCheck(Long groupId, Long userId) {
+    public boolean isGroupMember(Long groupId, Long userId) {
         Integer result = queryFactory
                 .selectOne()
                 .from(groupMember)
                 .join(groupMember.group, group)
                 .where(
-                        group.id.eq(groupId),
+                        groupMember.group.id.eq(groupId),
                         groupMember.user.id.eq(userId),
                         groupMember.isParticipant.isTrue()
                 )
