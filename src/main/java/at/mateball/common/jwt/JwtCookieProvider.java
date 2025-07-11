@@ -68,6 +68,7 @@ public class JwtCookieProvider {
     private ResponseCookie createCookie(String name, String value, long maxAge) {
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
+                .domain(".mateball.co.kr")
                 .secure(true)
                 .sameSite("None")
                 .path("/")
@@ -78,6 +79,7 @@ public class JwtCookieProvider {
     private ResponseCookie deleteCookie(String name, HttpServletRequest request) {
         return ResponseCookie.from(name, "")
                 .httpOnly(true)
+                .domain(".mateball.co.kr")
                 .secure(true)
                 .sameSite("None")
                 .path("/")
