@@ -16,6 +16,8 @@ public class GroupMatchFailScheduler {
 
     @Scheduled(cron = "0 0 3 * * *")
     public void run() {
+        log.info("스케줄러 호출 완료");
+
         try {
             groupMatchFailService.failExpiredGroups();
         } catch (Exception exception) {
