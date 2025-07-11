@@ -67,7 +67,7 @@ public class UserController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
     }
 
-    @PostMapping("/v1/users/info")
+    @PostMapping("/info")
     public ResponseEntity<MateballResponse<?>> createUserInfo(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @Valid @RequestBody UserInfoReq userInfoReq
@@ -75,6 +75,6 @@ public class UserController {
         Long userId = customUserDetails.getUserId();
         userService.createUserInfo(userId, userInfoReq.gender(), userInfoReq.birthYear());
 
-        return ResponseEntity.ofNullable(MateballResponse.successWithNoData(SuccessCode.OK));
+        return ResponseEntity.ofNullable(MateballResponse.successWithNoData(SuccessCode.CREATED));
     }
 }
