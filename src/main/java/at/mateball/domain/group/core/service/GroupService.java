@@ -210,8 +210,8 @@ public class GroupService {
 
         GroupMemberStatusCountRes counts = groupMemberRepository.countGroupMemberStatus(groupId);
 
-        long totalGroupMembers = counts.totalParticipants();
-        long awaitingApprovalCount = counts.awaitingApprovalCount();
+        Long totalGroupMembers = counts.totalParticipants();
+        Long awaitingApprovalCount = counts.awaitingApprovalCount();
 
         if (awaitingApprovalCount < totalGroupMembers) {
             return;
@@ -220,7 +220,7 @@ public class GroupService {
         groupMemberRepository.updateStatusAndParticipant(requesterId, groupId, GroupMemberStatus.APPROVED.getValue());
         groupMemberRepository.updateStatusForApprovedMembers(groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
 
-        long participantCount = groupMemberRepository.countParticipants(groupId);
+        Long participantCount = groupMemberRepository.countParticipants(groupId);
 
         if (participantCount == TOTAL_GROUP_MEMBER) {
             groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
