@@ -163,8 +163,8 @@ public class GroupService {
     @Transactional
     public void rejectRequest(Long userId, Long matchId) {
 
-        boolean exists = groupMemberRepository.existsParticipantInGroupWithGroupCheck(matchId, userId);
-        if (!exists) {
+        boolean isGroupMember = groupMemberRepository.isGroupMember(matchId, userId);
+        if (!isGroupMember) {
             throw new BusinessException(BusinessErrorCode.NOT_GROUP_MEMBER);
         }
 
