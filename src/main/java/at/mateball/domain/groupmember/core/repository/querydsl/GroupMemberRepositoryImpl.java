@@ -10,6 +10,7 @@ import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
 import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
@@ -469,5 +470,29 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 )
                 .fetchFirst();
         return result != null;
+    }
+
+    @Override
+    public List<PermitRequestBaseRes> findPermitValidationData(Long userId, LocalDate date) {
+        QGameInformation gameInfo = QGameInformation.gameInformation;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        PermitRequestBaseRes.class,
+                        groupMember.user.id,
+                        groupMember.group.id,
+                        groupMember.status,
+                        gameInfo.gameDate,
+                        group.isGroup,
+                        group.status
+                ))
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(group.gameInformation, gameInfo)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        gameInfo.gameDate.eq(date)
+                )
+                .fetch();
     }
 }

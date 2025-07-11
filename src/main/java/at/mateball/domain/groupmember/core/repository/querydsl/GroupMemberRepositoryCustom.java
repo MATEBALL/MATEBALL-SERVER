@@ -7,6 +7,7 @@ import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -60,4 +61,6 @@ public interface GroupMemberRepositoryCustom {
     Long findRequesterId(Long groupId);
 
     boolean isUserParticipant(Long userId, Long groupId);
+
+    List<PermitRequestBaseRes> findPermitValidationData(Long userId, LocalDate date);
 }
