@@ -14,7 +14,7 @@ public class NicknameValidator {
 
     public static void validate(String nickname) {
         if (nickname == null || nickname.isBlank()) {
-            throw new BusinessException(BusinessErrorCode.INVALID_NICKNAME_LENGTH);
+            throw new BusinessException(BusinessErrorCode.BLANKED_NICKNAME);
         }
 
         if (nickname.length() < MIN_NICKNAME_LENGTH || nickname.length() > MAX_NICKNAME_LENGTH) {
