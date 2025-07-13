@@ -67,7 +67,10 @@ public class UserController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
     }
 
+
     @PostMapping("/info")
+    @CustomExceptionDescription(SwaggerResponseDescription.GET_USER_INFORMATION)
+    @Operation(summary = "사용자 정보 반환 api")
     public ResponseEntity<MateballResponse<?>> createUserInfo(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @Valid @RequestBody UserInfoReq userInfoReq
