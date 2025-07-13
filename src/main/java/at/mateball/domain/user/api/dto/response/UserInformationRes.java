@@ -11,6 +11,8 @@ public record UserInformationRes(
         String age,
         @Schema(description = "사용자의 성별")
         String gender,
+        @Schema(description = "응원 팀")
+        String team,
         @Schema(description = "사용자의 직관 스타일")
         String style,
         @Schema(description = "사용자의 한 줄 소개")
@@ -21,6 +23,7 @@ public record UserInformationRes(
     public static UserInformationRes fromBase(UserInformationBaseRes userInformationBaseRes) {
         if (userInformationBaseRes == null) {
             return new UserInformationRes(
+                    null,
                     null,
                     null,
                     null,
@@ -39,6 +42,7 @@ public record UserInformationRes(
                 userInformationBaseRes.nickname(),
                 age,
                 Gender.from(userInformationBaseRes.gender()).getLabel(),
+                userInformationBaseRes.team(),
                 Style.from(userInformationBaseRes.style()).getLabel(),
                 userInformationBaseRes.introduction(),
                 userInformationBaseRes.imgUrl()
