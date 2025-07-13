@@ -40,7 +40,10 @@ public enum SwaggerResponseDescription {
     ),
     UPDATE_MATCH_REQUIREMENT(
             new LinkedHashSet<>(Set.of(USER_NOT_FOUND))
-    );
+    ),
+    POST_KAKAO_LOGIN(
+            new LinkedHashSet<>(Set.of(KAKAO_TOKEN_FETCH_FAILED, KAKAO_USER_INFO_FETCH_FAILED))
+    ),;
 
     private final Set<ErrorCode> commonErrorCodeList;
 

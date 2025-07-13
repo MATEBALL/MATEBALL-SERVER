@@ -2,15 +2,18 @@ package at.mateball.domain.auth.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.jwt.JwtCookieProvider;
+import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.domain.auth.api.dto.LoginCommand;
 import at.mateball.domain.auth.core.service.LoginService;
 import at.mateball.domain.auth.api.dto.LoginResult;
 import at.mateball.domain.auth.api.dto.LoginUserInfo;
 import at.mateball.exception.code.SuccessCode;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import at.mateball.common.swagger.SwaggerResponseDescription;
 
 import java.util.List;
 
@@ -24,6 +27,8 @@ public class OAuthController {
         this.loginService = loginService;
     }
 
+    @CustomExceptionDescription(SwaggerResponseDescription.POST_KAKAO_LOGIN)
+    @Operation(summary = "카카오 소셜 로그인")
     @PostMapping("/auth/login")
     public ResponseEntity<MateballResponse<?>> login(@RequestBody LoginCommand loginCommand) {
         LoginResult result = loginService.login(loginCommand);
