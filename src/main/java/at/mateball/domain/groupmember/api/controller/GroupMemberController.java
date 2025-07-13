@@ -46,6 +46,8 @@ public class GroupMemberController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }
 
+    @CustomExceptionDescription(SwaggerResponseDescription.NO_BUSINESS_ERROR)
+    @Operation(summary = "그룹 매칭 현황 조회")
     @GetMapping("/match-stage/group")
     public ResponseEntity<MateballResponse<?>> getGroupStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
