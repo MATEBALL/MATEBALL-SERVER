@@ -32,6 +32,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         user.nickname,
                         user.birthYear,
                         user.gender,
+                        matchRequirement.team,
                         matchRequirement.style,
                         user.introduction,
                         user.imgUrl
