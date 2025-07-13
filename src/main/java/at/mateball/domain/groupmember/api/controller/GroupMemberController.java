@@ -80,6 +80,8 @@ public class GroupMemberController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupMemberCountRes));
     }
 
+    @CustomExceptionDescription(SwaggerResponseDescription.GROUP_MATCHING)
+    @Operation(summary = "매칭 요청 상세 조회")
     @GetMapping("/match-detail/{matchId}")
     public ResponseEntity<MateballResponse<?>> getDetailMatching(
             @AuthenticationPrincipal CustomUserDetails userDetails,
