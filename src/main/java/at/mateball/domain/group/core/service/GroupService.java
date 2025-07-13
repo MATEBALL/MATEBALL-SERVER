@@ -119,7 +119,7 @@ public class GroupService {
         }
 
         if (permitRequestBaseRes.stream().anyMatch(dto ->
-                dto.groupId().equals(group.getId()) &&
+                !dto.groupId().equals(group.getId()) &&
                         dto.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue()
         )) {
             throw new BusinessException(BusinessErrorCode.ALREADY_HAS_PENDING_REQUEST);
@@ -207,19 +207,30 @@ public class GroupService {
         groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.AWAITING_APPROVAL.getValue());
         List<GroupMatchBaseRes> members = groupMemberRepository.findAllGroupMemberInfo(groupId);
 
-        Long requesterId = members.stream()
-                .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() && !m.isParticipant())
-                .map(GroupMatchBaseRes::userId)
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
+        Long requesterId = null;
+        Long totalParticipants = 0L;
+        Long awaitingApprovals = 0L;
 
-        Long totalParticipants = members.stream()
-                .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() || m.status() == GroupMemberStatus.NEW_REQUEST.getValue())
-                .count();
+        for (GroupMatchBaseRes m : members) {
+            int status = m.status();
+            boolean isParticipant = m.isParticipant();
 
-        Long awaitingApprovals = members.stream()
-                .filter(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() && m.isParticipant())
-                .count();
+            if (status == GroupMemberStatus.AWAITING_APPROVAL.getValue()) {
+                if (!isParticipant && requesterId == null) {
+                    requesterId = m.userId();
+                }
+                if (isParticipant) {
+                    awaitingApprovals++;
+                }
+                totalParticipants++;
+            } else if (status == GroupMemberStatus.NEW_REQUEST.getValue()) {
+                totalParticipants++;
+            }
+        }
+
+        if (requesterId == null) {
+            throw new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND);
+        }
 
         if (awaitingApprovals < totalParticipants - 1) {
             return;
