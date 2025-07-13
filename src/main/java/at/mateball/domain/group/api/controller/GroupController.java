@@ -64,6 +64,8 @@ public class GroupController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupCreateRes));
     }
 
+    @CustomExceptionDescription(SwaggerResponseDescription.POST_MATCHING)
+    @Operation(summary = "매칭 요청")
     @PostMapping("/match-request/{matchId}")
     public ResponseEntity<MateballResponse<?>> requestMatching(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
