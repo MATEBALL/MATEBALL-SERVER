@@ -2,6 +2,7 @@ package at.mateball.domain.groupmember.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
+import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.groupmember.api.dto.DetailMatchingListRes;
 import at.mateball.domain.groupmember.api.dto.DirectStatusListRes;
@@ -9,10 +10,12 @@ import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.GroupStatusListRes;
 import at.mateball.domain.groupmember.core.service.GroupMemberService;
 import at.mateball.exception.code.SuccessCode;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import at.mateball.common.swagger.SwaggerResponseDescription;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -23,6 +26,8 @@ public class GroupMemberController {
         this.groupMemberService = groupMemberService;
     }
 
+    @CustomExceptionDescription(SwaggerResponseDescription.NO_BUSINESS_ERROR)
+    @Operation(summary = "일대일 매칭 현황 조회")
     @GetMapping("/match-stage/direct")
     public ResponseEntity<MateballResponse<?>> getDirectStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
