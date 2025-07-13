@@ -11,7 +11,10 @@ import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.group.core.validator.GroupValidator;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.GroupMemberRes;
-import at.mateball.domain.groupmember.api.dto.base.*;
+import at.mateball.domain.groupmember.api.dto.base.DirectMatchBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.GroupMatchBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.RejectGroupMemberBaseRes;
 import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
@@ -30,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static at.mateball.domain.group.core.MatchType.DIRECT;
+import static at.mateball.domain.group.core.MatchType.GROUP;
 import static at.mateball.domain.group.core.validator.DateValidator.validate;
 
 @Service
@@ -41,8 +46,6 @@ public class GroupService {
     private final static int DIRECT_LIMIT = 3;
     private final static int GROUP_LIMIT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
-    private final static String GROUP = "GROUP";
-    private final static String DIRECT = "DIRECT";
 
     private final EntityManager entityManager;
 
@@ -283,9 +286,9 @@ public class GroupService {
     public CreateMatchRes createMatch(Long userId, Long gameId, String matchType) {
         validateMatchType(matchType);
 
-        boolean isGroup = matchType.equalsIgnoreCase(GROUP);
+        boolean isGroup = matchType.equalsIgnoreCase(String.valueOf(GROUP));
 
-       GroupMemberRes info = groupMemberRepository.getMatchingInfo(userId, gameId, isGroup)
+        GroupMemberRes info = groupMemberRepository.getMatchingInfo(userId, gameId, isGroup)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GAME_NOT_FOUND));
 
         if (LocalDate.now().isAfter(info.gameDate())) {
@@ -311,7 +314,7 @@ public class GroupService {
     }
 
     private void validateMatchType(String matchType) {
-        if (!GROUP.equalsIgnoreCase(matchType) && !DIRECT.equalsIgnoreCase(matchType)) {
+        if (!String.valueOf(GROUP).equalsIgnoreCase(matchType) && !String.valueOf(DIRECT).equalsIgnoreCase(matchType)) {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MATCH_TYPE);
         }
     }
