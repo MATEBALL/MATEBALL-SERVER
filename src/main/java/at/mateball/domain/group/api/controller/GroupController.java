@@ -119,7 +119,8 @@ public class GroupController {
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
     }
 
-
+    @CustomExceptionDescription(SwaggerResponseDescription.PATCH_MATCH_REJECT)
+    @Operation(summary = "매칭 생성 api")
     @PostMapping("/match")
     public ResponseEntity<MateballResponse<?>> createMatch(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,

@@ -6,9 +6,7 @@ import lombok.Getter;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import static at.mateball.exception.code.BusinessErrorCode.DUPLICATED_NICKNAME;
-import static at.mateball.exception.code.BusinessErrorCode.USER_NOT_FOUND;
-import static at.mateball.exception.code.BusinessErrorCode.GROUP_NOT_FOUND;
+
 import static at.mateball.exception.code.BusinessErrorCode.*;
 import static at.mateball.exception.code.CommonErrorCode.*;
 
@@ -16,7 +14,7 @@ import static at.mateball.exception.code.CommonErrorCode.*;
 public enum SwaggerResponseDescription {
 
     UPDATE_NICKNAME(
-            new LinkedHashSet<>(Set.of(USER_NOT_FOUND, DUPLICATED_NICKNAME))
+            new LinkedHashSet<>(Set.of(USER_NOT_FOUND, DUPLICATED_NICKNAME, INVALID_NICKNAME_LENGTH, NICKNAME_CONTAINS_WHITESPACE, INVALID_NICKNAME_CHARACTER))
     ),
 
     DIRECT_MATCHING(
@@ -56,6 +54,9 @@ public enum SwaggerResponseDescription {
     ),
     GROUP_DATE(
             new HashSet<>(Set.of(GROUP_NOT_FOUND, BAD_REQUEST_MONDAY, BAD_REQUEST_DATE, BAD_REQUEST_PAST))
+    ),
+    CREATE_MATCH(
+            new HashSet<>(Set.of(DUPLICATE_MATCHING_ON_SAME_DATE,EXCEED_GROUP_MATCHING_LIMIT,EXCEED_DIRECT_MATCHING_LIMIT))
     ),
     NO_BUSINESS_ERROR(
             new LinkedHashSet<>(Set.of())
