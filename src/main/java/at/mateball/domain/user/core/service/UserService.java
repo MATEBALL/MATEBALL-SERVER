@@ -1,7 +1,8 @@
 package at.mateball.domain.user.core.service;
 
+import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
-import at.mateball.domain.user.api.dto.request.UserInfoReq;
+import at.mateball.domain.matchrequirement.core.repository.MatchRequirementRepository;
 import at.mateball.domain.user.api.dto.response.KaKaoInformationRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.User;
@@ -13,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,6 +25,7 @@ import static at.mateball.exception.code.BusinessErrorCode.*;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final MatchRequirementRepository matchRequirementRepository;
     private final S3UploadService s3UploadService;
 
     public KaKaoInformationRes getKakaoInformation(final Long userId) {
@@ -60,6 +61,11 @@ public class UserService {
     public UserInformationRes getUserInformation(Long userId) {
         userRepository.getUser(userId);
 
+        MatchRequirement matchRequirement = matchRequirementRepository.findUserMatchRequirement(userId);
+        if (matchRequirement == null) {
+            throw new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND);
+        }
+
         return userRepository.findUserInformation(userId);
     }
 
@@ -67,7 +73,6 @@ public class UserService {
         return userRepository.getUser(userId).orElseThrow(()
                 -> new BusinessException(USER_NOT_FOUND));
     }
-
 
     @Transactional
     public void createUserInfo(Long userId, String gender, int birthYear) {
