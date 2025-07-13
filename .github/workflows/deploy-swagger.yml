@@ -18,6 +18,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Give execute permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Build and run Spring Boot app
         run: |
           ./gradlew bootJar -x test
@@ -33,12 +36,19 @@ jobs:
           git clone https://x-access-token:${{ secrets.SWAGGER_REPO_TOKEN }}@github.com/MATEBALL/MATEBALL-SWAGGER.git
           cp swagger.yaml MATEBALL-SWAGGER/swagger.yaml
 
+      - name: Generate swagger.yaml from running server
+        run: |
+          for i in {1..10}; do
+            curl -f http://localhost:8080/actuator/health && break
+            echo "Waiting for server..."
+            sleep 5
+          done
+          curl http://localhost:8080/v3/api-docs.yaml -o swagger.yaml
+
       - name: Commit and push updated swagger.yaml
         run: |
           cd MATEBALL-SWAGGER
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add swagger.yaml
-          git commit -m "update: swagger.yaml from MATEBALL-SERVER"
-          git push
-
+          git diff --quiet && echo "No changes to commit" || (git commit -m "update: swagger.yaml from MATEBALL-SERVER" && git push)
