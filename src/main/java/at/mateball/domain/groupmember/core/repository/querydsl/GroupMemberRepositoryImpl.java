@@ -478,7 +478,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
 
         Tuple tuple = queryFactory
                 .select(
-                        groupMember.count(),
+                        groupMember.countDistinct(),
                         JPAExpressions.selectOne()
                                 .from(groupMember)
                                 .join(groupMember.group, group)
@@ -498,7 +498,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 )
                 .fetchOne();
 
-        Long totalMatches = tuple != null ? tuple.get(groupMember.count()) : 0L;
+        Long totalMatches = tuple != null ? tuple.get(groupMember.countDistinct()) : 0L;
         boolean hasMatchOnSameDate = tuple != null && Boolean.TRUE.equals(tuple.get(1, Boolean.class));
 
         return Optional.of(new GroupMemberBaseRes(gameDate, totalMatches, hasMatchOnSameDate));
