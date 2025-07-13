@@ -93,6 +93,8 @@ public class GroupMemberController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, detailMatchingListRes));
     }
 
+    @CustomExceptionDescription(SwaggerResponseDescription.GROUP_MATCHING)
+    @Operation(summary = "승인완료에서 요청대기중으로 상태 변화")
     @PatchMapping("/match-stage/{matchId}")
     public ResponseEntity<MateballResponse<?>> updateStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
