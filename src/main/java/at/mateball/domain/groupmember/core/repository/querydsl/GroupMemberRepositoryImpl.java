@@ -5,16 +5,15 @@ import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
+import at.mateball.domain.groupmember.api.dto.GroupMemberRes;
 import at.mateball.domain.groupmember.api.dto.base.*;
 import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
@@ -467,40 +466,45 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public Optional<GroupMemberBaseRes> getMatchingInfo(Long userId, Long gameId, boolean isGroup) {
+    public Optional<GroupMemberRes> getMatchingInfo(Long userId, Long gameId, boolean isGroup) {
         LocalDate gameDate = queryFactory
                 .select(game.gameDate)
                 .from(game)
                 .where(game.id.eq(gameId))
-                .fetchFirst();
+                .fetchOne();
 
-        if (gameDate == null) return Optional.empty();
+        if (gameDate == null) {
+            return Optional.empty();
+        }
 
-        Tuple tuple = queryFactory
-                .select(
-                        groupMember.countDistinct(),
-                        JPAExpressions.selectOne()
-                                .from(groupMember)
-                                .join(groupMember.group, group)
-                                .where(
-                                        groupMember.user.id.eq(userId),
-                                        groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue()),
-                                        group.gameInformation.gameDate.eq(gameDate)
-                                )
-                                .limit(1)
-                )
+        Long totalMatches = queryFactory
+                .select(groupMember.countDistinct())
                 .from(groupMember)
                 .join(groupMember.group, group)
                 .where(
                         groupMember.user.id.eq(userId),
                         groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue()),
+                        groupMember.group.gameInformation.id.eq(gameId),
                         group.isGroup.eq(isGroup)
                 )
                 .fetchOne();
 
-        Long totalMatches = tuple != null ? tuple.get(groupMember.countDistinct()) : 0L;
-        boolean hasMatchOnSameDate = tuple != null && Boolean.TRUE.equals(tuple.get(1, Boolean.class));
+        Boolean hasMatchOnSameDate = queryFactory
+                .selectOne()
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(group.gameInformation, game)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue()),
+                        game.gameDate.eq(gameDate)
+                )
+                .fetchFirst() != null;
 
-        return Optional.of(new GroupMemberBaseRes(gameDate, totalMatches, hasMatchOnSameDate));
+        return Optional.of(new GroupMemberRes(
+                gameDate,
+                totalMatches != null ? totalMatches : 0L,
+                hasMatchOnSameDate
+        ));
     }
 }

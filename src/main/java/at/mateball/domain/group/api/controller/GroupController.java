@@ -8,6 +8,7 @@ import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.core.service.GroupService;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -114,7 +115,7 @@ public class GroupController {
     @PostMapping("/match")
     public ResponseEntity<MateballResponse<?>> createMatch(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @NotNull @RequestBody CreateMatchReq createMatchReq
+            @Valid @RequestBody CreateMatchReq createMatchReq
     ) {
         Long userId = customUserDetails.getUserId();
 
