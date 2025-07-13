@@ -4,10 +4,7 @@ import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
 import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.SwaggerResponseDescription;
-import at.mateball.domain.group.api.dto.DirectCreateRes;
-import at.mateball.domain.group.api.dto.DirectGetListRes;
-import at.mateball.domain.group.api.dto.GroupCreateRes;
-import at.mateball.domain.group.api.dto.GroupGetListRes;
+import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.core.service.GroupService;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -111,5 +108,18 @@ public class GroupController {
         groupService.rejectRequest(userId, matchId);
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
+    }
+
+
+    @PostMapping("/match")
+    public ResponseEntity<MateballResponse<?>> createMatch(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @NotNull @RequestBody CreateMatchReq createMatchReq
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        CreateMatchRes createMatchRes = groupService.createMatch(userId, createMatchReq.gameId(), createMatchReq.matchType());
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, createMatchRes));
     }
 }
