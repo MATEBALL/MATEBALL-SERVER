@@ -12,6 +12,7 @@ import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface GroupMemberRepositoryCustom {
     Map<Long, Integer> findGroupMemberCountMap(List<Long> groupIds);
@@ -54,9 +55,11 @@ public interface GroupMemberRepositoryCustom {
 
     List<GroupMatchBaseRes> findAllGroupMemberInfo(Long groupId);
 
-    List<GroupMemberBaseRes> getGroupMember(Long groupId);
+    List<RejectGroupMemberBaseRes> getGroupMember(Long groupId);
 
     void updateAllGroupMemberStatus(Long groupId, Long requesterId);
 
     boolean updateMyStatusFromApprovedToRequest(Long userId, Long matchId);
+
+    Optional<GroupMemberBaseRes> getMatchingInfo(Long userId, Long gameId, boolean isGroup);
 }

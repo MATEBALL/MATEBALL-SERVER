@@ -6,10 +6,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public class GameInformationRepositoryImpl implements GameInformationRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+    QGameInformation game = QGameInformation.gameInformation;
 
     public GameInformationRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -23,5 +25,14 @@ public class GameInformationRepositoryImpl implements GameInformationRepositoryC
                 .selectFrom(gameInformation)
                 .where(gameInformation.gameDate.eq(gameDate))
                 .fetch();
+    }
+
+    @Override
+    public Optional<LocalDate> findGameDateById(Long gameId) {
+        return Optional.ofNullable(queryFactory
+                .select(game.gameDate)
+                .from(game)
+                .where(game.id.eq(gameId))
+                .fetchFirst());
     }
 }
