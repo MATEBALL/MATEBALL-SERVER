@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ import static at.mateball.exception.code.BusinessErrorCode.*;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final S3UploadService s3UploadService;
 
     public KaKaoInformationRes getKakaoInformation(final Long userId) {
         User user = userRepository.findById(userId)
@@ -79,6 +81,9 @@ public class UserService {
             throw new BusinessException(AGE_NOT_APPROPRIATE);
         }
         Gender genderStatus = Gender.fromLabel(gender);
+
+        user.updateProfileImage("https://mateball-file.s3.ap-northeast-2.amazonaws.com/profile.jpg");
+        user.updateIntroduction("메잇볼이 선택한 너");
         user.updateGenderAndBirthYear(genderStatus, birthYear);
     }
 }

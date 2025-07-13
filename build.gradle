@@ -61,6 +61,9 @@ dependencies {
 
 	// Scheduling
 	implementation 'org.springframework.boot:spring-boot-starter-quartz'
+
+	// S3
+	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 }
 
 tasks.named('test') {
