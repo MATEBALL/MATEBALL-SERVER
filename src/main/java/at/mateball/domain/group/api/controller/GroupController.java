@@ -27,7 +27,7 @@ public class GroupController {
 
     @GetMapping("/direct/{matchId}")
     @CustomExceptionDescription(SwaggerResponseDescription.DIRECT_MATCHING)
-    @Operation(summary = "일대일 매칭 생성 결과 조회")
+    @Operation(summary = "일대일 매칭 생성 결과 조회 api")
     public ResponseEntity<MateballResponse<?>> getDirectMatching(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @NotNull @PathVariable Long matchId
@@ -40,7 +40,7 @@ public class GroupController {
 
     @GetMapping("/direct")
     @CustomExceptionDescription(SwaggerResponseDescription.DIRECT_MATCH)
-    @Operation(summary = "일대일 매칭 리스트 반환")
+    @Operation(summary = "일대일 매칭 리스트 조회 api")
     public ResponseEntity<MateballResponse<?>> getDirects(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @NotNull @RequestParam LocalDate date
@@ -53,7 +53,7 @@ public class GroupController {
 
     @GetMapping("/group/{matchId}")
     @CustomExceptionDescription(SwaggerResponseDescription.GROUP_MATCHING)
-    @Operation(summary = "그룹 매칭 생성 결과 화면입니다.")
+    @Operation(summary = "그룹 매칭 생성 결과 조회 api")
     public ResponseEntity<MateballResponse<?>> getGroupMatching(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @NotNull @PathVariable Long matchId
@@ -65,7 +65,7 @@ public class GroupController {
     }
 
     @CustomExceptionDescription(SwaggerResponseDescription.GROUP_DATE)
-    @Operation(summary = "매칭 요청")
+    @Operation(summary = "매칭 요청 api")
     @PostMapping("/match-request/{matchId}")
     public ResponseEntity<MateballResponse<?>> requestMatching(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -79,7 +79,7 @@ public class GroupController {
     }
 
     @CustomExceptionDescription(SwaggerResponseDescription.NO_BUSINESS_ERROR)
-    @Operation(summary = "그룹 매칭 리스트 조회")
+    @Operation(summary = "그룹 매칭 리스트 조회 api")
     @GetMapping("/group")
     public ResponseEntity<MateballResponse<?>> getGroups(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -92,7 +92,7 @@ public class GroupController {
     }
 
     @CustomExceptionDescription(SwaggerResponseDescription.PATCH_MATCH_ACCEPT)
-    @Operation(summary = "요청 수락")
+    @Operation(summary = "요청 수락 api")
     @PatchMapping("/match-accept/{matchId}")
     public ResponseEntity<MateballResponse<?>> permitRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -106,7 +106,7 @@ public class GroupController {
     }
 
     @CustomExceptionDescription(SwaggerResponseDescription.PATCH_MATCH_REJECT)
-    @Operation(summary = "요청 거절")
+    @Operation(summary = "요청 거절 api")
     @PatchMapping("/match-reject/{matchId}")
     public ResponseEntity<MateballResponse<?>> rejectRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,

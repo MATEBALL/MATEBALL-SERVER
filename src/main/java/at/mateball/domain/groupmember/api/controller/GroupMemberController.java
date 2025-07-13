@@ -27,7 +27,7 @@ public class GroupMemberController {
     }
 
     @CustomExceptionDescription(SwaggerResponseDescription.NO_BUSINESS_ERROR)
-    @Operation(summary = "일대일 매칭 현황 조회")
+    @Operation(summary = "일대일 매칭 현황 조회 api")
     @GetMapping("/match-stage/direct")
     public ResponseEntity<MateballResponse<?>> getDirectStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -47,7 +47,7 @@ public class GroupMemberController {
     }
 
     @CustomExceptionDescription(SwaggerResponseDescription.NO_BUSINESS_ERROR)
-    @Operation(summary = "그룹 매칭 현황 조회")
+    @Operation(summary = "그룹 매칭 현황 조회 api")
     @GetMapping("/match-stage/group")
     public ResponseEntity<MateballResponse<?>> getGroupStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -67,7 +67,7 @@ public class GroupMemberController {
     }
 
     @CustomExceptionDescription(SwaggerResponseDescription.GROUP_MATCHING)
-    @Operation(summary = "매칭된 인원 조회")
+    @Operation(summary = "매칭된 인원 조회 api")
     @GetMapping("/num-count/{matchId}")
     public ResponseEntity<MateballResponse<?>> countGroupMember(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -94,7 +94,7 @@ public class GroupMemberController {
     }
 
     @CustomExceptionDescription(SwaggerResponseDescription.GROUP_MATCHING)
-    @Operation(summary = "승인완료에서 요청대기중으로 상태 변화")
+    @Operation(summary = "승인완료에서 요청대기중으로 상태 변화 api")
     @PatchMapping("/match-stage/{matchId}")
     public ResponseEntity<MateballResponse<?>> updateStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
