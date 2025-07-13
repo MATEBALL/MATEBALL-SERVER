@@ -19,10 +19,6 @@ public class CorsConfig {
                 "https://mateball.co.kr",
                 "http://localhost:5173",
                 "https://dev.mateball.co.kr"
-/*                "https://mateball.co.kr",*/
-                "http://localhost:5173",
-                "https://mateball.co.kr:5173",
-                "https://dev.mateball.co.kr"
         ));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
