@@ -91,6 +91,8 @@ public class GroupController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupGetListRes));
     }
 
+    @CustomExceptionDescription(SwaggerResponseDescription.PATCH_MATCH_ACCEPT)
+    @Operation(summary = "요청 수락")
     @PatchMapping("/match-accept/{matchId}")
     public ResponseEntity<MateballResponse<?>> permitRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
