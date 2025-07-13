@@ -40,6 +40,8 @@ public class GroupService {
     private final static int DIRECT_LIMIT = 3;
     private final static int GROUP_LIMIT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
+    private final static String GROUP = "GROUP";
+    private final static String DIRECT = "DIRECT";
 
     private final EntityManager entityManager;
 
@@ -281,7 +283,7 @@ public class GroupService {
     public CreateMatchRes createMatch(Long userId, Long gameId, String matchType) {
         validateMatchType(matchType);
 
-        boolean isGroup = matchType.equalsIgnoreCase("GROUP");
+        boolean isGroup = matchType.equalsIgnoreCase(GROUP);
 
        GroupMemberBaseRes info = groupMemberRepository.getMatchingInfo(userId, gameId, isGroup)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GAME_NOT_FOUND));
@@ -309,7 +311,7 @@ public class GroupService {
     }
 
     private void validateMatchType(String matchType) {
-        if (!"GROUP".equalsIgnoreCase(matchType) && !"DIRECT".equalsIgnoreCase(matchType)) {
+        if (!GROUP.equalsIgnoreCase(matchType) && !DIRECT.equalsIgnoreCase(matchType)) {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MATCH_TYPE);
         }
     }
