@@ -10,6 +10,7 @@ import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.group.core.validator.GroupValidator;
 import at.mateball.domain.groupmember.GroupMemberStatus;
+import at.mateball.domain.groupmember.api.dto.GroupMemberRes;
 import at.mateball.domain.groupmember.api.dto.base.*;
 import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
@@ -279,21 +280,13 @@ public class GroupService {
         groupMemberRepository.updateAllGroupMemberStatus(matchId, requesterId);
     }
 
-    @Transactional
     public CreateMatchRes createMatch(Long userId, Long gameId, String matchType) {
         validateMatchType(matchType);
 
         boolean isGroup = matchType.equalsIgnoreCase(GROUP);
 
-       GroupMemberBaseRes info = groupMemberRepository.getMatchingInfo(userId, gameId, isGroup)
+       GroupMemberRes info = groupMemberRepository.getMatchingInfo(userId, gameId, isGroup)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GAME_NOT_FOUND));
-
-        if (isGroup ? info.totalMatches() >= GROUP_LIMIT : info.totalMatches() >= DIRECT_LIMIT) {
-            throw new BusinessException(
-                    isGroup ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
-                            : BusinessErrorCode.EXCEED_DIRECT_MATCHING_LIMIT
-            );
-        }
 
         if (LocalDate.now().isAfter(info.gameDate())) {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_PAST);
@@ -307,6 +300,13 @@ public class GroupService {
             throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
         }
 
+        if (isGroup ? info.totalMatches() >= GROUP_LIMIT : info.totalMatches() >= DIRECT_LIMIT) {
+            throw new BusinessException(
+                    isGroup ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
+                            : BusinessErrorCode.EXCEED_DIRECT_MATCHING_LIMIT
+            );
+        }
+
         return new CreateMatchRes(createGroup(userId, gameId, isGroup));
     }
 
@@ -316,7 +316,8 @@ public class GroupService {
         }
     }
 
-    private Long createGroup(Long userId, Long gameId, boolean isGroup) {
+    @Transactional
+    protected Long createGroup(Long userId, Long gameId, boolean isGroup) {
         User user = entityManager.getReference(User.class, userId);
         GameInformation game = entityManager.getReference(GameInformation.class, gameId);
 

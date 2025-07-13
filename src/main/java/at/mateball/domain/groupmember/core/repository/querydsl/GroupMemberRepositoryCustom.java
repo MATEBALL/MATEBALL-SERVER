@@ -5,7 +5,7 @@ import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.base.*;
 import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
-import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
+import at.mateball.domain.groupmember.api.dto.GroupMemberRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
 
@@ -61,5 +61,5 @@ public interface GroupMemberRepositoryCustom {
 
     boolean updateMyStatusFromApprovedToRequest(Long userId, Long matchId);
 
-    Optional<GroupMemberBaseRes> getMatchingInfo(Long userId, Long gameId, boolean isGroup);
+    Optional<GroupMemberRes> getMatchingInfo(Long userId, Long gameId, boolean isGroup);
 }
