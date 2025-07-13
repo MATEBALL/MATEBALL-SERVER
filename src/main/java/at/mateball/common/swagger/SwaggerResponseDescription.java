@@ -34,7 +34,7 @@ public enum SwaggerResponseDescription {
             new LinkedHashSet<>(Set.of(USER_NOT_FOUND, AGE_NOT_APPROPRIATE))
     ),
     GET_USER_INFORMATION(
-            new LinkedHashSet<>(Set.of(USER_NOT_FOUND))
+            new LinkedHashSet<>(Set.of(USER_NOT_FOUND, AGE_NOT_APPROPRIATE))
     ),
     GET_GAME_INFORMATION(
             new LinkedHashSet<>(Set.of(USER_NOT_FOUND))
@@ -43,16 +43,19 @@ public enum SwaggerResponseDescription {
             new LinkedHashSet<>(Set.of(USER_NOT_FOUND))
     ),
     POST_KAKAO_LOGIN(
-            new LinkedHashSet<>(Set.of(KAKAO_TOKEN_FETCH_FAILED, KAKAO_USER_INFO_FETCH_FAILED))
+            new LinkedHashSet<>(Set.of(KAKAO_TOKEN_FETCH_FAILED, KAKAO_USER_INFO_FETCH_FAILED, ALREADY_COMPLETED_GROUP))
     ),
     PATCH_MATCH_ACCEPT(
             new LinkedHashSet<>(Set.of(GROUP_NOT_FOUND, NOT_GROUP_MEMBER))
     ),
     PATCH_MATCH_REJECT(
-            new HashSet<>(Set.of(NOT_GROUP_MEMBER, USER_NOT_FOUND))
+            new HashSet<>(Set.of(NOT_GROUP_MEMBER, USER_NOT_FOUND, GROUP_NOT_FOUND))
     ),
     POST_USER_INFO(
-            new HashSet<>(Set.of(USER_NOT_FOUND, AGE_NOT_APPROPRIATE))
+            new HashSet<>(Set.of(AGE_NOT_APPROPRIATE))
+    ),
+    GROUP_DATE(
+            new HashSet<>(Set.of(GROUP_NOT_FOUND, BAD_REQUEST_MONDAY, BAD_REQUEST_DATE, BAD_REQUEST_PAST))
     ),
     NO_BUSINESS_ERROR(
             new LinkedHashSet<>(Set.of())
