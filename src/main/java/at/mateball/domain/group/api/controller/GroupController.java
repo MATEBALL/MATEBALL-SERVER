@@ -107,6 +107,8 @@ public class GroupController {
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
     }
 
+    @CustomExceptionDescription(SwaggerResponseDescription.PATCH_MATCH_ACCEPT)
+    @Operation(summary = "요청 거절")
     @PatchMapping("/match-reject/{matchId}")
     public ResponseEntity<MateballResponse<?>> rejectRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
