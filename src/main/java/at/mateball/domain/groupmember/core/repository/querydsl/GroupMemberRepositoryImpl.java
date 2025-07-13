@@ -11,14 +11,17 @@ import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
@@ -27,6 +30,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
 
     QGroupMember groupMember = QGroupMember.groupMember;
     QGroup group = QGroup.group;
+    QGameInformation game = QGameInformation.gameInformation;
 
     public GroupMemberRepositoryImpl(JPAQueryFactory queryFactory, EntityManager entityManager) {
         this.queryFactory = queryFactory;
@@ -423,10 +427,10 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public List<GroupMemberBaseRes> getGroupMember(Long groupId) {
+    public List<RejectGroupMemberBaseRes> getGroupMember(Long groupId) {
         return queryFactory
                 .select(Projections.constructor(
-                        GroupMemberBaseRes.class,
+                        RejectGroupMemberBaseRes.class,
                         groupMember.user.id,
                         groupMember.status
                 ))
@@ -460,5 +464,43 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .execute();
 
         return updatedCount > 0;
+    }
+
+    @Override
+    public Optional<GroupMemberBaseRes> getMatchingInfo(Long userId, Long gameId, boolean isGroup) {
+        LocalDate gameDate = queryFactory
+                .select(game.gameDate)
+                .from(game)
+                .where(game.id.eq(gameId))
+                .fetchFirst();
+
+        if (gameDate == null) return Optional.empty();
+
+        Tuple tuple = queryFactory
+                .select(
+                        groupMember.count(),
+                        JPAExpressions.selectOne()
+                                .from(groupMember)
+                                .join(groupMember.group, group)
+                                .where(
+                                        groupMember.user.id.eq(userId),
+                                        groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue()),
+                                        group.gameInformation.gameDate.eq(gameDate)
+                                )
+                                .limit(1)
+                )
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue()),
+                        group.isGroup.eq(isGroup)
+                )
+                .fetchOne();
+
+        Long totalMatches = tuple != null ? tuple.get(groupMember.count()) : 0L;
+        boolean hasMatchOnSameDate = tuple != null && Boolean.TRUE.equals(tuple.get(1, Boolean.class));
+
+        return Optional.of(new GroupMemberBaseRes(gameDate, totalMatches, hasMatchOnSameDate));
     }
 }

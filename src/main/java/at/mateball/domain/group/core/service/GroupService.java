@@ -1,5 +1,7 @@
 package at.mateball.domain.group.core.service;
 
+import at.mateball.domain.gameinformation.core.GameInformation;
+import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
@@ -8,19 +10,20 @@ import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.group.core.validator.GroupValidator;
 import at.mateball.domain.groupmember.GroupMemberStatus;
-import at.mateball.domain.groupmember.api.dto.base.DirectMatchBaseRes;
-import at.mateball.domain.groupmember.api.dto.base.GroupMatchBaseRes;
-import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
-import at.mateball.domain.groupmember.api.dto.base.GroupMemberBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.*;
+import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
+import at.mateball.domain.user.core.User;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +41,13 @@ public class GroupService {
     private final static int GROUP_LIMIT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
 
-    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService) {
+    private final EntityManager entityManager;
+
+    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, GameInformationRepository gameInformationRepository, MatchRequirementService matchRequirementService, EntityManager entityManager) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.matchRequirementService = matchRequirementService;
+        this.entityManager = entityManager;
     }
 
     public DirectCreateRes getDirectMatching(Long userId, Long matchId) {
@@ -128,7 +134,7 @@ public class GroupService {
         if (permitRequestBaseRes.stream().anyMatch(dto ->
                 dto.status() != GroupMemberStatus.MATCH_FAILED.getValue()
         )) {
-            throw new BusinessException(BusinessErrorCode.DUPLICATE_REQUEST_ON_SAME_DATE);
+            throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
         }
 
         long pendingRequestCount = permitRequestBaseRes.stream()
@@ -251,9 +257,10 @@ public class GroupService {
             groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
         }
     }
+
     @Transactional
     public void rejectRequest(Long userId, Long matchId) {
-        List<GroupMemberBaseRes> members = groupMemberRepository.getGroupMember(matchId);
+        List<RejectGroupMemberBaseRes> members = groupMemberRepository.getGroupMember(matchId);
 
         boolean isGroupMember = members.stream()
                 .anyMatch(member -> member.userId().equals(userId));
@@ -263,10 +270,60 @@ public class GroupService {
 
         Long requesterId = members.stream()
                 .filter(member -> member.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue())
-                .map(GroupMemberBaseRes::userId)
+                .map(RejectGroupMemberBaseRes::userId)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
 
         groupMemberRepository.updateAllGroupMemberStatus(matchId, requesterId);
+    }
+
+    @Transactional
+    public CreateMatchRes createMatch(Long userId, Long gameId, String matchType) {
+        validateMatchType(matchType);
+
+        boolean isGroup = matchType.equalsIgnoreCase("GROUP");
+
+       GroupMemberBaseRes info = groupMemberRepository.getMatchingInfo(userId, gameId, isGroup)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GAME_NOT_FOUND));
+
+        if (isGroup ? info.totalMatches() >= GROUP_LIMIT : info.totalMatches() >= DIRECT_LIMIT) {
+            throw new BusinessException(
+                    isGroup ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
+                            : BusinessErrorCode.EXCEED_DIRECT_MATCHING_LIMIT
+            );
+        }
+
+        if (LocalDate.now().isAfter(info.gameDate())) {
+            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_PAST);
+        }
+
+        if (LocalDate.now().isBefore(info.gameDate().minusDays(2))) {
+            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MATCHING_DATE);
+        }
+
+        if (info.hasMatchOnSameDate()) {
+            throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
+        }
+
+        return new CreateMatchRes(createGroup(userId, gameId, isGroup));
+    }
+
+    private void validateMatchType(String matchType) {
+        if (!"GROUP".equalsIgnoreCase(matchType) && !"DIRECT".equalsIgnoreCase(matchType)) {
+            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MATCH_TYPE);
+        }
+    }
+
+    private Long createGroup(Long userId, Long gameId, boolean isGroup) {
+        User user = entityManager.getReference(User.class, userId);
+        GameInformation game = entityManager.getReference(GameInformation.class, gameId);
+
+        Group group = new Group(user, game, LocalDateTime.now(), GroupStatus.PENDING.getValue(), isGroup);
+        entityManager.persist(group);
+
+        GroupMember leader = new GroupMember(user, group, true, GroupMemberStatus.PENDING_REQUEST.getValue());
+        entityManager.persist(leader);
+
+        return group.getId();
     }
 }
