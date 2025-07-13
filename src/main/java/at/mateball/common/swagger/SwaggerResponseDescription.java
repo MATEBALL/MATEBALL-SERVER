@@ -53,7 +53,7 @@ public enum SwaggerResponseDescription {
     ),
     NO_BUSINESS_ERROR(
             new LinkedHashSet<>(Set.of())
-    ),;
+    );
 
     private final Set<ErrorCode> commonErrorCodeList;
 

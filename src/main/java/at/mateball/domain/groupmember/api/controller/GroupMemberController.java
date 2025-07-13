@@ -66,6 +66,8 @@ public class GroupMemberController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }
 
+    @CustomExceptionDescription(SwaggerResponseDescription.GROUP_MATCHING)
+    @Operation(summary = "매칭된 인원 조회")
     @GetMapping("/num-count/{matchId}")
     public ResponseEntity<MateballResponse<?>> countGroupMember(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
