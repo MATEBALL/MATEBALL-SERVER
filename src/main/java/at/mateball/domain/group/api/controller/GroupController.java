@@ -64,7 +64,7 @@ public class GroupController {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, groupCreateRes));
     }
 
-    @CustomExceptionDescription(SwaggerResponseDescription.NO_BUSINESS_ERROR)
+    @CustomExceptionDescription(SwaggerResponseDescription.GROUP_DATE)
     @Operation(summary = "매칭 요청")
     @PostMapping("/match-request/{matchId}")
     public ResponseEntity<MateballResponse<?>> requestMatching(
@@ -105,7 +105,7 @@ public class GroupController {
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
     }
 
-    @CustomExceptionDescription(SwaggerResponseDescription.PATCH_MATCH_ACCEPT)
+    @CustomExceptionDescription(SwaggerResponseDescription.PATCH_MATCH_REJECT)
     @Operation(summary = "요청 거절")
     @PatchMapping("/match-reject/{matchId}")
     public ResponseEntity<MateballResponse<?>> rejectRequest(
