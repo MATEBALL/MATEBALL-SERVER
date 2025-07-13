@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static at.mateball.exception.code.BusinessErrorCode.*;
@@ -69,6 +70,12 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
+        int currentYear = LocalDate.now().getYear();
+        int age = currentYear - birthYear;
+
+        if (age < 19) {
+            throw new BusinessException(AGE_NOT_APPROPRIATE);
+        }
         Gender genderStatus = Gender.fromLabel(gender);
         user.updateGenderAndBirthYear(genderStatus, birthYear);
     }
