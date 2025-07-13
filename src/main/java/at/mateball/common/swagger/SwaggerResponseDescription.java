@@ -3,6 +3,7 @@ package at.mateball.common.swagger;
 import at.mateball.exception.code.ErrorCode;
 import lombok.Getter;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import static at.mateball.exception.code.BusinessErrorCode.DUPLICATED_NICKNAME;
@@ -46,6 +47,9 @@ public enum SwaggerResponseDescription {
     ),
     PATCH_MATCH_ACCEPT(
             new LinkedHashSet<>(Set.of(GROUP_NOT_FOUND, NOT_GROUP_MEMBER))
+    ),
+    PATCH_MATCH_REJECT(
+            new HashSet<>(Set.of(NOT_GROUP_MEMBER, USER_NOT_FOUND))
     ),
     NO_BUSINESS_ERROR(
             new LinkedHashSet<>(Set.of())
