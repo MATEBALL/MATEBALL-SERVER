@@ -1,10 +1,13 @@
 package at.mateball.domain.user.api.dto.request;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 public record UserInfoReq(
+        @Enumerated(EnumType.STRING)
         @NotBlank(message = "성별은 필수 입력해야합니다.")
         String gender,
 
