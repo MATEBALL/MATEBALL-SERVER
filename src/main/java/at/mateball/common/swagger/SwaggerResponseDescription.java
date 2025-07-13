@@ -44,7 +44,7 @@ public enum SwaggerResponseDescription {
     POST_KAKAO_LOGIN(
             new LinkedHashSet<>(Set.of(KAKAO_TOKEN_FETCH_FAILED, KAKAO_USER_INFO_FETCH_FAILED))
     ),
-    POST_MATCHING(
+    NO_BUSINESS_ERROR(
             new LinkedHashSet<>(Set.of())
     ),;
 
