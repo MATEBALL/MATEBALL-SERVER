@@ -2,6 +2,7 @@ package at.mateball.domain.user.api.dto.response;
 
 import at.mateball.domain.matchrequirement.core.constant.Gender;
 import at.mateball.domain.matchrequirement.core.constant.Style;
+import at.mateball.domain.team.core.TeamName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record UserInformationRes(
@@ -37,12 +38,13 @@ public record UserInformationRes(
         String age = (birthYear != null)
                 ? (java.time.LocalDate.now().getYear() - birthYear + 1) + "세"
                 : null;
+        String team = TeamName.from(userInformationBaseRes.team()).getLabel();
 
         return new UserInformationRes(
                 userInformationBaseRes.nickname(),
                 age,
                 Gender.from(userInformationBaseRes.gender()).getLabel(),
-                userInformationBaseRes.team(),
+                team,
                 Style.from(userInformationBaseRes.style()).getLabel(),
                 userInformationBaseRes.introduction(),
                 userInformationBaseRes.imgUrl()

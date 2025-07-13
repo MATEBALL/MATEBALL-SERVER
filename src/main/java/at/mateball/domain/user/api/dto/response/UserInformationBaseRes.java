@@ -4,7 +4,7 @@ public record UserInformationBaseRes(
         String nickname,
         Integer birthYear,
         String gender,
-        String team,
+        Integer team,
         Integer style,
         String introduction,
         String imgUrl
