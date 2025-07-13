@@ -51,6 +51,9 @@ public enum SwaggerResponseDescription {
     PATCH_MATCH_REJECT(
             new HashSet<>(Set.of(NOT_GROUP_MEMBER, USER_NOT_FOUND))
     ),
+    POST_USER_INFO(
+            new HashSet<>(Set.of(USER_NOT_FOUND, AGE_NOT_APPROPRIATE))
+    ),
     NO_BUSINESS_ERROR(
             new LinkedHashSet<>(Set.of())
     );
