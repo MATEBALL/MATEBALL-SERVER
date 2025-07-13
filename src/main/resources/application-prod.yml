@@ -39,3 +39,15 @@ auth:
   redirect-uri:
     local: https://dev.mateball.co.kr/auth
     prod: https://mateball.co.kr/auth
+
+cloud:
+  aws:
+    region:
+      static: ${S3_REGION}
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+      base-url: ${S3_BASE_URL}
+    credentials:
+      instance-profile: true
+    stack:
+      auto: false

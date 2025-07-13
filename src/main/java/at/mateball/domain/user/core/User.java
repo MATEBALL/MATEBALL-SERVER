@@ -60,6 +60,9 @@ public class User {
         this.nickname = nickname;
     }
 
+    public void updateProfileImage(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
     public void updateIntroduction(final String introduction) {
         this.introduction = introduction;
     }
