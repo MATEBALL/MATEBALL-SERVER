@@ -3,6 +3,7 @@ package at.mateball.domain.user.core.service;
 import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
 import at.mateball.domain.matchrequirement.core.repository.MatchRequirementRepository;
+import at.mateball.domain.user.api.dto.response.CheckUserRes;
 import at.mateball.domain.user.api.dto.response.KaKaoInformationRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.User;
@@ -90,5 +91,9 @@ public class UserService {
         user.updateProfileImage("https://mateball-file.s3.ap-northeast-2.amazonaws.com/profile.jpg");
         user.updateIntroduction("메잇볼이 선택한 너");
         user.updateGenderAndBirthYear(genderStatus, birthYear);
+    }
+
+    public CheckUserRes getCheckUserInfo(Long userId) {
+        return userRepository.fetchUserInfoCheck((userId));
     }
 }

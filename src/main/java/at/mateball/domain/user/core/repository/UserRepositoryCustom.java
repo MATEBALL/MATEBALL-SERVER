@@ -1,5 +1,6 @@
 package at.mateball.domain.user.core.repository;
 
+import at.mateball.domain.user.api.dto.response.CheckUserRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.User;
 import org.springframework.stereotype.Repository;
@@ -13,4 +14,6 @@ public interface UserRepositoryCustom {
     boolean existsByNickname(String nickname);
 
     Optional<User> getUser(final Long userId);
+
+    CheckUserRes fetchUserInfoCheck(Long userId);
 }
