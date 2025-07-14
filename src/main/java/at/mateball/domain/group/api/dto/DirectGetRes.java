@@ -4,6 +4,7 @@ import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
 import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.team.core.TeamName;
+import at.mateball.util.AgeUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
@@ -46,26 +47,26 @@ public record DirectGetRes(
         @Schema(description = "이미지 URL", nullable = true)
         String imgUrl
 ) {
-        public static DirectGetRes from(DirectGetBaseRes raw) {
-                String age = null;
+    public static DirectGetRes from(DirectGetBaseRes raw) {
+        String age = null;
 
-                if (raw.birthYear() != null) {
-                        age = (LocalDate.now().getYear() - raw.birthYear() + 1) + "세";
-                }
-
-                return new DirectGetRes(
-                        raw.id(),
-                        raw.nickname(),
-                        age,
-                        Gender.from(raw.gender()).getLabel(),
-                        TeamName.from(raw.team()).getLabel(),
-                        Style.from(raw.style()).getLabel(),
-                        raw.awayTeam(),
-                        raw.homeTeam(),
-                        raw.stadium(),
-                        raw.date(),
-                        raw.matchRate(),
-                        raw.imgUrl()
-                );
+        if (raw.birthYear() != null) {
+            age = AgeUtils.calculateAge(raw.birthYear());
         }
+
+        return new DirectGetRes(
+                raw.id(),
+                raw.nickname(),
+                age,
+                Gender.from(raw.gender()).getLabel(),
+                TeamName.from(raw.team()).getLabel(),
+                Style.from(raw.style()).getLabel(),
+                raw.awayTeam(),
+                raw.homeTeam(),
+                raw.stadium(),
+                raw.date(),
+                raw.matchRate(),
+                raw.imgUrl()
+        );
+    }
 }

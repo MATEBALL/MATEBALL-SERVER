@@ -3,6 +3,7 @@ package at.mateball.domain.user.api.dto.response;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
 import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.team.core.TeamName;
+import at.mateball.util.AgeUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record UserInformationRes(
@@ -36,7 +37,7 @@ public record UserInformationRes(
 
         Integer birthYear = userInformationBaseRes.birthYear();
         String age = (birthYear != null)
-                ? (java.time.LocalDate.now().getYear() - birthYear + 1) + "세"
+                ? AgeUtils.calculateAge(birthYear)
                 : null;
         String team = TeamName.from(userInformationBaseRes.team()).getLabel();
 

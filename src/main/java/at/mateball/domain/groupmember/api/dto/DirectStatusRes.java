@@ -5,6 +5,7 @@ import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseRes;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
 import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.team.core.TeamName;
+import at.mateball.util.AgeUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
@@ -47,7 +48,7 @@ public record DirectStatusRes(
     public static DirectStatusRes from(DirectStatusBaseRes baseRes) {
         String age = null;
         if (baseRes.birthYear() != null) {
-            age = (LocalDate.now().getYear() - baseRes.birthYear() + 1) + "세";
+            age = AgeUtils.calculateAge(baseRes.birthYear());
         }
 
         return new DirectStatusRes(

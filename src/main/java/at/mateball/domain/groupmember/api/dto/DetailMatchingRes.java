@@ -4,6 +4,7 @@ import at.mateball.domain.groupmember.api.dto.base.DetailMatchingBaseRes;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
 import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.team.core.TeamName;
+import at.mateball.util.AgeUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
@@ -53,7 +54,7 @@ public record DetailMatchingRes(
     public static DetailMatchingRes from(DetailMatchingBaseRes base, Integer matchRate) {
         String age = null;
         if (base.birthYear() != null) {
-            age = (LocalDate.now().getYear() - base.birthYear() + 1) + "세";
+            age = AgeUtils.calculateAge(base.birthYear());
         }
 
         return new DetailMatchingRes(
