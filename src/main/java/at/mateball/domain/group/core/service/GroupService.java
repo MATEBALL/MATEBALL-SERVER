@@ -8,12 +8,13 @@ import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
 import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
+import at.mateball.domain.group.core.validator.DateValidator;
 import at.mateball.domain.group.core.validator.GroupValidator;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.GroupMemberRes;
 import at.mateball.domain.groupmember.api.dto.base.DirectMatchBaseRes;
+import at.mateball.domain.groupmember.api.dto.base.GroupInformationRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupMatchBaseRes;
-import at.mateball.domain.groupmember.api.dto.base.PermitRequestBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.RejectGroupMemberBaseRes;
 import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
@@ -96,7 +97,7 @@ public class GroupService {
         Group group = groupRepository.findById(matchId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
 
-        validatePermitRequest(userId, group);
+        validateRequest(userId, group);
 
         groupMemberRepository.createGroupMember(userId, matchId);
 
@@ -109,41 +110,45 @@ public class GroupService {
         }
     }
 
-    private void validatePermitRequest(Long userId, Group group) {
+    private void validateRequest(Long userId, Group group) {
         LocalDate gameDate = group.getGameInformation().getGameDate();
         boolean isGroup = group.isGroup();
 
-        List<PermitRequestBaseRes> permitRequestBaseRes =
-                groupMemberRepository.findPermitValidationData(userId, gameDate);
+        List<GroupInformationRes> groupInformationRes =
+                groupMemberRepository.findGroupInformation(userId, gameDate);
 
-        if (permitRequestBaseRes.stream().anyMatch(dto ->
+        groupInformationRes.stream()
+                .map(GroupInformationRes::gameDate)
+                .forEach(DateValidator::validate);
+
+        if (groupInformationRes.stream().anyMatch(dto ->
                 dto.groupId().equals(group.getId()) &&
                         dto.status() == GroupMemberStatus.MATCH_FAILED.getValue()
         )) {
             throw new BusinessException(BusinessErrorCode.ALREADY_FAILED_REQUEST);
         }
 
-        if (permitRequestBaseRes.stream().anyMatch(dto ->
+        if (groupInformationRes.stream().anyMatch(dto ->
                 dto.groupId().equals(group.getId()) &&
                         dto.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue()
         )) {
             throw new BusinessException(BusinessErrorCode.DUPLICATED_REQUEST);
         }
 
-        if (permitRequestBaseRes.stream().anyMatch(dto ->
+        if (groupInformationRes.stream().anyMatch(dto ->
                 !dto.groupId().equals(group.getId()) &&
                         dto.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue()
         )) {
             throw new BusinessException(BusinessErrorCode.ALREADY_HAS_PENDING_REQUEST);
         }
 
-        if (permitRequestBaseRes.stream().anyMatch(dto ->
+        if (groupInformationRes.stream().anyMatch(dto ->
                 dto.status() != GroupMemberStatus.MATCH_FAILED.getValue()
         )) {
             throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
         }
 
-        long pendingRequestCount = permitRequestBaseRes.stream()
+        long pendingRequestCount = groupInformationRes.stream()
                 .filter(dto -> dto.isGroup() == isGroup && dto.groupStatus() == GroupStatus.PENDING.getValue())
                 .count();
         int requestLimit = isGroup ? GROUP_LIMIT : DIRECT_LIMIT;
@@ -291,13 +296,7 @@ public class GroupService {
         GroupMemberRes info = groupMemberRepository.getMatchingInfo(userId, gameId, isGroup)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GAME_NOT_FOUND));
 
-        if (LocalDate.now().isAfter(info.gameDate())) {
-            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_PAST);
-        }
-
-        if (LocalDate.now().isBefore(info.gameDate().minusDays(2))) {
-            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MATCHING_DATE);
-        }
+        validate(info.gameDate());
 
         if (info.hasMatchOnSameDate()) {
             throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);

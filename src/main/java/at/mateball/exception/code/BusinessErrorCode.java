@@ -13,7 +13,7 @@ public enum BusinessErrorCode implements ErrorCode {
     BAD_REQUEST_ENUM(HttpStatus.BAD_REQUEST, "존재하지 않는 enum값입니다."),
     BAD_REQUEST_MONDAY(HttpStatus.BAD_REQUEST, "월요일은 경기가 없습니다."),
     BAD_REQUEST_PAST(HttpStatus.BAD_REQUEST, "과거에 머물러있지 마십쇼. 이미 종료된 경기입니다."),
-    BAD_REQUEST_DATE(HttpStatus.BAD_REQUEST, "매칭신청은 2일 전까지 가능합니다."),
+    BAD_REQUEST_DATE(HttpStatus.BAD_REQUEST, "매칭생성 및 신청은 2일 전까지 가능합니다."),
     EXCEED_GROUP_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "그룹 매칭은 최대 2개까지만 가능합니다."),
     EXCEED_DIRECT_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "1대1 매칭은 최대 3개까지만 가능합니다."),
     ALREADY_HAS_PENDING_REQUEST(HttpStatus.BAD_REQUEST, "이미 요청이 존재하는 매칭입니다."),
@@ -23,7 +23,6 @@ public enum BusinessErrorCode implements ErrorCode {
     NICKNAME_CONTAINS_WHITESPACE(HttpStatus.BAD_REQUEST, "닉네임에 공백이 포함될 수 없습니다."),
     INVALID_NICKNAME_CHARACTER(HttpStatus.BAD_REQUEST, "닉네임은 한글 또는 영어만 사용할 수 있으며, 특수문자는 사용할 수 없습니다."),
     BAD_REQUEST_MATCH_TYPE(HttpStatus.BAD_REQUEST, "요청 matchType이 잘못되었습니다."),
-    BAD_REQUEST_MATCHING_DATE(HttpStatus.BAD_REQUEST, "매칭생성은 경기 2일 전부터 가능합니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
