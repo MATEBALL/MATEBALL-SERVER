@@ -178,7 +178,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .join(group.gameInformation, gameInformation)
                 .where(
                         groupMember.user.id.eq(userId),
-                        groupMember.isParticipant.isTrue(),
                         group.isGroup.isTrue()
                 )
                 .fetch();
@@ -207,7 +206,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .join(group.gameInformation, gameInformation)
                 .where(
                         groupMember.user.id.eq(userId),
-                        groupMember.isParticipant.isTrue(),
                         group.isGroup.isTrue(),
                         group.status.eq(groupStatus)
                 )
