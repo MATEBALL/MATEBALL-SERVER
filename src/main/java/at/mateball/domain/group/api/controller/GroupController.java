@@ -67,13 +67,13 @@ public class GroupController {
     @CustomExceptionDescription(SwaggerResponseDescription.GROUP_DATE)
     @Operation(summary = "매칭 요청 api")
     @PostMapping("/match-request/{matchId}")
-    public ResponseEntity<MateballResponse<?>> requestMatching(
+    public ResponseEntity<MateballResponse<?>> createRequest(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @NotNull @PathVariable Long matchId
     ) {
         Long userId = customUserDetails.getUserId();
 
-        groupService.requestMatching(userId, matchId);
+        groupService.createRequest(userId, matchId);
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.CREATED));
     }
