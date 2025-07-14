@@ -74,6 +74,7 @@ public class GroupMemberService {
                 ));
 
         List<DetailMatchingRes> result = baseResList.stream()
+                .filter(base -> !base.userId().equals(userId))
                 .map(base -> {
                     Integer matchRate = matchRateMap.getOrDefault(base.userId(), 0);
                     return DetailMatchingRes.from(base, matchRate);

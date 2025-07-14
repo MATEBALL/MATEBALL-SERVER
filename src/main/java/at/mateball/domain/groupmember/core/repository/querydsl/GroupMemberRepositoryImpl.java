@@ -260,9 +260,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
                 .where(
                         group.id.eq(matchId),
-                        groupMember.isParticipant.isTrue(),
-                        groupMember.status.eq(1),
-                        user.id.ne(userId)
+                        groupMember.status.notIn(1, 6)
                 )
                 .fetch();
     }
