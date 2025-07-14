@@ -54,7 +54,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .from(group)
                 .join(user).on(group.leader.eq(user))
                 .join(game).on(group.gameInformation.eq(game))
-                .join(matchRequirement).on(matchRequirement.user.eq(user))
+                .leftJoin(matchRequirement).on(matchRequirement.user.eq(user))
                 .where(
                         group.leader.id.eq(userId),
                         group.id.eq(matchId),
@@ -91,7 +91,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .from(group)
                 .join(user).on(group.leader.eq(user))
                 .join(game).on(group.gameInformation.eq(game))
-                .join(matchRequirement).on(matchRequirement.user.eq(user))
+                .leftJoin(matchRequirement).on(matchRequirement.user.eq(user))
                 .where(
                         group.isGroup.isFalse(),
                         group.leader.id.ne(userId),

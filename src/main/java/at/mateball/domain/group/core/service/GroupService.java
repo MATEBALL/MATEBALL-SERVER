@@ -59,6 +59,10 @@ public class GroupService {
             throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
         }
 
+        if (result.team() == null || result.style() == null) {
+            throw new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND);
+        }
+
         return result;
     }
 
@@ -67,13 +71,17 @@ public class GroupService {
 
         List<DirectGetBaseRes> result = groupRepository.findDirectGroupsByDate(userId, date);
 
+        List<DirectGetBaseRes> filtered = result.stream()
+                .filter(res -> res.team() != null && res.style() != null)
+                .toList();
+
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
                 .collect(Collectors.toMap(
                         MatchingScoreDto::targetUserId,
                         MatchingScoreDto::totalScore
                 ));
 
-        List<DirectGetRes> directGetRes = result.stream()
+        List<DirectGetRes> directGetRes = filtered.stream()
                 .map(res -> res.withMatchRate(matchRateMap.getOrDefault(res.leaderId(), 0)))
                 .map(DirectGetRes::from)
                 .sorted(Comparator.comparingInt(DirectGetRes::matchRate).reversed())
