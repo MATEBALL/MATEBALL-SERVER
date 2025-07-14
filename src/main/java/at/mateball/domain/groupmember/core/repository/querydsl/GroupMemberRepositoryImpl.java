@@ -114,7 +114,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
                 .where(
                         groupMember.user.id.eq(userId),
-                        groupMember.isParticipant.isTrue(),
                         group.isGroup.isFalse(),
                         group.status.eq(groupStatus)
                 )
@@ -151,7 +150,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
                 .where(
                         groupMember.user.id.eq(userId),
-                        groupMember.isParticipant.isTrue(),
                         group.isGroup.isFalse()
                 )
                 .fetch();
