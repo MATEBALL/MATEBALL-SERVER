@@ -25,6 +25,8 @@ jobs:
         run: ./gradlew bootJar -x test
 
       - name: Run server and wait for it to be ready
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           nohup java -jar build/libs/*.jar > server.log 2>&1 &
           for i in {1..36}; do
@@ -32,7 +34,7 @@ jobs:
             echo "Waiting for server to start..."
             sleep 5
           done
-          curl -f http://localhost:8080/actuator/health || (echo "Server did not start in time. Here's the log:" && cat server.log | tail -n 100 && exit 1)
+          curl -f http://localhost:8080/actuator/health || (echo "Server did not start in time. Here's the log:" && tail -n 100 server.log && exit 1)
 
       - name: Generate swagger.yaml
         run: curl http://localhost:8080/v3/api-docs.yaml -o swagger.yaml
