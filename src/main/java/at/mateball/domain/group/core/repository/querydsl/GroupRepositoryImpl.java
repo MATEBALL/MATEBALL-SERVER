@@ -162,7 +162,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     }
 
     @Override
-    public List<GroupGetBaseRes> findGroupsWithBaseInfo(LocalDate date) {
+    public List<GroupGetBaseRes> findGroupsWithBaseInfo(Long userId, LocalDate date) {
         QGroup group = QGroup.group;
         QUser leader = user;
         QGameInformation game = QGameInformation.gameInformation;
@@ -182,6 +182,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .join(game).on(group.gameInformation.eq(game))
                 .where(
                         group.isGroup.isTrue(),
+                        group.leader.id.ne(userId),
                         game.gameDate.eq(date),
                         JPAExpressions
                                 .selectOne()

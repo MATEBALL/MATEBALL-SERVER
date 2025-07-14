@@ -167,7 +167,7 @@ public class GroupService {
     public GroupGetListRes getGroups(Long userId, LocalDate date) {
         validate(date);
 
-        List<GroupGetBaseRes> groupBases = groupRepository.findGroupsWithBaseInfo(date);
+        List<GroupGetBaseRes> groupBases = groupRepository.findGroupsWithBaseInfo(userId, date);
         List<Long> groupIds = groupBases.stream().map(GroupGetBaseRes::id).toList();
 
         Map<Long, List<Long>> groupToUserIds = groupMemberRepository.findUserIdsGroupedByGroupIds(groupIds);
