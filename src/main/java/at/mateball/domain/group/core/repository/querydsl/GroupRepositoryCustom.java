@@ -16,7 +16,7 @@ public interface GroupRepositoryCustom {
 
     List<DirectGetBaseRes> findDirectGroupsByDate(Long userId, LocalDate date);
 
-    List<GroupGetBaseRes> findGroupsWithBaseInfo(LocalDate date);
+    List<GroupGetBaseRes> findGroupsWithBaseInfo(Long userId, LocalDate date);
 
     void updateGroupStatus(Long groupId, int status);
 
