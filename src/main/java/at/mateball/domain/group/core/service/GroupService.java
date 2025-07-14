@@ -1,11 +1,10 @@
 package at.mateball.domain.group.core.service;
 
-import at.mateball.domain.gameinformation.core.GameInformation;
-import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
 import at.mateball.domain.group.core.Group;
+import at.mateball.domain.group.core.GroupExecutor;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.group.core.validator.DateValidator;
@@ -16,19 +15,15 @@ import at.mateball.domain.groupmember.api.dto.base.DirectMatchBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupInformationRes;
 import at.mateball.domain.groupmember.api.dto.base.GroupMatchBaseRes;
 import at.mateball.domain.groupmember.api.dto.base.RejectGroupMemberBaseRes;
-import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
-import at.mateball.domain.user.core.User;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
-import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -44,17 +39,17 @@ public class GroupService {
     private final GroupMemberRepository groupMemberRepository;
     private final MatchRequirementService matchRequirementService;
 
+    private final GroupExecutor groupExecutor;
+
     private final static int DIRECT_LIMIT = 3;
     private final static int GROUP_LIMIT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
 
-    private final EntityManager entityManager;
-
-    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, GameInformationRepository gameInformationRepository, MatchRequirementService matchRequirementService, EntityManager entityManager) {
+    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, GroupExecutor groupExecutor) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.matchRequirementService = matchRequirementService;
-        this.entityManager = entityManager;
+        this.groupExecutor = groupExecutor;
     }
 
     public DirectCreateRes getDirectMatching(Long userId, Long matchId) {
@@ -309,26 +304,12 @@ public class GroupService {
             );
         }
 
-        return new CreateMatchRes(createGroup(userId, gameId, isGroup));
+        return new CreateMatchRes(groupExecutor.createGroup(userId, gameId, isGroup));
     }
 
     private void validateMatchType(String matchType) {
         if (!String.valueOf(GROUP).equalsIgnoreCase(matchType) && !String.valueOf(DIRECT).equalsIgnoreCase(matchType)) {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MATCH_TYPE);
         }
-    }
-
-    @Transactional
-    protected Long createGroup(Long userId, Long gameId, boolean isGroup) {
-        User user = entityManager.getReference(User.class, userId);
-        GameInformation game = entityManager.getReference(GameInformation.class, gameId);
-
-        Group group = new Group(user, game, LocalDateTime.now(), GroupStatus.PENDING.getValue(), isGroup);
-        entityManager.persist(group);
-
-        GroupMember leader = new GroupMember(user, group, true, GroupMemberStatus.PENDING_REQUEST.getValue());
-        entityManager.persist(leader);
-
-        return group.getId();
     }
 }
