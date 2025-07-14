@@ -2,7 +2,7 @@ package at.mateball.domain.groupmember.api.dto.base;
 
 import java.time.LocalDate;
 
-public record PermitRequestBaseRes(
+public record GroupInformationRes(
         Long userId,
         Long groupId,
         int status,

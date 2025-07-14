@@ -371,12 +371,12 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     }
 
     @Override
-    public List<PermitRequestBaseRes> findPermitValidationData(Long userId, LocalDate date) {
+    public List<GroupInformationRes> findGroupInformation(Long userId, LocalDate date) {
         QGameInformation gameInfo = QGameInformation.gameInformation;
 
         return queryFactory
                 .select(Projections.constructor(
-                        PermitRequestBaseRes.class,
+                        GroupInformationRes.class,
                         groupMember.user.id,
                         groupMember.group.id,
                         groupMember.status,
