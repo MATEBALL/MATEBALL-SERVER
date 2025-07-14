@@ -6,6 +6,7 @@ import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.user.api.dto.request.NicknameReq;
 import at.mateball.domain.user.api.dto.request.UserInfoReq;
+import at.mateball.domain.user.api.dto.response.CheckUserRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.api.dto.response.KaKaoInformationRes;
 import at.mateball.domain.user.core.service.UserService;
@@ -79,5 +80,15 @@ public class UserController {
         userService.createUserInfo(userId, userInfoReq.gender(), userInfoReq.birthYear());
 
         return ResponseEntity.ofNullable(MateballResponse.successWithNoData(SuccessCode.CREATED));
+    }
+
+    @GetMapping("/info-check")
+    public ResponseEntity<MateballResponse<?>> getCheckUserInfo(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        Long userId = customUserDetails.getUserId();
+        CheckUserRes checkUserRes = userService.getCheckUserInfo(userId);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, checkUserRes));
     }
 }
