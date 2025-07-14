@@ -62,4 +62,6 @@ public interface GroupMemberRepositoryCustom {
     boolean updateMyStatusFromApprovedToRequest(Long userId, Long matchId);
 
     Optional<GroupMemberRes> getMatchingInfo(Long userId, Long gameId, boolean isGroup);
+    Map<Long, List<Long>> findUserIdsGroupedByGroupIds(List<Long> groupIds);
+
 }

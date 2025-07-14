@@ -12,6 +12,7 @@ import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -506,5 +507,24 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 totalMatches != null ? totalMatches : 0L,
                 hasMatchOnSameDate
         ));
+    }
+
+    @Override
+    public Map<Long, List<Long>> findUserIdsGroupedByGroupIds(List<Long> groupIds) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+
+        List<Tuple> results = queryFactory
+                .select(groupMember.group.id, groupMember.user.id)
+                .from(groupMember)
+                .where(
+                        groupMember.group.id.in(groupIds),
+                        groupMember.isParticipant.isTrue()
+                )                .fetch();
+
+        return results.stream()
+                .collect(Collectors.groupingBy(
+                        tuple -> tuple.get(groupMember.group.id),
+                        Collectors.mapping(tuple -> tuple.get(groupMember.user.id), Collectors.toList())
+                ));
     }
 }

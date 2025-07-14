@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -166,30 +167,56 @@ public class GroupService {
     public GroupGetListRes getGroups(Long userId, LocalDate date) {
         validate(date);
 
-        List<GroupGetBaseRes> baseList = groupRepository.findGroupsWithBaseInfo(date);
-        List<Long> groupIds = baseList.stream().map(GroupGetBaseRes::id).toList();
+        List<GroupGetBaseRes> groupBases = groupRepository.findGroupsWithBaseInfo(date);
+        List<Long> groupIds = groupBases.stream().map(GroupGetBaseRes::id).toList();
 
-        Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
-                .collect(Collectors.toMap(
-                        MatchingScoreDto::targetUserId,
-                        MatchingScoreDto::totalScore
-                ));
+        Map<Long, List<Long>> groupToUserIds = groupMemberRepository.findUserIdsGroupedByGroupIds(groupIds);
+        Map<Long, Integer> userMatchScores = matchRequirementService.getMatchings(userId).stream()
+                .collect(Collectors.toMap(MatchingScoreDto::targetUserId, MatchingScoreDto::totalScore));
 
-        Map<Long, Integer> countMap = groupMemberRepository.findGroupMemberCountMap(groupIds);
-        Map<Long, List<String>> imgMap = groupMemberRepository.findGroupMemberImgMap(groupIds);
+        Map<Long, Integer> groupToMemberCount = groupMemberRepository.findGroupMemberCountMap(groupIds);
+        Map<Long, List<String>> groupToImgUrls = groupMemberRepository.findGroupMemberImgMap(groupIds);
 
-        List<GroupGetRes> result = baseList.stream()
-                .map(base -> {
-                    int count = countMap.getOrDefault(base.id(), 1);
-                    List<String> imgs = imgMap.getOrDefault(base.id(), List.of());
-                    int score = matchRateMap.getOrDefault(base.id(), 0);
-                    int avg = Math.round((float) score / count);
-                    return GroupGetRes.from(base, avg, count, imgs);
+        Map<Long, Integer> groupToAvgMatchRate = calculateGroupAvgMatchRates(groupToUserIds, userMatchScores);
+
+        List<GroupGetRes> result = groupBases.stream()
+                .map(groupBase -> {
+                    Long groupId = groupBase.id();
+                    int count = groupToMemberCount.getOrDefault(groupId, 1);
+                    List<String> imgs = groupToImgUrls.getOrDefault(groupId, List.of());
+                    int avgMatchRate = groupToAvgMatchRate.getOrDefault(groupId, 0);
+
+                    return GroupGetRes.from(groupBase, avgMatchRate, count, imgs);
                 })
                 .sorted(Comparator.comparingInt(GroupGetRes::matchRate).reversed())
                 .toList();
 
         return new GroupGetListRes(result);
+    }
+
+    private Map<Long, Integer> calculateGroupAvgMatchRates(Map<Long, List<Long>> groupUserMap,
+                                                           Map<Long, Integer> matchRateMap) {
+        Map<Long, Integer> result = new HashMap<>();
+
+        for (Map.Entry<Long, List<Long>> entry : groupUserMap.entrySet()) {
+            Long groupId = entry.getKey();
+            List<Long> userIds = entry.getValue();
+
+            int total = 0, count = 0;
+
+            for (Long userId : userIds) {
+                Integer score = matchRateMap.get(userId);
+                if (score != null) {
+                    total += score;
+                    count++;
+                }
+            }
+
+            int avg = count > 0 ? (int) Math.round((double) total / count) : 0;
+            result.put(groupId, avg);
+        }
+
+        return result;
     }
 
     @Transactional
