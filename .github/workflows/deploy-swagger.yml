@@ -21,29 +21,26 @@ jobs:
       - name: Give execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build and run Spring Boot app
-        run: |
-          ./gradlew bootJar -x test
-          java -jar build/libs/*.jar &
-          sleep 20
+      - name: Build jar
+        run: ./gradlew bootJar -x test
 
-      - name: Generate swagger.yaml from running server
+      - name: Run server and wait for it to be ready
         run: |
-          curl http://localhost:8080/v3/api-docs.yaml -o swagger.yaml
+          nohup java -jar build/libs/*.jar > server.log 2>&1 &
+          for i in {1..36}; do
+            curl -f http://localhost:8080/actuator/health && break
+            echo "Waiting for server to start..."
+            sleep 5
+          done
+          curl -f http://localhost:8080/actuator/health || (echo "Server did not start in time. Here's the log:" && cat server.log | tail -n 100 && exit 1)
+
+      - name: Generate swagger.yaml
+        run: curl http://localhost:8080/v3/api-docs.yaml -o swagger.yaml
 
       - name: Clone swagger repo and overwrite file
         run: |
           git clone https://x-access-token:${{ secrets.SWAGGER_REPO_TOKEN }}@github.com/MATEBALL/MATEBALL-SWAGGER.git
           cp swagger.yaml MATEBALL-SWAGGER/swagger.yaml
-
-      - name: Generate swagger.yaml from running server
-        run: |
-          for i in {1..10}; do
-            curl -f http://localhost:8080/actuator/health && break
-            echo "Waiting for server..."
-            sleep 5
-          done
-          curl http://localhost:8080/v3/api-docs.yaml -o swagger.yaml
 
       - name: Commit and push updated swagger.yaml
         run: |
