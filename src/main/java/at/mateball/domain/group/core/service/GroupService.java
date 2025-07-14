@@ -88,7 +88,7 @@ public class GroupService {
     }
 
     @Transactional
-    public void requestMatching(Long userId, Long matchId) {
+    public void createRequest(Long userId, Long matchId) {
         Group group = groupRepository.findById(matchId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
 
