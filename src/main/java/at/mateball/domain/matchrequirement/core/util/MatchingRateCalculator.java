@@ -1,4 +1,4 @@
-package at.mateball.domain.matchrequirement.core.uril;
+package at.mateball.domain.matchrequirement.core.util;
 
 import java.time.LocalDateTime;
 
