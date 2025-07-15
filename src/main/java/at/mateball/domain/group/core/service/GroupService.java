@@ -140,7 +140,7 @@ public class GroupService {
         }
 
         if (groupInformationRes.stream().anyMatch(dto ->
-                !dto.groupId().equals(group.getId()) &&
+                dto.groupId().equals(group.getId()) &&
                         dto.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue()
         )) {
             throw new BusinessException(BusinessErrorCode.ALREADY_HAS_PENDING_REQUEST);
