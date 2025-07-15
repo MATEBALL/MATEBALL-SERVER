@@ -387,8 +387,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .join(groupMember.group, group)
                 .join(group.gameInformation, gameInfo)
                 .where(
-                        groupMember.user.id.eq(userId),
-                        gameInfo.gameDate.eq(date)
+                        groupMember.user.id.eq(userId)
                 )
                 .fetch();
     }
