@@ -1,5 +1,6 @@
 package at.mateball.domain.groupmember.core.service;
 
+import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.groupmember.api.dto.*;
@@ -61,7 +62,16 @@ public class GroupMemberService {
     }
 
     public DetailMatchingListRes getDetailMatching(Long userId, Long matchId, boolean newRequest) {
-        List<DetailMatchingBaseRes> baseResList = groupMemberRepository.findGroupMatesByMatchId(userId, matchId, newRequest);
+        Group group = groupRepository.findById(matchId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        List<DetailMatchingBaseRes> baseResList;
+
+        if (newRequest) {
+            baseResList = groupMemberRepository.findGroupMatesByMatchId(userId, matchId, true);
+        } else {
+            baseResList = groupMemberRepository.findParticipantsOnly(matchId);
+        }
 
         if (baseResList == null || baseResList.isEmpty()) {
             throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
@@ -78,6 +88,11 @@ public class GroupMemberService {
                     if (newRequest) {
                         return !base.userId().equals(userId);
                     }
+
+                    if (group.getStatus() == 1) {
+                        return !base.userId().equals(userId);
+                    }
+
                     return true;
                 })
                 .map(base -> {
@@ -86,8 +101,34 @@ public class GroupMemberService {
                 })
                 .toList();
 
+
         return new DetailMatchingListRes(result);
     }
+
+    public DetailMatchingListRes getDetailMatchingForCreator(Long userId, Long matchId) {
+        List<DetailMatchingBaseRes> newRequests =
+                groupMemberRepository.findNewRequestsForCreator(userId, matchId);
+
+        if (newRequests == null || newRequests.isEmpty()) {
+            throw new BusinessException(BusinessErrorCode.NO_PENDING_REQUESTS);
+        }
+
+        Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
+                .collect(Collectors.toMap(
+                        MatchingScoreDto::targetUserId,
+                        MatchingScoreDto::totalScore
+                ));
+
+        List<DetailMatchingRes> result = newRequests.stream()
+                .map(base -> {
+                    Integer matchRate = matchRateMap.getOrDefault(base.userId(), 0);
+                    return DetailMatchingRes.from(base, matchRate);
+                })
+                .toList();
+
+        return new DetailMatchingListRes(result);
+    }
+
 
     private GroupStatusListRes mapWithCountsAndImages(List<GroupStatusBaseRes> baseResList) {
         if (baseResList.isEmpty()) {
