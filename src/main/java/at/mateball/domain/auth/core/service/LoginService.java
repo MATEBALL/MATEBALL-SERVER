@@ -29,7 +29,7 @@ public class LoginService {
 
     @Transactional
     public LoginResult login(LoginCommand loginCommand) {
-        String redirectUri = "https://dev.mateball.co.kr/auth";
+        String redirectUri = "https://www.mateball.co.kr/auth";
 
         KakaoTokenRes kakaoToken = oauthClientApi.fetchToken(loginCommand.code(), redirectUri);
 

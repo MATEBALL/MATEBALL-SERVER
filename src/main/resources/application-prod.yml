@@ -24,7 +24,7 @@ kakao:
     client-secret: ${KAKAO_CLIENT_SECRET}
     client-authentication-method: client_secret_post
     authorization-grant-type: authorization_code
-    redirect-uri: https://dev.mateball.co.kr/auth
+    redirect-uri: https://www.mateball.co.kr/auth
     scope:
       - birthday
       - gender
@@ -38,7 +38,7 @@ jwt:
 auth:
   redirect-uri:
     local: https://dev.mateball.co.kr/auth
-    prod: https://mateball.co.kr/auth
+    prod: https://www.mateball.co.kr/auth
 
 cloud:
   aws:
