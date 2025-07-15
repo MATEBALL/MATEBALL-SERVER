@@ -12,6 +12,7 @@ import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
@@ -225,13 +226,26 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
         return new GroupMemberCountRes(count != null ? count.intValue() : 0);
     }
 
-    @Override
-    public List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId) {
+    public List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId, boolean newRequest) {
         QGroupMember groupMember = QGroupMember.groupMember;
         QUser user = QUser.user;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
         QGroup group = QGroup.group;
         QGameInformation game = QGameInformation.gameInformation;
+
+        BooleanBuilder condition = new BooleanBuilder();
+
+        condition.and(group.id.eq(matchId));
+
+        condition.and(group.status.eq(1));
+
+        condition.and(groupMember.status.notIn(1, 6));
+
+        if (newRequest) {
+            condition.and(groupMember.isParticipant.isFalse());
+        } else {
+            condition.and(groupMember.isParticipant.isTrue());
+        }
 
         return queryFactory
                 .select(Projections.constructor(DetailMatchingBaseRes.class,
@@ -254,10 +268,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .join(groupMember.group, group)
                 .join(group.gameInformation, game)
                 .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
-                .where(
-                        group.id.eq(matchId),
-                        groupMember.status.notIn(1, 6)
-                )
+                .where(condition)
                 .fetch();
     }
 

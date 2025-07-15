@@ -82,13 +82,14 @@ public class GroupMemberController {
 
     @CustomExceptionDescription(SwaggerResponseDescription.GROUP_DATE)
     @Operation(summary = "매칭 요청 상세 조회")
-    @GetMapping("/match-detail/{matchId}")
+    @GetMapping("/match/{matchId}")
     public ResponseEntity<MateballResponse<?>> getDetailMatching(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @NotNull @PathVariable Long matchId
+            @NotNull @PathVariable Long matchId,
+            @NotNull @RequestParam boolean newRequest
     ) {
         Long userId = userDetails.getUserId();
-        DetailMatchingListRes detailMatchingListRes = groupMemberService.getDetailMatching(userId, matchId);
+        DetailMatchingListRes detailMatchingListRes = groupMemberService.getDetailMatching(userId, matchId, newRequest);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, detailMatchingListRes));
     }

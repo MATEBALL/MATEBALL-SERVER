@@ -60,8 +60,8 @@ public class GroupMemberService {
         return mapWithCountsAndImages(baseResList);
     }
 
-    public DetailMatchingListRes getDetailMatching(Long userId, Long matchId) {
-        List<DetailMatchingBaseRes> baseResList = groupMemberRepository.findGroupMatesByMatchId(userId, matchId);
+    public DetailMatchingListRes getDetailMatching(Long userId, Long matchId, boolean newRequest) {
+        List<DetailMatchingBaseRes> baseResList = groupMemberRepository.findGroupMatesByMatchId(userId, matchId, newRequest);
 
         if (baseResList == null || baseResList.isEmpty()) {
             throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
@@ -74,7 +74,12 @@ public class GroupMemberService {
                 ));
 
         List<DetailMatchingRes> result = baseResList.stream()
-                .filter(base -> !base.userId().equals(userId))
+                .filter(base -> {
+                    if (newRequest) {
+                        return !base.userId().equals(userId);
+                    }
+                    return true;
+                })
                 .map(base -> {
                     Integer matchRate = matchRateMap.getOrDefault(base.userId(), 0);
                     return DetailMatchingRes.from(base, matchRate);
