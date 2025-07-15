@@ -9,7 +9,7 @@ import java.util.Arrays;
 @Getter
 public enum GroupMemberStatus {
     PENDING_REQUEST(1, "요청 대기 중"),
-    NEW_REQUEST(2, "새요청"),
+    NEW_REQUEST(2, "새 요청"),
     AWAITING_APPROVAL(3, "승인 대기 중"),
     APPROVED(4, "승인 완료"),
     MATCHED(5, "매칭 완료"),
