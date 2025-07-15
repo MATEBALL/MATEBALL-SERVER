@@ -234,12 +234,9 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
         QGameInformation game = QGameInformation.gameInformation;
 
         BooleanBuilder condition = new BooleanBuilder();
-
         condition.and(group.id.eq(matchId));
-
-        condition.and(group.status.eq(1));
-
-        condition.and(groupMember.status.notIn(1, 6));
+        condition.and(group.status.in(0, 1));
+        /*condition.and(groupMember.status.notIn(1, 6));*/
 
         if (newRequest) {
             condition.and(groupMember.isParticipant.isFalse());
@@ -269,6 +266,81 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .join(group.gameInformation, game)
                 .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
                 .where(condition)
+                .fetch();
+    }
+
+    public List<DetailMatchingBaseRes> findNewRequestsForCreator(Long userId, Long matchId) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QUser user = QUser.user;
+        QGroup group = QGroup.group;
+        QGameInformation game = QGameInformation.gameInformation;
+        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+
+        return queryFactory
+                .select(Projections.constructor(DetailMatchingBaseRes.class,
+                        group.id,
+                        user.id,
+                        user.nickname,
+                        user.birthYear,
+                        user.gender,
+                        matchRequirement.team,
+                        matchRequirement.style,
+                        user.introduction,
+                        game.awayTeamName,
+                        game.homeTeamName,
+                        game.stadiumName,
+                        game.gameDate,
+                        user.imgUrl
+                ))
+                .from(groupMember)
+                .join(groupMember.user, user)
+                .join(groupMember.group, group)
+                .join(group.gameInformation, game)
+                .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
+                .where(
+                        group.id.eq(matchId),
+                        group.status.eq(1),
+                        group.id.eq(userId),
+                        groupMember.group.id.eq(group.id),
+                        groupMember.isParticipant.isFalse(),
+                        groupMember.status.eq(2)
+                )
+                .fetch();
+    }
+
+    public List<DetailMatchingBaseRes> findParticipantsOnly(Long matchId) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QUser user = QUser.user;
+        QGroup group = QGroup.group;
+        QGameInformation game = QGameInformation.gameInformation;
+        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+
+        return queryFactory
+                .select(Projections.constructor(DetailMatchingBaseRes.class,
+                        group.id,
+                        user.id,
+                        user.nickname,
+                        user.birthYear,
+                        user.gender,
+                        matchRequirement.team,
+                        matchRequirement.style,
+                        user.introduction,
+                        game.awayTeamName,
+                        game.homeTeamName,
+                        game.stadiumName,
+                        game.gameDate,
+                        user.imgUrl
+                ))
+                .from(groupMember)
+                .join(groupMember.user, user)
+                .join(groupMember.group, group)
+                .join(group.gameInformation, game)
+                .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
+                .where(
+                        group.id.eq(matchId),
+                        groupMember.isParticipant.isTrue(),
+                        groupMember.status.notIn(1, 6)
+                )
                 .fetch();
     }
 
