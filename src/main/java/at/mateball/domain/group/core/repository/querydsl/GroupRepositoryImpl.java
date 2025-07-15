@@ -171,6 +171,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         return queryFactory
                 .select(Projections.constructor(GroupGetBaseRes.class,
                         group.id,
+                        leader.birthYear,
                         leader.nickname,
                         game.awayTeamName,
                         game.homeTeamName,
