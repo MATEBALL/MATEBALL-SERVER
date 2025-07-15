@@ -29,7 +29,7 @@ public interface GroupMemberRepositoryCustom {
 
     GroupMemberCountRes countGroupMember(Long groupId);
 
-    List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId);
+    List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId, boolean newRequest);
 
     List<DirectMatchBaseRes> findDirectMatchMembers(Long groupId);
 
