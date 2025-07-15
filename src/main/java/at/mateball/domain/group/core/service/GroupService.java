@@ -7,6 +7,7 @@ import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupExecutor;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.repository.GroupRepository;
+import at.mateball.domain.group.core.validator.AgeValidator;
 import at.mateball.domain.group.core.validator.DateValidator;
 import at.mateball.domain.group.core.validator.GroupValidator;
 import at.mateball.domain.groupmember.GroupMemberStatus;
@@ -39,18 +40,19 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final MatchRequirementService matchRequirementService;
-
     private final GroupExecutor groupExecutor;
+    private final AgeValidator ageValidator;
 
     private final static int DIRECT_LIMIT = 3;
     private final static int GROUP_LIMIT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
 
-    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, GroupExecutor groupExecutor) {
+    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, GroupExecutor groupExecutor, AgeValidator ageValidator) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.matchRequirementService = matchRequirementService;
         this.groupExecutor = groupExecutor;
+        this.ageValidator = ageValidator;
     }
 
     public DirectCreateRes getDirectMatching(Long userId, Long matchId) {
@@ -74,6 +76,7 @@ public class GroupService {
 
         List<DirectGetBaseRes> filtered = result.stream()
                 .filter(res -> res.team() != null && res.style() != null)
+                .filter(res-> ageValidator.isAgeWithinRange(userId,res.birthYear()))
                 .toList();
 
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
@@ -168,6 +171,15 @@ public class GroupService {
         validate(date);
 
         List<GroupGetBaseRes> groupBases = groupRepository.findGroupsWithBaseInfo(userId, date);
+
+        List<GroupGetBaseRes> ageFiltered = groupBases.stream()
+                .filter(groupBase -> ageValidator.isAgeWithinRange(userId, groupBase.birthYear()))
+                .toList();
+
+        if (ageFiltered.isEmpty()) {
+            throw new BusinessException(BusinessErrorCode.NOT_ALLOWED_AGE);
+        }
+
         List<Long> groupIds = groupBases.stream().map(GroupGetBaseRes::id).toList();
 
         Map<Long, List<Long>> groupToUserIds = groupMemberRepository.findUserIdsGroupedByGroupIds(groupIds);

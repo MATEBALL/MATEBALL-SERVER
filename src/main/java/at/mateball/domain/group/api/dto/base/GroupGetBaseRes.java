@@ -5,6 +5,7 @@ import java.util.List;
 
 public record GroupGetBaseRes(
         Long id,
+        Integer birthYear,
         String nickname,
         String awayTeam,
         String homeTeam,
