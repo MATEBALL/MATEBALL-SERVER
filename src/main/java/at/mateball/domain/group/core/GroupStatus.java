@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @Getter
 public enum GroupStatus {
-    PENDING(1, "대기중"),
+    PENDING(1, "대기 중"),
     COMPLETED(2, "완료"),
     FAILED(3, "실패");
 
