@@ -42,8 +42,8 @@ public class GroupService {
 
     private final GroupExecutor groupExecutor;
 
-    private final static int DIRECT_LIMIT = 3;
-    private final static int GROUP_LIMIT = 2;
+    private final static int MAX_DIRECT_COUNT = 3;
+    private final static int MAX_GROUP_COUNT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
 
     public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, GroupExecutor groupExecutor) {
@@ -148,7 +148,7 @@ public class GroupService {
         long pendingRequestCount = groupInformationRes.stream()
                 .filter(dto -> dto.isGroup() == isGroup && dto.groupStatus() == GroupStatus.PENDING.getValue())
                 .count();
-        int requestLimit = isGroup ? GROUP_LIMIT : DIRECT_LIMIT;
+        int requestLimit = isGroup ? MAX_GROUP_COUNT : MAX_DIRECT_COUNT;
         if (pendingRequestCount >= requestLimit) {
             throw new BusinessException(
                     isGroup ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
@@ -330,7 +330,7 @@ public class GroupService {
             throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
         }
 
-        if (isGroup ? info.totalMatches() >= GROUP_LIMIT : info.totalMatches() >= DIRECT_LIMIT) {
+        if (isGroup ? info.totalMatches() >= MAX_GROUP_COUNT : info.totalMatches() >= MAX_DIRECT_COUNT) {
             throw new BusinessException(
                     isGroup ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
                             : BusinessErrorCode.EXCEED_DIRECT_MATCHING_LIMIT
