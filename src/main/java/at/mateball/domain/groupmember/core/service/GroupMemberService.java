@@ -86,7 +86,30 @@ public class GroupMemberService {
     }
 
     public DetailMatchingListRes getDetailMatchingForRequester(Long userId, Long matchId) {
-        throw new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND);
+
+        List<DetailMatchingBaseRes> participants =
+                groupMemberRepository.findParticipantsForRequester(userId, matchId);
+
+        if (participants == null || participants.isEmpty()) {
+            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
+        }
+
+        // 매칭률 계산
+        Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
+                .collect(Collectors.toMap(
+                        MatchingScoreDto::targetUserId,
+                        MatchingScoreDto::totalScore
+                ));
+
+        // 결과 매핑
+        List<DetailMatchingRes> result = participants.stream()
+                .map(base -> {
+                    Integer matchRate = matchRateMap.getOrDefault(base.userId(), 0);
+                    return DetailMatchingRes.from(base, matchRate);
+                })
+                .toList();
+
+        return new DetailMatchingListRes(result);
     }
 
     private GroupStatusListRes mapWithCountsAndImages(List<GroupStatusBaseRes> baseResList) {

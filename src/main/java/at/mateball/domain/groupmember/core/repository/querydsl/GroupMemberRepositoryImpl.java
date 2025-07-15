@@ -4,6 +4,7 @@ import at.mateball.domain.gameinformation.core.QGameInformation;
 import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.GroupMemberStatus;
+import at.mateball.domain.groupmember.api.dto.DetailMatchingListRes;
 import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.GroupMemberRes;
 import at.mateball.domain.groupmember.api.dto.base.*;
@@ -15,6 +16,7 @@ import at.mateball.domain.user.core.User;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -271,6 +273,56 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                                         QGroupMember.groupMember.status.in(1, 2)
                                 )
                                 .exists()
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<DetailMatchingBaseRes> findParticipantsForRequester(Long userId, Long matchId) {
+        QGroup group = QGroup.group;
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QUser user = QUser.user;
+        QGameInformation game = QGameInformation.gameInformation;
+        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+
+        BooleanExpression alreadyJoined = JPAExpressions
+                .selectOne()
+                .from(QGroupMember.groupMember)
+                .where(
+                        QGroupMember.groupMember.group.id.eq(matchId),
+                        QGroupMember.groupMember.user.id.eq(userId),
+                        QGroupMember.groupMember.isParticipant.isTrue()
+                )
+                .exists();
+
+        return queryFactory
+                .select(Projections.constructor(
+                        DetailMatchingBaseRes.class,
+                        group.id,
+                        user.id,
+                        user.nickname,
+                        user.birthYear,
+                        user.gender,
+                        matchRequirement.team,
+                        matchRequirement.style,
+                        user.introduction,
+                        game.awayTeamName,
+                        game.homeTeamName,
+                        game.stadiumName,
+                        game.gameDate,
+                        user.imgUrl
+                ))
+                .from(groupMember)
+                .join(groupMember.user, user)
+                .join(groupMember.group, group)
+                .join(group.gameInformation, game)
+                .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
+                .where(
+                        group.id.eq(matchId),
+                        group.status.eq(1),
+                        groupMember.isParticipant.isTrue(),
+                        user.id.ne(userId),
+                        alreadyJoined.not()
                 )
                 .fetch();
     }
