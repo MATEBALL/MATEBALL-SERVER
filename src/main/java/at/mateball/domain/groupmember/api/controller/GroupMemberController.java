@@ -89,7 +89,10 @@ public class GroupMemberController {
             @NotNull @RequestParam boolean newRequest
     ) {
         Long userId = userDetails.getUserId();
-        DetailMatchingListRes detailMatchingListRes = groupMemberService.getDetailMatching(userId, matchId, newRequest);
+
+        DetailMatchingListRes detailMatchingListRes = newRequest
+                ? groupMemberService.getDetailMatchingForCreator(userId, matchId)
+                : groupMemberService.getDetailMatchingForRequester(userId, matchId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, detailMatchingListRes));
     }
