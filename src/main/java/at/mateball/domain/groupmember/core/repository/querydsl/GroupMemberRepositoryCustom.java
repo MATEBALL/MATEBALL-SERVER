@@ -29,17 +29,11 @@ public interface GroupMemberRepositoryCustom {
 
     GroupMemberCountRes countGroupMember(Long groupId);
 
-    List<DetailMatchingBaseRes> findGroupMatesByMatchId(Long userId, Long matchId, boolean newRequest);
-
-    List<DetailMatchingBaseRes> findOnlySelf(Long userId, Long matchId);
-
-    List<DetailMatchingBaseRes> findParticipantsOnly(Long matchId);
-
     List<DirectMatchBaseRes> findDirectMatchMembers(Long groupId);
 
     void createGroupMember(Long userId, Long matchId);
 
-    List<DetailMatchingBaseRes> findNewRequestsForCreator(Long userId, Long matchId)
+    List<DetailMatchingBaseRes> findNewRequestsForCreator(Long userId, Long matchId);
 
     void updateLeaderStatus(Long userId, Long matchId, int status);
 

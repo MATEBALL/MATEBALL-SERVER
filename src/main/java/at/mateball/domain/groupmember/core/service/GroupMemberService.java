@@ -61,56 +61,12 @@ public class GroupMemberService {
         return mapWithCountsAndImages(baseResList);
     }
 
-    public DetailMatchingListRes getDetailMatching(Long userId, Long matchId, boolean newRequest) {
-        Group group = groupRepository.findById(matchId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
-
-        List<DetailMatchingBaseRes> baseResList;
-
-        if (newRequest) {
-            baseResList = groupMemberRepository.findGroupMatesByMatchId(userId, matchId, true);
-        } else {
-            baseResList = groupMemberRepository.findParticipantsOnly(matchId);
-        }
-
-        if (baseResList == null || baseResList.isEmpty()) {
-            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
-        }
-
-        Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
-                .collect(Collectors.toMap(
-                        MatchingScoreDto::targetUserId,
-                        MatchingScoreDto::totalScore
-                ));
-
-        List<DetailMatchingRes> result = baseResList.stream()
-                .filter(base -> {
-                    if (newRequest) {
-                        return !base.userId().equals(userId);
-                    }
-
-                    if (group.getStatus() == 1) {
-                        return !base.userId().equals(userId);
-                    }
-
-                    return true;
-                })
-                .map(base -> {
-                    Integer matchRate = matchRateMap.getOrDefault(base.userId(), 0);
-                    return DetailMatchingRes.from(base, matchRate);
-                })
-                .toList();
-
-
-        return new DetailMatchingListRes(result);
-    }
-
     public DetailMatchingListRes getDetailMatchingForCreator(Long userId, Long matchId) {
         List<DetailMatchingBaseRes> newRequests =
                 groupMemberRepository.findNewRequestsForCreator(userId, matchId);
 
         if (newRequests == null || newRequests.isEmpty()) {
-            throw new BusinessException(BusinessErrorCode.NO_PENDING_REQUESTS);
+            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
         }
 
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
@@ -129,6 +85,9 @@ public class GroupMemberService {
         return new DetailMatchingListRes(result);
     }
 
+    public DetailMatchingListRes getDetailMatchingForRequester(Long userId, Long matchId) {
+        throw new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND);
+    }
 
     private GroupStatusListRes mapWithCountsAndImages(List<GroupStatusBaseRes> baseResList) {
         if (baseResList.isEmpty()) {
