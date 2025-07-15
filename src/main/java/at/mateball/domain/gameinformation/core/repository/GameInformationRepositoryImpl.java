@@ -26,13 +26,4 @@ public class GameInformationRepositoryImpl implements GameInformationRepositoryC
                 .where(gameInformation.gameDate.eq(gameDate))
                 .fetch();
     }
-
-    @Override
-    public Optional<LocalDate> findGameDateById(Long gameId) {
-        return Optional.ofNullable(queryFactory
-                .select(game.gameDate)
-                .from(game)
-                .where(game.id.eq(gameId))
-                .fetchFirst());
-    }
 }

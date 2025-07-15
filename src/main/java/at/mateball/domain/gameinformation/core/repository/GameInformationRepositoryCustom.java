@@ -10,6 +10,4 @@ import java.util.Optional;
 @Repository
 public interface GameInformationRepositoryCustom {
     List<GameInformation> findByGameDate(LocalDate gameDate);
-
-    Optional<LocalDate> findGameDateById(Long gameId);
 }
