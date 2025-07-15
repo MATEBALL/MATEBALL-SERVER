@@ -134,13 +134,14 @@ public class GroupService {
 
         if (groupInformationRes.stream().anyMatch(dto ->
                 dto.groupId().equals(group.getId()) &&
-                        dto.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue()
+                        dto.groupStatus() == GroupStatus.PENDING.getValue()
         )) {
             throw new BusinessException(BusinessErrorCode.DUPLICATED_REQUEST);
         }
 
         if (groupInformationRes.stream().anyMatch(dto ->
                 dto.status() != GroupMemberStatus.MATCH_FAILED.getValue()
+                        && dto.gameDate().equals(gameDate)
         )) {
             throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
         }
@@ -157,7 +158,7 @@ public class GroupService {
         }
 
         if (groupMemberRepository.findAllGroupMemberInfo(group.getId()).stream()
-                .anyMatch(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue())) {
+                .anyMatch(m -> m.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue() || m.status() == GroupMemberStatus.NEW_REQUEST.getValue())) {
             throw new BusinessException(BusinessErrorCode.ALREADY_HAS_PENDING_REQUEST);
         }
     }
