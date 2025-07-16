@@ -2,9 +2,9 @@ package at.mateball.domain.groupmember.core.repository.querydsl;
 
 import at.mateball.domain.gameinformation.core.QGameInformation;
 import at.mateball.domain.group.core.Group;
+import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.GroupMemberStatus;
-import at.mateball.domain.groupmember.api.dto.DetailMatchingListRes;
 import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.GroupMemberRes;
 import at.mateball.domain.groupmember.api.dto.base.*;
@@ -13,7 +13,6 @@ import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -543,8 +542,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .join(groupMember.group, group)
                 .where(
                         groupMember.user.id.eq(userId),
-                        groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue()),
-                        groupMember.group.gameInformation.id.eq(gameId),
+                        group.status.eq(GroupStatus.PENDING.getValue()),
                         group.isGroup.eq(isGroup)
                 )
                 .fetchOne();
@@ -578,7 +576,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .where(
                         groupMember.group.id.in(groupIds),
                         groupMember.isParticipant.isTrue()
-                )                .fetch();
+                ).fetch();
 
         return results.stream()
                 .collect(Collectors.groupingBy(
