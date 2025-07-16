@@ -171,6 +171,10 @@ public class GroupService {
 
         List<GroupGetBaseRes> groupBases = groupRepository.findGroupsWithBaseInfo(userId, date);
 
+        if (groupBases.isEmpty()) {
+            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
+        }
+
         List<GroupGetBaseRes> ageFiltered = groupBases.stream()
                 .filter(groupBase -> ageValidator.isAgeWithinRange(userId, groupBase.birthYear()))
                 .toList();
