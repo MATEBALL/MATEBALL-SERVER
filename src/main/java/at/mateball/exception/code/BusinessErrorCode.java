@@ -49,8 +49,8 @@ public enum BusinessErrorCode implements ErrorCode {
     DUPLICATED_REQUEST(HttpStatus.CONFLICT, "이미 요청을 전송한 매칭입니다."),
 
     // 429 TOO MANY REQUESTS
-    EXCEED_GROUP_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "그룹 매칭은 최대 2개까지만 가능합니다."),
-    EXCEED_DIRECT_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "1대1 매칭은 최대 3개까지만 가능합니다.");
+    EXCEED_GROUP_MATCHING_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "그룹 매칭은 최대 2개까지만 가능합니다."),
+    EXCEED_DIRECT_MATCHING_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "1대1 매칭은 최대 3개까지만 가능합니다.");
 
     private final HttpStatus status;
     private final String message;
