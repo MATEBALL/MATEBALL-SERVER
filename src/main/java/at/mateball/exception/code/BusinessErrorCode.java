@@ -14,8 +14,6 @@ public enum BusinessErrorCode implements ErrorCode {
     BAD_REQUEST_MONDAY(HttpStatus.BAD_REQUEST, "월요일은 경기가 없습니다."),
     BAD_REQUEST_PAST(HttpStatus.BAD_REQUEST, "과거에 머물러있지 마십쇼. 이미 종료된 경기입니다."),
     BAD_REQUEST_DATE(HttpStatus.BAD_REQUEST, "매칭생성 및 신청은 2일 전까지 가능합니다."),
-    EXCEED_GROUP_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "그룹 매칭은 최대 2개까지만 가능합니다."),
-    EXCEED_DIRECT_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "1대1 매칭은 최대 3개까지만 가능합니다."),
     ALREADY_HAS_PENDING_REQUEST(HttpStatus.BAD_REQUEST, "이미 요청이 존재하는 매칭입니다."),
     DUPLICATE_MATCHING_ON_SAME_DATE(HttpStatus.BAD_REQUEST, "같은 날짜의 경기에는 하나의 매칭만 참여할 수 있습니다."),
     ALREADY_COMPLETED_GROUP(HttpStatus.BAD_REQUEST, "이미 매칭이 완료된 그룹입니다."),
@@ -48,7 +46,11 @@ public enum BusinessErrorCode implements ErrorCode {
     // 409 CONFLICT
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     ALREADY_FAILED_REQUEST(HttpStatus.CONFLICT, "이미 요청이 실패한 매칭입니다."),
-    DUPLICATED_REQUEST(HttpStatus.CONFLICT, "이미 요청을 전송한 매칭입니다.");
+    DUPLICATED_REQUEST(HttpStatus.CONFLICT, "이미 요청을 전송한 매칭입니다."),
+
+    // 429 TOO MANY REQUESTS
+    EXCEED_GROUP_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "그룹 매칭은 최대 2개까지만 가능합니다."),
+    EXCEED_DIRECT_MATCHING_LIMIT(HttpStatus.BAD_REQUEST, "1대1 매칭은 최대 3개까지만 가능합니다.");
 
     private final HttpStatus status;
     private final String message;
