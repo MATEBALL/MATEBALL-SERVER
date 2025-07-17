@@ -20,6 +20,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -95,6 +96,22 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
         QGameInformation gameInformation = QGameInformation.gameInformation;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
 
+        BooleanExpression statusCondition;
+
+
+        if (groupStatus == 3) {
+            statusCondition = (group.status.eq(3).and(groupMember.status.ne(6)))
+                    .or(
+                            groupMember.status.eq(6)
+                                    .and(groupMember.isParticipant.isFalse())
+                    );
+        } else {
+            statusCondition = group.status.eq(groupStatus)
+                    .and(
+                            groupMember.status.ne(6)
+                    );
+        }
+
         return queryFactory
                 .select(Projections.constructor(DirectStatusBaseRes.class,
                         group.id,
@@ -118,7 +135,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .where(
                         groupMember.user.id.eq(userId),
                         group.isGroup.isFalse(),
-                        group.status.eq(groupStatus)
+                        statusCondition
                 )
                 .fetch();
     }
@@ -193,6 +210,22 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
         QUser user = QUser.user;
         QGameInformation gameInformation = QGameInformation.gameInformation;
 
+        BooleanExpression statusCondition;
+
+
+        if (groupStatus == 3) {
+            statusCondition = (group.status.eq(3).and(groupMember.status.ne(6)))
+                    .or(
+                            groupMember.status.eq(6)
+                                    .and(groupMember.isParticipant.isFalse())
+                    );
+        } else {
+            statusCondition = group.status.eq(groupStatus)
+                    .and(
+                            groupMember.status.ne(6)
+                    );
+        }
+
         return queryFactory
                 .select(Projections.constructor(GroupStatusBaseRes.class,
                         group.id,
@@ -210,7 +243,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .where(
                         groupMember.user.id.eq(userId),
                         group.isGroup.isTrue(),
-                        group.status.eq(groupStatus)
+                        statusCondition
                 )
                 .fetch();
     }
