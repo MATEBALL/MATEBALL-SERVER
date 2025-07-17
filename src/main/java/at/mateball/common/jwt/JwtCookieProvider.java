@@ -45,11 +45,7 @@ public class JwtCookieProvider {
         return List.of(
                 createCookie(ACCESS_TOKEN_NAME, result.accessToken(), jwtProperties.accessExpiration()),
                 createCookie(REFRESH_TOKEN_NAME, result.refreshToken(), jwtProperties.refreshExpiration()),
-                createCookie(KAKAO_TOKEN_NAME, result.kakaoAccessToken(), jwtProperties.kakaoExpiration()),
-
-                deleteLegacyCookie(ACCESS_TOKEN_NAME),
-                deleteLegacyCookie(REFRESH_TOKEN_NAME),
-                deleteLegacyCookie(KAKAO_TOKEN_NAME)
+                createCookie(KAKAO_TOKEN_NAME, result.kakaoAccessToken(), jwtProperties.kakaoExpiration())
         );
     }
 
