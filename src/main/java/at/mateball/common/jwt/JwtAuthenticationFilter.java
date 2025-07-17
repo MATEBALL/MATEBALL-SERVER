@@ -1,5 +1,6 @@
 package at.mateball.common.jwt;
 
+import at.mateball.domain.auth.core.service.TokenService;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -21,13 +22,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtCookieProvider cookieProvider;
     private final JwtTokenValidator tokenValidator;
     private final JwtAuthenticationProvider authenticationProvider;
+    private final TokenService tokenService;
 
     public JwtAuthenticationFilter(JwtCookieProvider cookieProvider,
                                    JwtTokenValidator tokenValidator,
-                                   JwtAuthenticationProvider authenticationProvider) {
+                                   JwtAuthenticationProvider authenticationProvider,
+                                   TokenService tokenService) {
         this.cookieProvider = cookieProvider;
         this.tokenValidator = tokenValidator;
         this.authenticationProvider = authenticationProvider;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -38,6 +42,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = cookieProvider.extractAccessToken(request);
 
             if (token != null && token.contains(".") && countDots(token) == 2) {
+                if (tokenService.isBlacklisted(token)) {
+                    throw new BusinessException(BusinessErrorCode.LOGGED_OUT_TOKEN);
+                }
+
                 tokenValidator.validate(token);
                 Authentication authentication = authenticationProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

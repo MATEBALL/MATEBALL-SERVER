@@ -30,6 +30,7 @@ public enum BusinessErrorCode implements ErrorCode {
     INVALID_KAKAO_TOKEN(HttpStatus.UNAUTHORIZED, "Kakao Access Token이 유효하지 않습니다."),
     INVALID_SERVER_JWT(HttpStatus.UNAUTHORIZED, "유효하지 않은 서버 JWT입니다."),
     KAKAO_CLIENT_ERROR(HttpStatus.UNAUTHORIZED, "카카오 JWT 파싱 중 오류가 발생했습니다."),
+    LOGGED_OUT_TOKEN(HttpStatus.UNAUTHORIZED,"이미 로그아웃된 토큰입니다."),
 
     // 403 FORBIDDEN
     AGE_NOT_APPROPRIATE(HttpStatus.FORBIDDEN, "만 19세 이상부터 가입이 가능합니다."),
