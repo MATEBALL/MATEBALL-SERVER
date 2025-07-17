@@ -55,4 +55,21 @@ public class JwtTokenGenerator {
             throw new BusinessException(BusinessErrorCode.INVALID_ACCESS_TOKEN);
         }
     }
+
+    public Long getRemainingExpiration(String accessToken) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(accessToken)
+                    .getBody();
+
+            Date expiration = claims.getExpiration();
+            Long now = System.currentTimeMillis();
+
+            return expiration.getTime() - now;
+        } catch (Exception exception) {
+            throw new BusinessException(BusinessErrorCode.INVALID_ACCESS_TOKEN);
+        }
+    }
 }
