@@ -303,6 +303,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                                 )
                                 .exists()
                 )
+                .orderBy(groupMember.id.desc())
                 .fetch();
     }
 
@@ -353,6 +354,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         user.id.ne(userId),
                         alreadyJoined.not()
                 )
+                .orderBy(groupMember.id.desc())
                 .fetch();
     }
 
