@@ -30,13 +30,13 @@ public class TokenService {
 
     public void delete(Long userId) {
         refreshTokenRepository.deleteById("RT:" + userId);
-    }\
+    }
 
     public void addToBlacklist(String accessToken, Long expirationMillis) {
         redisTemplate.opsForValue().set("BL:" + accessToken, "logout", expirationMillis, TimeUnit.MILLISECONDS);
     }
 
-    public boolean  isBlacklisted(String accessToken) {
+    public boolean isBlacklisted(String accessToken) {
         return Boolean.TRUE.equals(redisTemplate.hasKey("BL:" + accessToken));
     }
 }
