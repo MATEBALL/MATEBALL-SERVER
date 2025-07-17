@@ -54,7 +54,7 @@ public class OAuthController {
         List<ResponseCookie> expiredCookies = jwtCookieProvider.expireAllCookies();
 
         return withCookies(expiredCookies)
-                .body(MateballResponse.successWithNoData(SuccessCode.CREATED));
+                .body(MateballResponse.successWithNoData(SuccessCode.OK));
     }
 
     private ResponseEntity.BodyBuilder withCookies(List<ResponseCookie> cookies) {
