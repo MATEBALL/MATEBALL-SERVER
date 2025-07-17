@@ -37,6 +37,9 @@ public record DirectStatusRes(
         @Schema(description = "홈 팀")
         String homeTeam,
         @NotNull
+        @Schema(description = "경기장")
+        String stadium,
+        @NotNull
         @Schema(description = "경기 날짜")
         LocalDate date,
         @NotNull
@@ -60,6 +63,7 @@ public record DirectStatusRes(
                 Style.from(baseRes.style()).getLabel(),
                 baseRes.awayTeam(),
                 baseRes.homeTeam(),
+                baseRes.stadium(),
                 baseRes.date(),
                 GroupMemberStatus.from(baseRes.status()).getLabel(),
                 baseRes.imgUrl()
