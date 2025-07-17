@@ -10,6 +10,7 @@ import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
+import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,13 @@ public class GroupMemberService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final MatchRequirementService matchRequirementService;
+    private final UserRepository userRepository;
 
-    public GroupMemberService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService) {
+    public GroupMemberService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, UserRepository userRepository) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.matchRequirementService = matchRequirementService;
+        this.userRepository = userRepository;
     }
 
     public DirectStatusListRes getDirectStatus(Long userId, GroupStatus groupStatus) {
@@ -82,7 +85,9 @@ public class GroupMemberService {
                 })
                 .toList();
 
-        return new DetailMatchingListRes(result);
+        String nickname = userRepository.findNicknameById(userId);
+
+        return new DetailMatchingListRes(nickname, result);
     }
 
     public DetailMatchingListRes getDetailMatchingForRequester(Long userId, Long matchId) {
@@ -94,14 +99,12 @@ public class GroupMemberService {
             throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
         }
 
-        // 매칭률 계산
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
                 .collect(Collectors.toMap(
                         MatchingScoreDto::targetUserId,
                         MatchingScoreDto::totalScore
                 ));
 
-        // 결과 매핑
         List<DetailMatchingRes> result = participants.stream()
                 .map(base -> {
                     Integer matchRate = matchRateMap.getOrDefault(base.userId(), 0);
@@ -109,7 +112,9 @@ public class GroupMemberService {
                 })
                 .toList();
 
-        return new DetailMatchingListRes(result);
+        String nickname = userRepository.findNicknameById(userId);
+
+        return new DetailMatchingListRes(nickname, result);
     }
 
     private GroupStatusListRes mapWithCountsAndImages(List<GroupStatusBaseRes> baseResList) {
