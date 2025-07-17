@@ -87,6 +87,26 @@ public class JwtCookieProvider {
                 .build();
     }
 
+    private ResponseCookie expireCookie(String name) {
+        return ResponseCookie.from(name, "")
+                .httpOnly(true)
+                .domain(".mateball.co.kr")
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
+    }
+
+    public List<ResponseCookie> expireAllCookies() {
+        return List.of(
+                expireCookie(ACCESS_TOKEN_NAME),
+                expireCookie(REFRESH_TOKEN_NAME),
+                expireCookie(KAKAO_TOKEN_NAME)
+        );
+    }
+
+
     private ResponseCookie deleteCookie(String name, HttpServletRequest request) {
         return ResponseCookie.from(name, "")
                 .httpOnly(true)
