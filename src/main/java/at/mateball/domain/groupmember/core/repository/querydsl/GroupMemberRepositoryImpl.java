@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static at.mateball.domain.matchrequirement.core.QMatchRequirement.matchRequirement;
+
 public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final EntityManager entityManager;
@@ -92,46 +94,41 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     public List<DirectStatusBaseRes> findDirectMatchingsByUserAndGroupStatus(Long userId, int groupStatus) {
         QGroupMember groupMember = QGroupMember.groupMember;
         QGroup group = QGroup.group;
-        QUser user = QUser.user;
+        QUser leader = new QUser("leader");
         QGameInformation gameInformation = QGameInformation.gameInformation;
-        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+        QMatchRequirement leaderMatchRequirement = new QMatchRequirement("leaderMatchRequirement");
 
         BooleanExpression statusCondition;
 
 
         if (groupStatus == 3) {
             statusCondition = (group.status.eq(3).and(groupMember.status.ne(6)))
-                    .or(
-                            groupMember.status.eq(6)
-                                    .and(groupMember.isParticipant.isFalse())
-                    );
+                    .or(groupMember.status.eq(6).and(groupMember.isParticipant.isFalse()));
         } else {
             statusCondition = group.status.eq(groupStatus)
-                    .and(
-                            groupMember.status.ne(6)
-                    );
+                    .and(groupMember.status.ne(6));
         }
 
         return queryFactory
                 .select(Projections.constructor(DirectStatusBaseRes.class,
                         group.id,
-                        user.nickname,
-                        user.birthYear,
-                        user.gender,
-                        matchRequirement.team,
-                        matchRequirement.style,
+                        leader.nickname,
+                        leader.birthYear,
+                        leader.gender,
+                        leaderMatchRequirement.team,
+                        leaderMatchRequirement.style,
                         gameInformation.awayTeamName,
                         gameInformation.homeTeamName,
                         gameInformation.stadiumName,
                         gameInformation.gameDate,
                         groupMember.status,
-                        user.imgUrl
+                        leader.imgUrl
                 ))
                 .from(groupMember)
                 .join(groupMember.group, group)
-                .join(groupMember.user, user)
+                .join(group.leader, leader)
                 .join(group.gameInformation, gameInformation)
-                .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
+                .join(leaderMatchRequirement).on(leaderMatchRequirement.user.id.eq(leader.id))
                 .where(
                         groupMember.user.id.eq(userId),
                         group.isGroup.isFalse(),
@@ -144,30 +141,30 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     public List<DirectStatusBaseRes> findAllDirectMatchingsByUser(Long userId) {
         QGroupMember groupMember = QGroupMember.groupMember;
         QGroup group = QGroup.group;
-        QUser user = QUser.user;
+        QUser leader = new QUser("leader");
         QGameInformation gameInformation = QGameInformation.gameInformation;
-        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+        QMatchRequirement leaderMatchRequirement = new QMatchRequirement("leaderMatchRequirement");
 
         return queryFactory
                 .select(Projections.constructor(DirectStatusBaseRes.class,
                         group.id,
-                        user.nickname,
-                        user.birthYear,
-                        user.gender,
-                        matchRequirement.team,
-                        matchRequirement.style,
+                        leader.nickname,
+                        leader.birthYear,
+                        leader.gender,
+                        leaderMatchRequirement.team,
+                        leaderMatchRequirement.style,
                         gameInformation.awayTeamName,
                         gameInformation.homeTeamName,
                         gameInformation.stadiumName,
                         gameInformation.gameDate,
                         groupMember.status,
-                        user.imgUrl
+                        leader.imgUrl
                 ))
                 .from(groupMember)
                 .join(groupMember.group, group)
-                .join(groupMember.user, user)
+                .join(group.leader, leader)
                 .join(group.gameInformation, gameInformation)
-                .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
+                .join(leaderMatchRequirement).on(leaderMatchRequirement.user.id.eq(leader.id))
                 .where(
                         groupMember.user.id.eq(userId),
                         group.isGroup.isFalse()
@@ -175,17 +172,19 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .fetch();
     }
 
+
     @Override
     public List<GroupStatusBaseRes> findGroupMatchingsByUser(Long userId) {
         QGroupMember groupMember = QGroupMember.groupMember;
         QGroup group = QGroup.group;
-        QUser user = QUser.user;
+        QUser leader = new QUser("leader");
         QGameInformation gameInformation = QGameInformation.gameInformation;
+        QMatchRequirement leaderMatchRequirement = new QMatchRequirement("leaderMatchRequirement");
 
         return queryFactory
                 .select(Projections.constructor(GroupStatusBaseRes.class,
                         group.id,
-                        user.nickname,
+                        leader.nickname,
                         gameInformation.awayTeamName,
                         gameInformation.homeTeamName,
                         gameInformation.stadiumName,
@@ -194,8 +193,9 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 ))
                 .from(groupMember)
                 .join(groupMember.group, group)
-                .join(groupMember.user, user)
+                .join(group.leader, leader)
                 .join(group.gameInformation, gameInformation)
+                .join(leaderMatchRequirement).on(leaderMatchRequirement.user.id.eq(leader.id))
                 .where(
                         groupMember.user.id.eq(userId),
                         group.isGroup.isTrue()
@@ -207,29 +207,24 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     public List<GroupStatusBaseRes> findGroupMatchingsByUserAndStatus(Long userId, int groupStatus) {
         QGroupMember groupMember = QGroupMember.groupMember;
         QGroup group = QGroup.group;
-        QUser user = QUser.user;
+        QUser leader = new QUser("leader");
         QGameInformation gameInformation = QGameInformation.gameInformation;
+        QMatchRequirement leaderMatchRequirement = new QMatchRequirement("leaderMatchRequirement");
 
         BooleanExpression statusCondition;
 
-
         if (groupStatus == 3) {
             statusCondition = (group.status.eq(3).and(groupMember.status.ne(6)))
-                    .or(
-                            groupMember.status.eq(6)
-                                    .and(groupMember.isParticipant.isFalse())
-                    );
+                    .or(groupMember.status.eq(6).and(groupMember.isParticipant.isFalse()));
         } else {
             statusCondition = group.status.eq(groupStatus)
-                    .and(
-                            groupMember.status.ne(6)
-                    );
+                    .and(groupMember.status.ne(6));
         }
 
         return queryFactory
                 .select(Projections.constructor(GroupStatusBaseRes.class,
                         group.id,
-                        user.nickname,
+                        leader.nickname,
                         gameInformation.awayTeamName,
                         gameInformation.homeTeamName,
                         gameInformation.stadiumName,
@@ -238,11 +233,13 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 ))
                 .from(groupMember)
                 .join(groupMember.group, group)
-                .join(groupMember.user, user)
+                .join(group.leader, leader)
                 .join(group.gameInformation, gameInformation)
+                .join(leaderMatchRequirement).on(leaderMatchRequirement.user.id.eq(leader.id))
                 .where(
-                        groupMember.user.id.eq(userId),
                         group.isGroup.isTrue(),
+                        (groupMember.user.id.eq(userId)
+                                .or(group.leader.id.eq(userId))),
                         statusCondition
                 )
                 .fetch();
