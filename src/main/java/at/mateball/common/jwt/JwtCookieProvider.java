@@ -45,7 +45,11 @@ public class JwtCookieProvider {
         return List.of(
                 createCookie(ACCESS_TOKEN_NAME, result.accessToken(), jwtProperties.accessExpiration()),
                 createCookie(REFRESH_TOKEN_NAME, result.refreshToken(), jwtProperties.refreshExpiration()),
-                createCookie(KAKAO_TOKEN_NAME, result.kakaoAccessToken(), jwtProperties.kakaoExpiration())
+                createCookie(KAKAO_TOKEN_NAME, result.kakaoAccessToken(), jwtProperties.kakaoExpiration()),
+
+                deleteLegacyCookie(ACCESS_TOKEN_NAME),
+                deleteLegacyCookie(REFRESH_TOKEN_NAME),
+                deleteLegacyCookie(KAKAO_TOKEN_NAME)
         );
     }
 
@@ -53,18 +57,22 @@ public class JwtCookieProvider {
         return List.of(
                 deleteCookie(ACCESS_TOKEN_NAME, request),
                 deleteCookie(REFRESH_TOKEN_NAME, request),
-                deleteCookie(KAKAO_TOKEN_NAME, request)
+                deleteCookie(KAKAO_TOKEN_NAME, request),
+
+                deleteLegacyCookie(ACCESS_TOKEN_NAME),
+                deleteLegacyCookie(REFRESH_TOKEN_NAME),
+                deleteLegacyCookie(KAKAO_TOKEN_NAME)
         );
     }
 
-    private ResponseCookie deleteCookieByDomain(String name, String domain) {
+    private ResponseCookie deleteLegacyCookie(String name) {
         return ResponseCookie.from(name, "")
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")
                 .path("/")
                 .maxAge(0)
-                .domain(domain)
+                .domain(".mateball.co.kr")
                 .build();
     }
 
