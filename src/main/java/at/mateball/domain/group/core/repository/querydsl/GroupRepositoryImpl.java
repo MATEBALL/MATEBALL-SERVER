@@ -193,6 +193,16 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                                         groupMember.status.ne(1),
                                         groupMember.isParticipant.isTrue()
                                 )
+                                .notExists(),
+
+                        JPAExpressions
+                                .selectOne()
+                                .from(groupMember)
+                                .where(
+                                        groupMember.group.eq(group),
+                                        groupMember.user.id.eq(userId),
+                                        groupMember.isParticipant.isTrue()
+                                )
                                 .notExists()
                 )
                 .fetch();

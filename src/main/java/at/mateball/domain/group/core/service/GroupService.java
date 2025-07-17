@@ -171,19 +171,13 @@ public class GroupService {
 
         List<GroupGetBaseRes> groupBases = groupRepository.findGroupsWithBaseInfo(userId, date);
 
-        if (groupBases.isEmpty()) {
-            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
-        }
-
         List<GroupGetBaseRes> ageFiltered = groupBases.stream()
                 .filter(groupBase -> ageValidator.isAgeWithinRange(userId, groupBase.birthYear()))
                 .toList();
 
-        if (ageFiltered.isEmpty()) {
-            throw new BusinessException(BusinessErrorCode.NOT_ALLOWED_AGE);
-        }
-
-        List<Long> groupIds = groupBases.stream().map(GroupGetBaseRes::id).toList();
+        List<Long> groupIds = ageFiltered.stream()
+                .map(GroupGetBaseRes::id)
+                .toList();
 
         Map<Long, List<Long>> groupToUserIds = groupMemberRepository.findUserIdsGroupedByGroupIds(groupIds);
         Map<Long, Integer> userMatchScores = matchRequirementService.getMatchings(userId).stream()
@@ -191,10 +185,9 @@ public class GroupService {
 
         Map<Long, Integer> groupToMemberCount = groupMemberRepository.findGroupMemberCountMap(groupIds);
         Map<Long, List<String>> groupToImgUrls = groupMemberRepository.findGroupMemberImgMap(groupIds);
-
         Map<Long, Integer> groupToAvgMatchRate = calculateGroupAvgMatchRates(groupToUserIds, userMatchScores);
 
-        List<GroupGetRes> result = groupBases.stream()
+        List<GroupGetRes> result = ageFiltered.stream()
                 .map(groupBase -> {
                     Long groupId = groupBase.id();
                     int count = groupToMemberCount.getOrDefault(groupId, 1);
