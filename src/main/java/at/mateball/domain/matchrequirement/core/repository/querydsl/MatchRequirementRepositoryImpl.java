@@ -30,15 +30,30 @@ public class MatchRequirementRepositoryImpl implements MatchRequirementRepositor
         QUser userB = QUser.user;
 
         User user = entityManager.find(User.class, userId);
+
+        if (user == null || user.getBirthYear() == null || user.getGender() == null) {
+            return List.of();
+        }
+
         MatchRequirement reqA = entityManager.createQuery(
                         "SELECT r FROM MatchRequirement r WHERE r.user.id = :id", MatchRequirement.class)
                 .setParameter("id", userId)
-                .getSingleResult();
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
 
         Integer birthYearA = user.getBirthYear();
         if (birthYearA == null) {
             return List.of();
         }
+
+        if (user.getBirthYear() == null || user.getGender() == null || reqA == null ||
+                reqA.getTeam() == null || reqA.getTeamAllowed() == null ||
+                reqA.getStyle() == null || reqA.getGenderPreference() == null) {
+            return List.of();
+        }
+
         int teamA = reqA.getTeam();
         int allowA = reqA.getTeamAllowed();
         int styleA = reqA.getStyle();

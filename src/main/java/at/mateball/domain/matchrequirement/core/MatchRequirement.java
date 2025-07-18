@@ -17,22 +17,22 @@ public class MatchRequirement {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private int team;
+    @Column(nullable = true)
+    private Integer team;
 
     @Column(nullable = true)
     private Integer teamAllowed;
 
-    @Column(nullable = false)
-    private int style;
+    @Column(nullable = true)
+    private Integer style;
 
-    @Column(nullable = false)
-    private int genderPreference;
+    @Column(nullable = true)
+    private Integer genderPreference;
 
     protected MatchRequirement() {
     }
 
-    public MatchRequirement(User user, int team, Integer teamAllowed, int style, int genderPreference) {
+    public MatchRequirement(User user, Integer team, Integer teamAllowed, Integer style, Integer genderPreference) {
         this.user = user;
         this.team = team;
         this.teamAllowed = teamAllowed;
@@ -44,7 +44,7 @@ public class MatchRequirement {
 
     }
 
-    public void updateAll(int team, Integer teamAllowed, int style, int genderPreference) {
+    public void updateAll(Integer team, Integer teamAllowed, Integer style, Integer genderPreference) {
         this.team = team;
         this.teamAllowed = teamAllowed;
         this.style = style;
