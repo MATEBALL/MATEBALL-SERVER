@@ -72,6 +72,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         QGameInformation game = QGameInformation.gameInformation;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
         QGroupMember groupMember = QGroupMember.groupMember;
+
         return queryFactory
                 .select(Projections.constructor(DirectGetBaseRes.class,
                         group.id,
@@ -101,7 +102,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                                 .from(groupMember)
                                 .where(
                                         groupMember.group.id.eq(group.id),
-                                        groupMember.status.ne(1)
+                                        groupMember.status.in(2, 3, 4, 5)
                                 )
                                 .notExists()
 
@@ -167,6 +168,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         QUser leader = user;
         QGameInformation game = QGameInformation.gameInformation;
         QGroupMember groupMember = QGroupMember.groupMember;
+        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
 
         return queryFactory
                 .select(Projections.constructor(GroupGetBaseRes.class,
@@ -190,7 +192,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                                 .from(groupMember)
                                 .where(
                                         groupMember.group.id.eq(group.id),
-                                        groupMember.status.ne(1),
+                                        groupMember.status.in(2, 3, 4, 5),
                                         groupMember.isParticipant.isTrue()
                                 )
                                 .notExists(),

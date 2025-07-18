@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import static at.mateball.domain.group.core.MatchType.DIRECT;
 import static at.mateball.domain.group.core.MatchType.GROUP;
 import static at.mateball.domain.group.core.validator.DateValidator.validate;
+import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
 
 @Service
 public class GroupService {
@@ -76,7 +77,8 @@ public class GroupService {
 
         List<DirectGetBaseRes> filtered = result.stream()
                 .filter(res -> res.team() != null && res.style() != null)
-                .filter(res-> ageValidator.isAgeWithinRange(userId,res.birthYear()))
+                .filter(res -> ageValidator.isAgeWithinRange(userId, res.birthYear()))
+                .filter(res -> !groupMemberRepository.existsByGroupIdAndUserIdAndStatus(res.id(), userId, 6))
                 .toList();
 
         Map<Long, Integer> matchRateMap = matchRequirementService.getMatchings(userId).stream()
@@ -141,7 +143,7 @@ public class GroupService {
 
         if (groupInformationRes.stream().anyMatch(dto ->
                 dto.groupId().equals(group.getId()) &&
-                        dto.status() == GroupMemberStatus.MATCH_FAILED.getValue()
+                        dto.status() == MATCH_FAILED.getValue()
         )) {
             throw new BusinessException(BusinessErrorCode.ALREADY_FAILED_REQUEST);
         }
@@ -154,7 +156,7 @@ public class GroupService {
         }
 
         if (groupInformationRes.stream().anyMatch(dto ->
-                dto.status() != GroupMemberStatus.MATCH_FAILED.getValue()
+                dto.status() != MATCH_FAILED.getValue()
                         && dto.gameDate().equals(gameDate)
         )) {
             throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
@@ -171,11 +173,15 @@ public class GroupService {
 
         List<GroupGetBaseRes> groupBases = groupRepository.findGroupsWithBaseInfo(userId, date);
 
-        List<GroupGetBaseRes> ageFiltered = groupBases.stream()
+        List<GroupGetBaseRes> filtered = groupBases.stream()
                 .filter(groupBase -> ageValidator.isAgeWithinRange(userId, groupBase.birthYear()))
+                .filter(groupBase ->
+                        !groupMemberRepository.existsByGroupIdAndUserIdAndStatus(
+                                groupBase.id(), userId, GroupMemberStatus.MATCH_FAILED.getValue())
+                )
                 .toList();
 
-        List<Long> groupIds = ageFiltered.stream()
+        List<Long> groupIds = filtered.stream()
                 .map(GroupGetBaseRes::id)
                 .toList();
 
@@ -187,7 +193,7 @@ public class GroupService {
         Map<Long, List<String>> groupToImgUrls = groupMemberRepository.findGroupMemberImgMap(groupIds);
         Map<Long, Integer> groupToAvgMatchRate = calculateGroupAvgMatchRates(groupToUserIds, userMatchScores);
 
-        List<GroupGetRes> result = ageFiltered.stream()
+        List<GroupGetRes> result = filtered.stream()
                 .map(groupBase -> {
                     Long groupId = groupBase.id();
                     int count = groupToMemberCount.getOrDefault(groupId, 1);
