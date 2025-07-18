@@ -334,14 +334,14 @@ public class GroupService {
         GroupMemberRes info = groupMemberRepository.getMatchingInfo(userId, gameId, isGroup)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GAME_NOT_FOUND));
 
-        validate(info.gameDate());
-
         if (isGroup ? info.totalMatches() >= MAX_GROUP_COUNT : info.totalMatches() >= MAX_DIRECT_COUNT) {
             throw new BusinessException(
                     isGroup ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
                             : BusinessErrorCode.EXCEED_DIRECT_MATCHING_LIMIT
             );
         }
+
+        validate(info.gameDate());
 
         if (info.hasMatchOnSameDate()) {
             throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
