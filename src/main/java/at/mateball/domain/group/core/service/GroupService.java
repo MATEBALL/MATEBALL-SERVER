@@ -124,6 +124,17 @@ public class GroupService {
         List<GroupInformationRes> groupInformationRes =
                 groupMemberRepository.findGroupInformation(userId, gameDate);
 
+        long pendingRequestCount = groupInformationRes.stream()
+                .filter(dto -> dto.isGroup() == isGroup && dto.groupStatus() == GroupStatus.PENDING.getValue())
+                .count();
+        int requestLimit = isGroup ? MAX_GROUP_COUNT : MAX_DIRECT_COUNT;
+        if (pendingRequestCount >= requestLimit) {
+            throw new BusinessException(
+                    isGroup ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
+                            : BusinessErrorCode.EXCEED_DIRECT_MATCHING_LIMIT
+            );
+        }
+
         groupInformationRes.stream()
                 .map(GroupInformationRes::gameDate)
                 .forEach(DateValidator::validate);
@@ -147,17 +158,6 @@ public class GroupService {
                         && dto.gameDate().equals(gameDate)
         )) {
             throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
-        }
-
-        long pendingRequestCount = groupInformationRes.stream()
-                .filter(dto -> dto.isGroup() == isGroup && dto.groupStatus() == GroupStatus.PENDING.getValue())
-                .count();
-        int requestLimit = isGroup ? MAX_GROUP_COUNT : MAX_DIRECT_COUNT;
-        if (pendingRequestCount >= requestLimit) {
-            throw new BusinessException(
-                    isGroup ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
-                            : BusinessErrorCode.EXCEED_DIRECT_MATCHING_LIMIT
-            );
         }
 
         if (groupMemberRepository.findAllGroupMemberInfo(group.getId()).stream()
@@ -336,15 +336,15 @@ public class GroupService {
 
         validate(info.gameDate());
 
-        if (info.hasMatchOnSameDate()) {
-            throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
-        }
-
         if (isGroup ? info.totalMatches() >= MAX_GROUP_COUNT : info.totalMatches() >= MAX_DIRECT_COUNT) {
             throw new BusinessException(
                     isGroup ? BusinessErrorCode.EXCEED_GROUP_MATCHING_LIMIT
                             : BusinessErrorCode.EXCEED_DIRECT_MATCHING_LIMIT
             );
+        }
+
+        if (info.hasMatchOnSameDate()) {
+            throw new BusinessException(BusinessErrorCode.DUPLICATE_MATCHING_ON_SAME_DATE);
         }
 
         return new CreateMatchRes(groupExecutor.createGroup(userId, gameId, isGroup));
