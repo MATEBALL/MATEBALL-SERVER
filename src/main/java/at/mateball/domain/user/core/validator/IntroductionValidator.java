@@ -9,7 +9,7 @@ public class IntroductionValidator {
 
     public static void validate(String introduction) {
         if (introduction == null || introduction.isBlank() || introduction.length() < MIN_INTRODUCTION_LENGTH || introduction.length() > MAX_INTRODUCTION_LENGTH) {
-            throw new BusinessException(BusinessErrorCode.INVALID_NICKNAME_LENGTH);
+            throw new BusinessException(BusinessErrorCode.INVALID_INTRODUCTION_LENGTH);
         }
     }
 }
