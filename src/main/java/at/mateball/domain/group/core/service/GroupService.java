@@ -268,6 +268,9 @@ public class GroupService {
 
         groupMemberRepository.updateStatusesForDirectMatching(userId, requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
         groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+
+        alarmService.createAlarm(userId, AlarmType.MATCHED);
+        alarmService.createAlarm(requesterId, AlarmType.MATCHED);
     }
 
     private void processGroup(Long userId, Long groupId) {
@@ -302,6 +305,7 @@ public class GroupService {
         if (awaitingApprovals < totalParticipants - 1) {
             return;
         }
+        alarmService.createAlarm(requesterId, AlarmType.APPROVED);
 
         groupMemberRepository.updateStatusAfterRequestApproval(
                 groupId, requesterId, GroupMemberStatus.APPROVED.getValue()
@@ -316,6 +320,9 @@ public class GroupService {
         if (participantCount + 1 == TOTAL_GROUP_MEMBER) {
             groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
             groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+
+            members.forEach(m -> alarmService.createAlarm(m.userId(), AlarmType.MATCHED));
+            alarmService.createAlarm(requesterId, AlarmType.MATCHED);
         }
     }
 
