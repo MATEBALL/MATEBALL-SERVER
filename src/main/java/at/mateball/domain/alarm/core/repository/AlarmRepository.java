@@ -19,4 +19,6 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
             "WHERE a.user.id = :userId AND a.type IN :types AND a.isRead = false")
     void markAsReadByUserAndTypes(@Param("userId") Long userId,
                                   @Param("types") List<AlarmType> types);
+
+    boolean existsByUserIdAndIsReadFalse(Long userId);
 }
