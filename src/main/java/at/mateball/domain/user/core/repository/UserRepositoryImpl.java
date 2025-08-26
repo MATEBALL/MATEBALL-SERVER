@@ -2,6 +2,7 @@ package at.mateball.domain.user.core.repository;
 
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.api.dto.response.CheckUserRes;
+import at.mateball.domain.user.api.dto.response.CheckUserV2Res;
 import at.mateball.domain.user.api.dto.response.UserInformationBaseRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.QUser;
@@ -96,4 +97,40 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         result.get(matchRequirement.genderPreference) != null;
 
         return new CheckUserRes(nicknameExists, allConditionsPresent);
-    }}
+    }
+
+    @Override
+    public CheckUserV2Res infoCheck(Long userId) {
+        QUser user = QUser.user;
+        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+
+        Tuple result = queryFactory
+                .select(user.nickname,
+                        matchRequirement.team,
+                        matchRequirement.teamAllowed,
+                        matchRequirement.style,
+                        matchRequirement.genderPreference,
+                        user.hasAccepted)
+                .from(user)
+                .leftJoin(matchRequirement).on(matchRequirement.user.id.eq(user.id))
+                .where(user.id.eq(userId))
+                .fetchOne();
+
+        if (result == null) {
+            throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND);
+        }
+
+        boolean nicknameExists = result.get(user.nickname) != null;
+
+        boolean allConditionsPresent =
+                result.get(matchRequirement.team) != null &&
+                        result.get(matchRequirement.teamAllowed) != null &&
+                        result.get(matchRequirement.style) != null &&
+                        result.get(matchRequirement.genderPreference) != null;
+
+        Boolean hasAccepted = result.get(user.hasAccepted);
+        boolean accepted = hasAccepted != null && hasAccepted;
+
+        return new CheckUserV2Res(nicknameExists, allConditionsPresent, accepted);
+    }
+}
