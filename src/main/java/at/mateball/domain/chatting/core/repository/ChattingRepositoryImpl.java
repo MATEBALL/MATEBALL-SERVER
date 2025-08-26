@@ -16,6 +16,7 @@ public class ChattingRepositoryImpl implements ChattingRepositoryCustom {
 
     @Override
     public Optional<Chatting> findFirstByIsUsedFalseOrderByIdAsc() {
+    public Optional<Chatting> findFirstByIsUsedFalse() {
         QChatting chatting = QChatting.chatting;
 
         Chatting result = queryFactory
@@ -26,4 +27,6 @@ public class ChattingRepositoryImpl implements ChattingRepositoryCustom {
 
         return Optional.ofNullable(result);
     }
-}
+}}
+
+
