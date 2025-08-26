@@ -22,6 +22,7 @@ public enum BusinessErrorCode implements ErrorCode {
     INVALID_NICKNAME_CHARACTER(HttpStatus.BAD_REQUEST, "닉네임은 한글 또는 영어만 사용할 수 있으며, 특수문자는 사용할 수 없습니다."),
     BAD_REQUEST_MATCH_TYPE(HttpStatus.BAD_REQUEST, "요청 matchType이 잘못되었습니다."),
     NOT_ALLOWED_AGE(HttpStatus.BAD_REQUEST, "매칭 가능한 나이가 아닙니다."),
+    INVALID_GROUP_STATUS(HttpStatus.BAD_REQUEST, "매칭 완료 상태가 아닙니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
@@ -43,6 +44,7 @@ public enum BusinessErrorCode implements ErrorCode {
     REQUESTER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 요청자입니다."),
     GAME_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 경기입니다."),
     MATCH_REQUIREMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "매칭 조건 정보가 존재하지 않습니다."),
+    CHATTING_NOT_FOUND(HttpStatus.NOT_FOUND, "오픈채팅이 존재하지 않습니다."),
 
     // 409 CONFLICT
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
