@@ -1,5 +1,6 @@
 package at.mateball.domain.group.core;
 
+import at.mateball.domain.chatting.core.Chatting;
 import at.mateball.domain.gameinformation.core.GameInformation;
 import at.mateball.domain.user.core.User;
 import jakarta.persistence.*;
@@ -24,14 +25,15 @@ public class Group {
     @JoinColumn(name = "game_information_id", nullable = false)
     private GameInformation gameInformation;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "chatting_id", nullable = true)
+    private Chatting chatting;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private int status;
-
-    @Column(nullable = true, length = 1000)
-    private String chattingUrl;
 
     @Column(nullable = false)
     private boolean isGroup;
