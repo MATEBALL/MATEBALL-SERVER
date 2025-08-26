@@ -2,6 +2,7 @@ package at.mateball.domain.user.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
+import at.mateball.domain.user.api.dto.request.AcceptedReq;
 import at.mateball.domain.user.api.dto.response.InfoCheckRes;
 import at.mateball.domain.user.core.service.UserV2Service;
 import at.mateball.exception.code.SuccessCode;
@@ -10,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -32,5 +34,13 @@ public class UserV2Contrller {
     }
 
     @PostMapping("/consent")
-    public ResponseEntity<MateballResponse<?>> updateHasAccepted
+    public ResponseEntity<MateballResponse<?>> updateHasAccepted(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestBody AcceptedReq acceptedReq
+    ) {
+        Long userId = customUserDetails.getUserId();
+        userV2Service.updateHasAccepted(userId, acceptedReq.hasAccepted());
+
+        return ResponseEntity.ofNullable(MateballResponse.successWithNoData(SuccessCode.CREATED));
+    }
 }
