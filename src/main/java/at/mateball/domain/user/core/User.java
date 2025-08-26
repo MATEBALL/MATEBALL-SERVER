@@ -72,4 +72,8 @@ public class User {
         this.gender = gender.getRaw();
         this.birthYear = birthYear;
     }
+
+    public void updateHasAccepted(boolean hasAccepted) {
+        this.hasAccepted = hasAccepted;
+    }
 }
