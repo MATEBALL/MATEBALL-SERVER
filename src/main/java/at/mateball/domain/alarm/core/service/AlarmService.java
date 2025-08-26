@@ -45,4 +45,8 @@ public class AlarmService {
     public List<Alarm> getUnreadAlarms(Long userId) {
         return alarmRepository.findByUserIdAndIsReadFalse(userId);
     }
+
+    public boolean hasUnreadAlarm(Long userId) {
+        return alarmRepository.existsByUserIdAndIsReadFalse(userId);
+    }
 }

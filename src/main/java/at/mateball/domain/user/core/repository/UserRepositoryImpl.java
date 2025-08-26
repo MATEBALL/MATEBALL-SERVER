@@ -131,6 +131,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         Boolean hasAccepted = result.get(user.hasAccepted);
         boolean accepted = hasAccepted != null && hasAccepted;
 
-        return new InfoCheckRes(nicknameExists, allConditionsPresent, accepted);
+        return new InfoCheckRes(nicknameExists, allConditionsPresent, accepted, false);
     }
 }
