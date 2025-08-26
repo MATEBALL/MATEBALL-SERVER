@@ -21,7 +21,7 @@ public class AlarmService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createAlarm(Long userId, AlarmType type) {
+    public void createAlarm(Long userId, AlarmType type, Long groupId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
 
@@ -29,7 +29,7 @@ public class AlarmService {
             alarmRepository.markAsReadByUserAndTypes(userId, List.of(AlarmType.NEW_REQUEST, AlarmType.APPROVED));
         }
 
-        Alarm alarm = new Alarm(user, type);
+        Alarm alarm = new Alarm(user, type, groupId);
         alarmRepository.save(alarm);
     }
 

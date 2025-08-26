@@ -27,14 +27,18 @@ public class Alarm {
     @Column(nullable = false)
     private boolean isRead = false;
 
+    @Column(name = "group_id")
+    private Long groupId;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     protected Alarm() {}
 
-    public Alarm(User user, AlarmType type) {
+    public Alarm(User user, AlarmType type, Long groupId) {
         this.user = user;
         this.type = type;
+        this.groupId = groupId;
     }
 
     public void markAsRead() {
