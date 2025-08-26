@@ -24,6 +24,7 @@ public enum BusinessErrorCode implements ErrorCode {
     NOT_ALLOWED_AGE(HttpStatus.BAD_REQUEST, "매칭 가능한 나이가 아닙니다."),
     INVALID_GROUP_STATUS(HttpStatus.BAD_REQUEST, "매칭 완료 상태가 아닙니다."),
     GROUP_NOT_FOUND_OR_ALREADY_UPDATED(HttpStatus.BAD_REQUEST, "업데이트할 그룹이 없거나 이미 업데이트된 상태입니다."),
+    INVALID_INTRODUCTION_LENGTH(HttpStatus.BAD_REQUEST, "한줄소개는 1자 이상 50자 이하로 입력해야 합니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
