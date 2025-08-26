@@ -218,7 +218,8 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .update(group)
                 .set(group.status, status)
                 .set(group.chatting.id, chattingId)
-                .where(group.id.eq(groupId))
+                .where(group.id.eq(groupId)
+                        .and(group.chatting.id.isNull()))
                 .execute();
     }
 
