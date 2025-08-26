@@ -6,6 +6,7 @@ import at.mateball.domain.user.api.dto.request.UserInfoV2Req;
 import at.mateball.domain.user.api.dto.response.InfoCheckRes;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
+import at.mateball.domain.user.core.validator.IntroductionValidator;
 import at.mateball.domain.user.core.validator.NicknameValidator;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
@@ -23,8 +24,6 @@ public class UserV2Service {
     private final AlarmService alarmService;
 
     private static final Integer LIMIT_AGE = 19;
-    private static final Integer MIN_INTRODUCTION_LENGTH = 1;
-    private static final Integer MAX_INTRODUCTION_LENGTH = 50;
     private static final String DEFAULT_PROFILE_IMAGE_URL =
             "https://mateball-file.s3.ap-northeast-2.amazonaws.com/profile.jpg";
 
@@ -72,9 +71,7 @@ public class UserV2Service {
     }
 
     private void validateIntroduction(String introduction) {
-        if (introduction == null || introduction.isBlank() || introduction.length() < MIN_INTRODUCTION_LENGTH || introduction.length() > MAX_INTRODUCTION_LENGTH) {
-            throw new BusinessException(BusinessErrorCode.INVALID_INTRODUCTION_LENGTH);
-        }
+        IntroductionValidator.validate(introduction);
     }
 
     private void validateAge(int birthYear) {
