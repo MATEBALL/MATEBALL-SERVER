@@ -6,6 +6,7 @@ import at.mateball.domain.user.api.dto.request.EditUserInfoReq;
 import at.mateball.domain.user.api.dto.request.UserInfoV2Req;
 import at.mateball.domain.user.api.dto.response.InfoCheckRes;
 import at.mateball.domain.user.core.User;
+import at.mateball.domain.user.core.UserInfoField;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.domain.user.core.validator.IntroductionValidator;
 import at.mateball.domain.user.core.validator.NicknameValidator;
@@ -68,12 +69,13 @@ public class UserV2Service {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
-        switch (req.field()) {
-            case "닉네임" -> {
+        UserInfoField field = UserInfoField.fromLabel(req.field());
+        switch (field) {
+            case NICKNAME -> {
                 validateNickname(req.value());
                 user.updateNickname(req.value());
             }
-            case "소개" -> {
+            case INTRODUCTION -> {
                 validateIntroduction(req.value());
                 user.updateIntroduction(req.value());
             }
