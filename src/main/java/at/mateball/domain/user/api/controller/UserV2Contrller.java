@@ -2,8 +2,7 @@ package at.mateball.domain.user.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
-import at.mateball.domain.user.api.dto.response.CheckUserV2Res;
-import at.mateball.domain.user.core.service.UserService;
+import at.mateball.domain.user.api.dto.response.InfoCheckRes;
 import at.mateball.domain.user.core.service.UserV2Service;
 import at.mateball.exception.code.SuccessCode;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +25,8 @@ public class UserV2Contrller {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         Long userId = customUserDetails.getUserId();
-        CheckUserV2Res checkUserV2Res = userV2Service.getInfoCheck(userId);
+        InfoCheckRes infoCheckRes = userV2Service.getInfoCheck(userId);
 
-        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, checkUserV2Res));
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, infoCheckRes));
     }
 }

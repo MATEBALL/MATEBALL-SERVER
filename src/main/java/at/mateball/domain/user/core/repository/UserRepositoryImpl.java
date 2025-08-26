@@ -2,7 +2,7 @@ package at.mateball.domain.user.core.repository;
 
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.api.dto.response.CheckUserRes;
-import at.mateball.domain.user.api.dto.response.CheckUserV2Res;
+import at.mateball.domain.user.api.dto.response.InfoCheckRes;
 import at.mateball.domain.user.api.dto.response.UserInformationBaseRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.QUser;
@@ -100,7 +100,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public CheckUserV2Res infoCheck(Long userId) {
+    public InfoCheckRes infoCheck(Long userId) {
         QUser user = QUser.user;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
 
@@ -131,6 +131,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         Boolean hasAccepted = result.get(user.hasAccepted);
         boolean accepted = hasAccepted != null && hasAccepted;
 
-        return new CheckUserV2Res(nicknameExists, allConditionsPresent, accepted);
+        return new InfoCheckRes(nicknameExists, allConditionsPresent, accepted);
     }
 }
