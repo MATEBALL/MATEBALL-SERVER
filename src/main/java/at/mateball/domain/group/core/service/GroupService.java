@@ -1,7 +1,7 @@
 package at.mateball.domain.group.core.service;
 
-import at.mateball.domain.alarm.AlarmService;
-import at.mateball.domain.alarm.AlarmType;
+import at.mateball.domain.alarm.core.service.AlarmService;
+import at.mateball.domain.alarm.common.AlarmType;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
