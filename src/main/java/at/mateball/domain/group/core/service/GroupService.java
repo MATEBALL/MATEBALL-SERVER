@@ -1,5 +1,7 @@
 package at.mateball.domain.group.core.service;
 
+import at.mateball.domain.chatting.core.Chatting;
+import at.mateball.domain.chatting.core.service.ChattingV2Service;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
@@ -41,6 +43,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final MatchRequirementService matchRequirementService;
+    private final ChattingV2Service chattingV2Service;
     private final GroupExecutor groupExecutor;
     private final AgeValidator ageValidator;
 
@@ -48,10 +51,11 @@ public class GroupService {
     private final static int MAX_GROUP_COUNT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
 
-    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, GroupExecutor groupExecutor, AgeValidator ageValidator) {
+    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, ChattingV2Service chattingV2Service, GroupExecutor groupExecutor, AgeValidator ageValidator) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.matchRequirementService = matchRequirementService;
+        this.chattingV2Service = chattingV2Service;
         this.groupExecutor = groupExecutor;
         this.ageValidator = ageValidator;
     }
@@ -260,8 +264,9 @@ public class GroupService {
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
 
+        Chatting chatting = chattingV2Service.assignChatting();
         groupMemberRepository.updateStatusesForDirectMatching(userId, requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
-        groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+        groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue(), chatting.getId());
     }
 
     private void processGroup(Long userId, Long groupId) {
@@ -308,8 +313,9 @@ public class GroupService {
                 .count();
 
         if (participantCount + 1 == TOTAL_GROUP_MEMBER) {
+            Chatting chatting = chattingV2Service.assignChatting();
             groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
-            groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+            groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue(), chatting.getId());
         }
     }
 
