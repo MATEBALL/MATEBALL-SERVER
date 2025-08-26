@@ -1,5 +1,8 @@
-package at.mateball.domain.alarm;
+package at.mateball.domain.alarm.core.service;
 
+import at.mateball.domain.alarm.common.AlarmType;
+import at.mateball.domain.alarm.core.Alarm;
+import at.mateball.domain.alarm.core.repository.AlarmRepository;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;

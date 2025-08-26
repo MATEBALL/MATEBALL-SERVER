@@ -1,5 +1,7 @@
-package at.mateball.domain.alarm;
+package at.mateball.domain.alarm.core.repository;
 
+import at.mateball.domain.alarm.common.AlarmType;
+import at.mateball.domain.alarm.core.Alarm;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

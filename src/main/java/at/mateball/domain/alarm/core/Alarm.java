@@ -1,5 +1,6 @@
-package at.mateball.domain.alarm;
+package at.mateball.domain.alarm.core;
 
+import at.mateball.domain.alarm.common.AlarmType;
 import at.mateball.domain.user.core.User;
 import jakarta.persistence.*;
 import lombok.Getter;

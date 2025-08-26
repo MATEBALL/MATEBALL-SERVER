@@ -1,4 +1,4 @@
-package at.mateball.domain.alarm;
+package at.mateball.domain.alarm.common;
 
 public final class AlarmBits {
     private AlarmBits() {}
