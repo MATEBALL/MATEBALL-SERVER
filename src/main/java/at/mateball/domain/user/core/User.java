@@ -38,18 +38,15 @@ public class User {
     @Column(nullable = true)
     private String email;
 
+    @Column(nullable = true)
+    private boolean hasAccepted;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchRequirement> matchRequirements = new ArrayList<>();
 
     protected User() {
 
     }
-
-/*    public User(Long kakaoUserId, String gender, int birthYear) {
-        this.kakaoUserId = kakaoUserId;
-        this.gender = gender;
-        this.birthYear = birthYear;
-    }*/
 
     public User(Long kakaoUserId, String email) {
         this.kakaoUserId = kakaoUserId;
