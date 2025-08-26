@@ -2,6 +2,7 @@ package at.mateball.domain.user.core.service;
 
 import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
+import at.mateball.domain.user.api.dto.request.EditUserInfoReq;
 import at.mateball.domain.user.api.dto.request.UserInfoV2Req;
 import at.mateball.domain.user.api.dto.response.InfoCheckRes;
 import at.mateball.domain.user.core.User;
@@ -9,7 +10,6 @@ import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.domain.user.core.validator.IntroductionValidator;
 import at.mateball.domain.user.core.validator.NicknameValidator;
 import at.mateball.exception.BusinessException;
-import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +61,23 @@ public class UserV2Service {
         user.updateIntroduction(req.introduction());
         user.updateGenderAndBirthYear(Gender.fromLabel(req.gender()), req.birthYear());
         user.updateProfileImage(DEFAULT_PROFILE_IMAGE_URL);
+    }
+
+    @Transactional
+    public void editUserInfo(Long userId, @Valid EditUserInfoReq req) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
+
+        switch (req.field()) {
+            case "닉네임" -> {
+                validateNickname(req.value());
+                user.updateNickname(req.value());
+            }
+            case "소개" -> {
+                validateIntroduction(req.value());
+                user.updateIntroduction(req.value());
+            }
+        }
     }
 
     private void validateNickname(String nickname) {
