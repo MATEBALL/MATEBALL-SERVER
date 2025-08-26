@@ -1,7 +1,7 @@
 package at.mateball.domain.user.core.repository;
 
 import at.mateball.domain.user.api.dto.response.CheckUserRes;
-import at.mateball.domain.user.api.dto.response.CheckUserV2Res;
+import at.mateball.domain.user.api.dto.response.InfoCheckRes;
 import at.mateball.domain.user.api.dto.response.UserInformationRes;
 import at.mateball.domain.user.core.User;
 import org.springframework.stereotype.Repository;
@@ -18,5 +18,5 @@ public interface UserRepositoryCustom {
 
     CheckUserRes fetchUserInfoCheck(Long userId);
 
-    CheckUserV2Res infoCheck(Long userId);
+    InfoCheckRes infoCheck(Long userId);
 }
