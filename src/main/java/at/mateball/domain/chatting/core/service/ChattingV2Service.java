@@ -7,6 +7,7 @@ import at.mateball.exception.code.BusinessErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -14,11 +15,12 @@ import org.springframework.stereotype.Service;
 public class ChattingV2Service {
     private final ChattingV2Repository chattingV2Repository;
 
+    @Transactional
     public Chatting assignChatting() {
         Chatting chatting = chattingV2Repository.findFirstByIsUsedFalse()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.CHATTING_NOT_FOUND));
 
         chatting.updateIsUsedStatus();
-        return chatting;
+        return chattingV2Repository.save(chatting);
     }
 }
