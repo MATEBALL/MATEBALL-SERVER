@@ -22,6 +22,10 @@ public class AlarmService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
 
+        if (type == AlarmType.MATCHED) {
+            alarmRepository.markAsReadByUserAndTypes(userId, List.of(AlarmType.NEW_REQUEST, AlarmType.APPROVED));
+        }
+
         Alarm alarm = new Alarm(user, type);
         alarmRepository.save(alarm);
     }
