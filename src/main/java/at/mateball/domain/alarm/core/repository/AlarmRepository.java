@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
@@ -21,4 +22,6 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
                                   @Param("types") List<AlarmType> types);
 
     boolean existsByUserIdAndIsReadFalse(Long userId);
+
+    List<Alarm> findAllByUserIdAndGroupId(Long userId, Long groupId);
 }

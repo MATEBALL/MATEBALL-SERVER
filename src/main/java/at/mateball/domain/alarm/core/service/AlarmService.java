@@ -49,4 +49,13 @@ public class AlarmService {
     public boolean hasUnreadAlarm(Long userId) {
         return alarmRepository.existsByUserIdAndIsReadFalse(userId);
     }
+
+    @Transactional
+    public void updateAlarm(Long userId, Long matchId) {
+        List<Alarm> alarms = alarmRepository.findAllByUserIdAndGroupId(userId, matchId);
+        if (alarms.isEmpty()) {
+            throw new BusinessException(BusinessErrorCode.ALARM_NOT_FOUND);
+        }
+        alarms.forEach(Alarm::markAsRead);
+    }
 }

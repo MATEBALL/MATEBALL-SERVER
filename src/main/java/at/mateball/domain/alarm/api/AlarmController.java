@@ -7,9 +7,7 @@ import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.exception.code.SuccessCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v2/users")
@@ -30,5 +28,17 @@ public class AlarmController {
         AlarmRes alarmRes = new AlarmRes(hasUnreadAlarm);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, alarmRes));
+    }
+
+    @PostMapping("/alarm/{matchId}")
+    public ResponseEntity<MateballResponse<?>> updateAlarm(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long matchId
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        alarmService.updateAlarm(userId, matchId);
+
+        return ResponseEntity.ofNullable(MateballResponse.successWithNoData(SuccessCode.OK));
     }
 }
