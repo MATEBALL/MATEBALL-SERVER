@@ -39,6 +39,6 @@ public class AlarmController {
 
         alarmService.updateAlarm(userId, matchId);
 
-        return ResponseEntity.ofNullable(MateballResponse.successWithNoData(SuccessCode.OK));
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.OK));
     }
 }
