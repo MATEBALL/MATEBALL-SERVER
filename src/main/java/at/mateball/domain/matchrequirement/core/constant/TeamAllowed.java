@@ -9,7 +9,7 @@ import java.util.Arrays;
 @Getter
 public enum TeamAllowed {
     SAME_TEAM_ONLY(1, "같은 팀 메이트와 보고 싶어요"),
-    NO_PREFERENCE(2, "상관 없어요");
+    NO_PREFERENCE(2, "상관없어요");
 
     private final int value;
     private final String label;
