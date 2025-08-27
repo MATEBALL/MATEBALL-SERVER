@@ -266,7 +266,8 @@ public class GroupService {
 
         Chatting chatting = chattingV2Service.assignChatting();
         groupMemberRepository.updateStatusesForDirectMatching(userId, requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
-        groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue(), chatting.getId());
+        groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+        groupRepository.assignChattingToGroup(groupId, chatting.getId());
     }
 
     private void processGroup(Long userId, Long groupId) {
@@ -315,7 +316,8 @@ public class GroupService {
         if (participantCount + 1 == TOTAL_GROUP_MEMBER) {
             Chatting chatting = chattingV2Service.assignChatting();
             groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
-            groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue(), chatting.getId());
+            groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+            groupRepository.assignChattingToGroup(groupId, chatting.getId());
         }
     }
 
