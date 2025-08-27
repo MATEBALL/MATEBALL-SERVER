@@ -8,6 +8,7 @@ import at.mateball.domain.auth.core.service.LoginService;
 import at.mateball.domain.auth.api.dto.LoginResult;
 import at.mateball.domain.auth.api.dto.LoginUserInfo;
 import at.mateball.domain.auth.core.service.LogoutService;
+import at.mateball.domain.auth.core.service.ReissueService;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,11 +25,13 @@ public class OAuthController {
     private final JwtCookieProvider jwtCookieProvider;
     private final LoginService loginService;
     private final LogoutService logoutService;
+    private final ReissueService reissueService;
 
-    public OAuthController(JwtCookieProvider jwtCookieProvider, LoginService loginService, LogoutService logoutService) {
+    public OAuthController(JwtCookieProvider jwtCookieProvider, LoginService loginService, LogoutService logoutService, ReissueService reissueService) {
         this.jwtCookieProvider = jwtCookieProvider;
         this.loginService = loginService;
         this.logoutService = logoutService;
+        this.reissueService = reissueService;
     }
 
     @CustomExceptionDescription(SwaggerResponseDescription.POST_KAKAO_LOGIN)
@@ -55,6 +58,16 @@ public class OAuthController {
 
         return withCookies(expiredCookies)
                 .body(MateballResponse.successWithNoData(SuccessCode.OK));
+    }
+
+    @PostMapping("/auth/reissue")
+    public ResponseEntity<MateballResponse<?>> reissue(HttpServletRequest request) {
+        LoginResult result = reissueService.reissue(request);
+        List<ResponseCookie> cookies = jwtCookieProvider.createAllCookies(result);
+
+        LoginUserInfo userInfo = new LoginUserInfo(result.userId(), result.email());
+
+        return withCookies(cookies).body(MateballResponse.success(SuccessCode.OK, userInfo));
     }
 
     private ResponseEntity.BodyBuilder withCookies(List<ResponseCookie> cookies) {
