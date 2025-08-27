@@ -23,6 +23,7 @@ public enum BusinessErrorCode implements ErrorCode {
     BAD_REQUEST_MATCH_TYPE(HttpStatus.BAD_REQUEST, "요청 matchType이 잘못되었습니다."),
     NOT_ALLOWED_AGE(HttpStatus.BAD_REQUEST, "매칭 가능한 나이가 아닙니다."),
     INVALID_GROUP_STATUS(HttpStatus.BAD_REQUEST, "매칭 완료 상태가 아닙니다."),
+    GROUP_NOT_FOUND_OR_ALREADY_UPDATED(HttpStatus.BAD_REQUEST, "업데이트할 그룹이 없거나 이미 업데이트된 상태입니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
@@ -31,7 +32,7 @@ public enum BusinessErrorCode implements ErrorCode {
     INVALID_KAKAO_TOKEN(HttpStatus.UNAUTHORIZED, "Kakao Access Token이 유효하지 않습니다."),
     INVALID_SERVER_JWT(HttpStatus.UNAUTHORIZED, "유효하지 않은 서버 JWT입니다."),
     KAKAO_CLIENT_ERROR(HttpStatus.UNAUTHORIZED, "카카오 JWT 파싱 중 오류가 발생했습니다."),
-    LOGGED_OUT_TOKEN(HttpStatus.UNAUTHORIZED,"이미 로그아웃된 토큰입니다."),
+    LOGGED_OUT_TOKEN(HttpStatus.UNAUTHORIZED, "이미 로그아웃된 토큰입니다."),
 
     // 403 FORBIDDEN
     AGE_NOT_APPROPRIATE(HttpStatus.FORBIDDEN, "만 19세 이상부터 가입이 가능합니다."),
