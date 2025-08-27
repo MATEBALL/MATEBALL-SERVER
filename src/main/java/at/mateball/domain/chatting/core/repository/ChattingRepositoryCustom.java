@@ -5,5 +5,5 @@ import at.mateball.domain.chatting.core.Chatting;
 import java.util.Optional;
 
 public interface ChattingRepositoryCustom {
-    Optional<Chatting> findFirstByIsUsedFalse();
+    Optional<Chatting> findFirstByIsUsedFalseOrderByIdAsc();
 }

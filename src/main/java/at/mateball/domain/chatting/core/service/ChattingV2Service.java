@@ -17,7 +17,7 @@ public class ChattingV2Service {
 
     @Transactional
     public Chatting assignChatting() {
-        Chatting chatting = chattingV2Repository.findFirstByIsUsedFalse()
+        Chatting chatting = chattingV2Repository.findFirstByIsUsedFalseOrderByIdAsc()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.CHATTING_NOT_FOUND));
 
         chatting.updateIsUsedStatus();
