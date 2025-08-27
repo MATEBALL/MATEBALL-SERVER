@@ -6,6 +6,7 @@ import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.core.service.GroupService;
+import at.mateball.domain.group.core.service.GroupV2Service;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -20,9 +21,11 @@ import java.time.LocalDate;
 @RequestMapping("/v1/users")
 public class GroupController {
     private final GroupService groupService;
+    private final GroupV2Service groupV2Service;
 
-    public GroupController(GroupService groupService) {
+    public GroupController(GroupService groupService, GroupV2Service groupV2Service) {
         this.groupService = groupService;
+        this.groupV2Service = groupV2Service;
     }
 
     @GetMapping("/direct/{matchId}")
@@ -100,7 +103,7 @@ public class GroupController {
     ) {
         Long userId = customUserDetails.getUserId();
 
-        groupService.permitRequest(userId, matchId);
+        groupV2Service.permitRequest(userId, matchId);
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
     }
