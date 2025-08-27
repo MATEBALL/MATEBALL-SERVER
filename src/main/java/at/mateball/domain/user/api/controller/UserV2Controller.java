@@ -58,7 +58,7 @@ public class UserV2Controller {
         Long userId = customUserDetails.getUserId();
         userV2Service.createUserInfo(userId, userInfoReq);
 
-        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.OK));
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.CREATED));
     }
 
     @PutMapping("/info")
