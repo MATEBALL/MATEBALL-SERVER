@@ -24,7 +24,7 @@ public class GroupV2Controller {
         this.groupV2Service = groupV2Service;
     }
 
-    @GetMapping("/group/{matchId}/chatting")
+    @GetMapping("/match/{matchId}/chatting")
     @Operation(summary = "오픈채팅방 주소 조회 api")
     public ResponseEntity<MateballResponse<?>> getChattingUrl(
             @AuthenticationPrincipal CustomUserDetails userDetails,
