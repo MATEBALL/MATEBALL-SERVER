@@ -79,6 +79,7 @@ public class UserV2Service {
                 validateIntroduction(req.value());
                 user.updateIntroduction(req.value());
             }
+            default -> throw new BusinessException(BAD_REQUEST_ENUM);
         }
     }
 
