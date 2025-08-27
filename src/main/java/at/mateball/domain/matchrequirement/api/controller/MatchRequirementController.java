@@ -5,7 +5,7 @@ import at.mateball.common.security.CustomUserDetails;
 import at.mateball.common.swagger.CustomExceptionDescription;
 import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
-import at.mateball.domain.user.api.dto.request.MatchRequirementReq;
+import at.mateball.domain.matchrequirement.api.dto.request.MatchRequirementReq;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;

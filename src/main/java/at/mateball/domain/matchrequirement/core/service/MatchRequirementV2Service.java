@@ -1,13 +1,14 @@
 package at.mateball.domain.matchrequirement.core.service;
 
 
+import at.mateball.domain.matchrequirement.api.dto.request.MatchRequirementReq;
+import at.mateball.domain.matchrequirement.api.dto.response.MatchRequirementRes;
 import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
 import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.matchrequirement.core.constant.TeamAllowed;
 import at.mateball.domain.matchrequirement.core.repository.MatchRequirementRepository;
 import at.mateball.domain.team.core.TeamName;
-import at.mateball.domain.user.api.dto.request.MatchRequirementReq;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,17 @@ public class MatchRequirementV2Service {
 
     public MatchRequirementV2Service(MatchRequirementRepository matchRequirementRepository) {
         this.matchRequirementRepository = matchRequirementRepository;
+    }
+
+    public MatchRequirementRes getMatchRequirement(Long userId) {
+        MatchRequirement requirement = matchRequirementRepository.findUserMatchRequirement(userId);
+
+        return new MatchRequirementRes(
+                TeamName.from(requirement.getTeam()).getLabel(),
+                TeamAllowed.from(requirement.getTeamAllowed()).getLabel(),
+                Style.from(requirement.getStyle()).getLabel(),
+                Gender.from(requirement.getGenderPreference()).getLabel()
+        );
     }
 
     @Transactional
