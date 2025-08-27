@@ -268,7 +268,7 @@ public class GroupV2Service {
 
         Chatting chatting = chattingV2Service.assignChatting();
         groupMemberRepository.updateStatusesForDirectMatching(userId, requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
-        groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+        updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
         groupRepository.assignChattingToGroup(groupId, chatting.getId());
     }
 
@@ -318,8 +318,15 @@ public class GroupV2Service {
         if (participantCount + 1 == TOTAL_GROUP_MEMBER) {
             Chatting chatting = chattingV2Service.assignChatting();
             groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
-            groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+            updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
             groupRepository.assignChattingToGroup(groupId, chatting.getId());
+        }
+    }
+
+    public void updateGroupStatus(Long groupId, int status) {
+        long updated = groupRepository.updateGroupStatus(groupId, status);
+        if (updated == 0) {
+            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND_OR_ALREADY_UPDATED);
         }
     }
 

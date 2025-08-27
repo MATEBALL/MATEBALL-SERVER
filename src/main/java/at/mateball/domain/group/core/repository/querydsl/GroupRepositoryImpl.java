@@ -211,9 +211,9 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     }
 
     @Override
-    public void updateGroupStatus(Long groupId, int status) {
+    public long updateGroupStatus(Long groupId, int status) {
         QGroup group = QGroup.group;
-        queryFactory
+        return queryFactory
                 .update(group)
                 .set(group.status, status)
                 .where(group.id.eq(groupId))
