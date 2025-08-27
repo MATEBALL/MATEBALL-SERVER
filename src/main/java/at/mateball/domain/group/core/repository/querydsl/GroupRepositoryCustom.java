@@ -18,7 +18,9 @@ public interface GroupRepositoryCustom {
 
     List<GroupGetBaseRes> findGroupsWithBaseInfo(Long userId, LocalDate date);
 
-    void updateGroupStatus(Long groupId, int status, Long chattingId);
+    void updateGroupStatus(Long groupId, int status);
+
+    void assignChattingToGroup(Long groupId, Long chattingId);
 
     List<Long> findGroupIdsByGameDate(LocalDate date);
 
