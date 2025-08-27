@@ -67,4 +67,8 @@ public interface GroupMemberRepositoryCustom {
     Optional<GroupMemberRes> getMatchingInfo(Long userId, Long gameId, boolean isGroup);
     Map<Long, List<Long>> findUserIdsGroupedByGroupIds(List<Long> groupIds);
 
+    List<DirectStatusBaseResV2> findDirectMatchingsByUserAndGroupStatusV2(Long userId, int groupStatus);
+
+    List<DirectStatusBaseResV2> findAllDirectMatchingsByUserV2(Long userId);
+
 }
