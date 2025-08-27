@@ -1,4 +1,4 @@
-package at.mateball.domain.user.api.dto.request;
+package at.mateball.domain.matchrequirement.api.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

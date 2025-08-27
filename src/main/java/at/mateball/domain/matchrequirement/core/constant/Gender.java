@@ -29,6 +29,13 @@ public enum Gender {
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
     }
 
+    public static Gender from(int value) {
+        return Arrays.stream(values())
+                .filter(g -> g.value == value)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
+    }
+
     public static Gender fromLabel(String label) {
         return Arrays.stream(values())
                 .filter(e -> e.label.equalsIgnoreCase(label))
