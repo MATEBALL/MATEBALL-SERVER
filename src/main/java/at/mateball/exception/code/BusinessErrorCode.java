@@ -53,6 +53,7 @@ public enum BusinessErrorCode implements ErrorCode {
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     ALREADY_FAILED_REQUEST(HttpStatus.CONFLICT, "이미 요청이 실패한 매칭입니다."),
     DUPLICATED_REQUEST(HttpStatus.CONFLICT, "이미 요청을 전송한 매칭입니다."),
+    DUPLICATED_INFO(HttpStatus.BAD_REQUEST, "이미 사용자 정보가 존재합니다. 사용자 정보 설정은 최초 한 번만 가능합니다."),
 
     // 429 TOO MANY REQUESTS
     EXCEED_GROUP_MATCHING_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "그룹 매칭은 최대 2개까지만 가능합니다."),

@@ -54,6 +54,10 @@ public class UserV2Service {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
 
+        if (user.getNickname() != null || user.getIntroduction() != null || user.getBirthYear() != null || user.getGender() != null) {
+            throw new BusinessException(DUPLICATED_INFO);
+        }
+
         validateNickname(req.nickname());
         validateIntroduction(req.introduction());
         validateAge(req.birthYear());
