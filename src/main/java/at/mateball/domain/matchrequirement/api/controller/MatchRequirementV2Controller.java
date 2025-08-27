@@ -40,7 +40,7 @@ public class MatchRequirementV2Controller {
     ) {
         Long userId = userDetails.getUserId();
 
-        matchRequirementV2Service.setMatchRequirement(userId, matchRequirementReq);
+        matchRequirementV2Service.updateMatchRequirement(userId, matchRequirementReq);
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
     }
