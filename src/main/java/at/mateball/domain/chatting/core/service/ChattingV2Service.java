@@ -21,6 +21,6 @@ public class ChattingV2Service {
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.CHATTING_NOT_FOUND));
 
         chatting.updateIsUsedStatusTrue();
-        return chattingRepository.save(chatting);
+        return chatting;
     }
 }
