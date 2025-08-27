@@ -25,10 +25,7 @@ public enum BusinessErrorCode implements ErrorCode {
     INVALID_GROUP_STATUS(HttpStatus.BAD_REQUEST, "매칭 완료 상태가 아닙니다."),
     GROUP_NOT_FOUND_OR_ALREADY_UPDATED(HttpStatus.BAD_REQUEST, "업데이트할 그룹이 없거나 이미 업데이트된 상태입니다."),
     INVALID_INTRODUCTION_LENGTH(HttpStatus.BAD_REQUEST, "한줄소개는 1자 이상 50자 이하로 입력해야 합니다."),
-<<<<<<< HEAD
     INVALID_TEAM_ALLOWED(HttpStatus.BAD_REQUEST, "'응원하는 팀이 없어요'는 '상관 없어요'만 선택가능합니다."),
-=======
->>>>>>> 29c4d6b ([feat/#152] 온보딩 회원 정보 설정 api 구현)
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
