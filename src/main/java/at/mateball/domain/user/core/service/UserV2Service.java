@@ -16,15 +16,6 @@ public class UserV2Service {
     }
 
     public InfoCheckRes getInfoCheck(Long userId) {
-        InfoCheckRes infoCheckRes = userRepository.infoCheck(userId);
-
-        boolean isAlarm = alarmService.hasUnreadAlarm(userId);
-
-        return new InfoCheckRes(
-                infoCheckRes.nickname(),
-                infoCheckRes.condition(),
-                infoCheckRes.hasAccepted(),
-                isAlarm
-        );
+        return userRepository.infoCheck(userId);
     }
 }
