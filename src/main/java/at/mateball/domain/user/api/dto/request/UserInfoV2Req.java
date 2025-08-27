@@ -10,7 +10,7 @@ public record UserInfoV2Req(
         String introduction,
 
         @NotNull
-        int birthYear,
+        Integer birthYear,
 
         @NotNull
         String gender
