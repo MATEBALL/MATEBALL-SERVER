@@ -15,7 +15,7 @@ public class ChattingRepositoryImpl implements ChattingRepositoryCustom {
     }
 
     @Override
-    public Optional<Chatting> findFirstByIsUsedFalse() {
+    public Optional<Chatting> findFirstByIsUsedFalseOrderByIdAsc() {
         QChatting chatting = QChatting.chatting;
 
         Chatting result = queryFactory
