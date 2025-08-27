@@ -20,7 +20,7 @@ public class ChattingV2Service {
         Chatting chatting = chattingRepository.findFirstByIsUsedFalseOrderByIdAsc()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.CHATTING_NOT_FOUND));
 
-        chatting.updateIsUsedStatus();
+        chatting.updateIsUsedStatusTrue();
         return chattingRepository.save(chatting);
     }
 }
