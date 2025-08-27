@@ -71,4 +71,7 @@ public interface GroupMemberRepositoryCustom {
 
     List<DirectStatusBaseResV2> findAllDirectMatchingsByUserV2(Long userId);
 
+    List<GroupStatusBaseResV2> findGroupMatchingsByUserV2(Long userId);
+
+    List<GroupStatusBaseResV2> findGroupMatchingsByUserAndStatusV2(Long userId, int groupStatus);
 }

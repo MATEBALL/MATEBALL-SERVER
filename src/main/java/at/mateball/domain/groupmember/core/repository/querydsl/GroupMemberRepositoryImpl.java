@@ -698,4 +698,77 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 )
                 .fetch();
     }
+
+    @Override
+    public List<GroupStatusBaseResV2> findGroupMatchingsByUserV2(Long userId) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QGroup group = QGroup.group;
+        QUser leader = new QUser("leader");
+        QGameInformation gameInformation = QGameInformation.gameInformation;
+        QMatchRequirement leaderMatchRequirement = new QMatchRequirement("leaderMatchRequirement");
+
+        return queryFactory
+                .select(Projections.constructor(GroupStatusBaseResV2.class,
+                        group.id,
+                        leader.id,
+                        leader.nickname,
+                        gameInformation.awayTeamName,
+                        gameInformation.homeTeamName,
+                        gameInformation.stadiumName,
+                        gameInformation.gameDate,
+                        groupMember.status
+                ))
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(group.leader, leader)
+                .join(group.gameInformation, gameInformation)
+                .join(leaderMatchRequirement).on(leaderMatchRequirement.user.id.eq(leader.id))
+                .where(
+                        groupMember.user.id.eq(userId),
+                        group.isGroup.isTrue()
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<GroupStatusBaseResV2> findGroupMatchingsByUserAndStatusV2(Long userId, int groupStatus) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QGroup group = QGroup.group;
+        QUser leader = new QUser("leader");
+        QGameInformation gameInformation = QGameInformation.gameInformation;
+        QMatchRequirement leaderMatchRequirement = new QMatchRequirement("leaderMatchRequirement");
+
+        BooleanExpression statusCondition;
+        if (groupStatus == 3) {
+            statusCondition = (group.status.eq(3).and(groupMember.status.ne(6)))
+                    .or(groupMember.status.eq(6).and(groupMember.isParticipant.isFalse()));
+        } else {
+            statusCondition = group.status.eq(groupStatus)
+                    .and(groupMember.status.ne(6));
+        }
+
+        return queryFactory
+                .select(Projections.constructor(GroupStatusBaseResV2.class,
+                        group.id,
+                        leader.id,
+                        leader.nickname,
+                        gameInformation.awayTeamName,
+                        gameInformation.homeTeamName,
+                        gameInformation.stadiumName,
+                        gameInformation.gameDate,
+                        groupMember.status
+                ))
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(group.leader, leader)
+                .join(group.gameInformation, gameInformation)
+                .join(leaderMatchRequirement).on(leaderMatchRequirement.user.id.eq(leader.id))
+                .where(
+                        group.isGroup.isTrue(),
+                        (groupMember.user.id.eq(userId)
+                                .or(group.leader.id.eq(userId))),
+                        statusCondition
+                )
+                .fetch();
+    }
 }
