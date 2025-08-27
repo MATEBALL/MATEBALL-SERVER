@@ -39,7 +39,7 @@ public class MatchRequirementV2Service {
     }
 
     @Transactional
-    public void setMatchRequirement(Long userId, MatchRequirementReq req) {
+    public void updateMatchRequirement(Long userId, MatchRequirementReq req) {
         MatchRequirement matchRequirement = matchRequirementRepository.findUserMatchRequirement(userId);
 
         if (req.team() != null) {
