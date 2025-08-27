@@ -23,20 +23,6 @@ public class GroupV2Controller {
         this.groupV2Service = groupV2Service;
     }
 
-    @CustomExceptionDescription(SwaggerResponseDescription.PATCH_MATCH_ACCEPT)
-    @Operation(summary = "요청 수락 api")
-    @PatchMapping("/match-accept/{matchId}")
-    public ResponseEntity<MateballResponse<?>> permitRequest(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @NotNull @PathVariable Long matchId
-    ) {
-        Long userId = customUserDetails.getUserId();
-
-        groupV2Service.permitRequest(userId, matchId);
-
-        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
-    }
-
     @GetMapping("/match/{matchId}/chatting")
     @Operation(summary = "오픈채팅방 주소 조회 api")
     public ResponseEntity<MateballResponse<?>> getChattingUrl(
