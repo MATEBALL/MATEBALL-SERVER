@@ -21,7 +21,7 @@ public class Chatting {
     protected Chatting() {
     }
 
-    public void updateIsUsedStatus() {
-        this.isUsed = !isUsed;
+    public void updateIsUsedStatusTrue() {
+        this.isUsed = true;
     }
 }
