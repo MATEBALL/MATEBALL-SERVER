@@ -8,26 +8,22 @@ import java.util.Optional;
 
 public class ChattingRepositoryImpl implements ChattingRepositoryCustom {
 
-        private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
-        public ChattingRepositoryImpl(JPAQueryFactory queryFactory) {
-            this.queryFactory = queryFactory;
-        }
+    public ChattingRepositoryImpl(JPAQueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
 
-        @Override
-        public Optional<Chatting> findFirstByIsUsedFalseOrderByIdAsc() {
-        public Optional<Chatting> findFirstByIsUsedFalse() {
-            QChatting chatting = QChatting.chatting;
+    @Override
+    public Optional<Chatting> findFirstByIsUsedFalseOrderByIdAsc() {
+        QChatting chatting = QChatting.chatting;
 
-            Chatting result = queryFactory
-                    .selectFrom(chatting)
-                    .where(chatting.isUsed.eq(false))
-                    .orderBy(chatting.id.asc())
-                    .fetchFirst();
+        Chatting result = queryFactory
+                .selectFrom(chatting)
+                .where(chatting.isUsed.eq(false))
+                .orderBy(chatting.id.asc())
+                .fetchFirst();
 
-            return Optional.ofNullable(result);
-        }
+        return Optional.ofNullable(result);
     }
 }
-
-

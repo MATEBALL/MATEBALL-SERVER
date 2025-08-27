@@ -2,7 +2,6 @@ package at.mateball.domain.group.core.service;
 
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.chatting.core.Chatting;
-<<<<<<< HEAD
 import at.mateball.domain.chatting.core.service.ChattingV2Service;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
@@ -23,16 +22,10 @@ import at.mateball.domain.groupmember.api.dto.base.RejectGroupMemberBaseRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
-=======
-import at.mateball.domain.group.core.Group;
-import at.mateball.domain.group.core.GroupStatus;
-import at.mateball.domain.group.core.repository.GroupRepository;
->>>>>>> e596730 ([feat/#144] 오픈채팅방 주소 조회 api 구현)
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -384,16 +377,6 @@ public class GroupV2Service {
         if (!String.valueOf(GROUP).equalsIgnoreCase(matchType) && !String.valueOf(DIRECT).equalsIgnoreCase(matchType)) {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MATCH_TYPE);
         }
-=======
-
-@Service
-
-public class GroupV2Service {
-    private final GroupRepository groupRepository;
-
-    public GroupV2Service(GroupRepository groupRepository) {
-        this.groupRepository = groupRepository;
->>>>>>> e596730 ([feat/#144] 오픈채팅방 주소 조회 api 구현)
     }
 
     public ChattingRes getChattingUrl(Long userId, @NotNull Long matchId) {
