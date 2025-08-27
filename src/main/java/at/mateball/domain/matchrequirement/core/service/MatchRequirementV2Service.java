@@ -9,8 +9,13 @@ import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.matchrequirement.core.constant.TeamAllowed;
 import at.mateball.domain.matchrequirement.core.repository.MatchRequirementRepository;
 import at.mateball.domain.team.core.TeamName;
+import at.mateball.exception.BusinessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+import static at.mateball.exception.code.BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND;
 
 @Service
 public class MatchRequirementV2Service {
@@ -21,7 +26,8 @@ public class MatchRequirementV2Service {
     }
 
     public MatchRequirementRes getMatchRequirement(Long userId) {
-        MatchRequirement requirement = matchRequirementRepository.findUserMatchRequirement(userId);
+        MatchRequirement requirement = Optional.ofNullable(matchRequirementRepository.findUserMatchRequirement(userId))
+                .orElseThrow(() -> new BusinessException(MATCH_REQUIREMENT_NOT_FOUND));
 
         return new MatchRequirementRes(
                 TeamName.from(requirement.getTeam()).getLabel(),
