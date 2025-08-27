@@ -18,13 +18,13 @@ public interface GroupRepositoryCustom {
 
     List<GroupGetBaseRes> findGroupsWithBaseInfo(Long userId, LocalDate date);
 
-<<<<<<< HEAD
     long updateGroupStatus(Long groupId, int status);
 
     void assignChattingToGroup(Long groupId, Long chattingId);
-=======
     void updateGroupStatus(Long groupId, int status, Long chattingId);
->>>>>>> e596730 ([feat/#144] 오픈채팅방 주소 조회 api 구현)
+    void updateGroupStatus(Long groupId, int status);
+
+    void assignChattingToGroup(Long groupId, Long chattingId);
 
     List<Long> findGroupIdsByGameDate(LocalDate date);
 

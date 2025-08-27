@@ -211,15 +211,24 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     }
 
     @Override
-<<<<<<< HEAD
     public long updateGroupStatus(Long groupId, int status) {
-=======
     public void updateGroupStatus(Long groupId, int status, Long chattingId) {
->>>>>>> e596730 ([feat/#144] 오픈채팅방 주소 조회 api 구현)
         QGroup group = QGroup.group;
         return queryFactory
+    public void updateGroupStatus(Long groupId, int status) {
+        QGroup group = QGroup.group;
+        queryFactory
                 .update(group)
                 .set(group.status, status)
+                .where(group.id.eq(groupId))
+                .execute();
+    }
+
+    @Override
+    public void assignChattingToGroup(Long groupId, Long chattingId) {
+        QGroup group = QGroup.group;
+        queryFactory
+                .update(group)
                 .set(group.chatting.id, chattingId)
                 .where(group.id.eq(groupId))
                 .execute();

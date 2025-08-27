@@ -279,6 +279,8 @@ public class GroupService {
         alarmService.createAlarm(userId, AlarmType.MATCHED, groupId);
         alarmService.createAlarm(requesterId, AlarmType.MATCHED, groupId);
         groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue(), chatting.getId());
+        groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+        groupRepository.assignChattingToGroup(groupId, chatting.getId());
     }
 
     private void processGroup(Long userId, Long groupId) {
@@ -333,6 +335,7 @@ public class GroupService {
             members.forEach(m -> alarmService.createAlarm(m.userId(), AlarmType.MATCHED, groupId));
             alarmService.createAlarm(requesterId, AlarmType.MATCHED, groupId);
             groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue(), chatting.getId());
+            groupRepository.assignChattingToGroup(groupId, chatting.getId());
         }
     }
 
