@@ -10,6 +10,7 @@ import at.mateball.domain.matchrequirement.core.constant.TeamAllowed;
 import at.mateball.domain.matchrequirement.core.repository.MatchRequirementRepository;
 import at.mateball.domain.team.core.TeamName;
 import at.mateball.exception.BusinessException;
+import at.mateball.exception.code.BusinessErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,11 +43,21 @@ public class MatchRequirementV2Service {
         MatchRequirement matchRequirement = matchRequirementRepository.findUserMatchRequirement(userId);
 
         if (req.team() != null) {
-            matchRequirement.updateTeam(TeamName.fromLabel(req.team()).getValue());
+            TeamName selectedTeam = TeamName.fromLabel(req.team());
+            matchRequirement.updateTeam(selectedTeam.getValue());
+
+            if (req.teamAllowed() != null) {
+                TeamAllowed selectedAllowed = TeamAllowed.fromLabel(req.teamAllowed());
+                if (selectedTeam == TeamName.NONE && selectedAllowed != TeamAllowed.NO_PREFERENCE) {
+                    throw new BusinessException(BusinessErrorCode.INVALID_TEAM_ALLOWED);
+                }
+                matchRequirement.updateTeamAllowed(selectedAllowed.getValue());
+            }
+        } else if (req.teamAllowed() != null) {
+            TeamAllowed selectedAllowed = TeamAllowed.fromLabel(req.teamAllowed());
+            matchRequirement.updateTeamAllowed(selectedAllowed.getValue());
         }
-        if (req.teamAllowed() != null) {
-            matchRequirement.updateTeamAllowed(TeamAllowed.fromLabel(req.teamAllowed()).getValue());
-        }
+
         if (req.style() != null) {
             matchRequirement.updateStyle(Style.fromLabel(req.style()).getValue());
         }
