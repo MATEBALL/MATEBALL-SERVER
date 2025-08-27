@@ -2,7 +2,6 @@ package at.mateball.domain.group.core.service;
 
 import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.alarm.common.AlarmType;
-import at.mateball.domain.chatting.core.Chatting;
 import at.mateball.domain.chatting.core.service.ChattingV2Service;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
@@ -63,7 +62,6 @@ public class GroupService {
         this.groupExecutor = groupExecutor;
         this.ageValidator = ageValidator;
     }
-
 
     public DirectCreateRes getDirectMatching(Long userId, Long matchId) {
         DirectCreateRes result = groupRepository.findDirectCreateResults(userId, matchId);
@@ -271,7 +269,6 @@ public class GroupService {
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
 
-        Chatting chatting = chattingV2Service.assignChatting();
         groupMemberRepository.updateStatusesForDirectMatching(userId, requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
 
         groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
@@ -280,7 +277,6 @@ public class GroupService {
         alarmService.createAlarm(requesterId, AlarmType.MATCHED, groupId);
         groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue(), chatting.getId());
         groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
-        groupRepository.assignChattingToGroup(groupId, chatting.getId());
     }
 
     private void processGroup(Long userId, Long groupId) {
@@ -328,7 +324,6 @@ public class GroupService {
                 .count();
 
         if (participantCount + 1 == TOTAL_GROUP_MEMBER) {
-            Chatting chatting = chattingV2Service.assignChatting();
             groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
             groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
 
