@@ -49,6 +49,7 @@ public enum BusinessErrorCode implements ErrorCode {
     MATCH_REQUIREMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "매칭 조건 정보가 존재하지 않습니다."),
     CHATTING_NOT_FOUND(HttpStatus.NOT_FOUND, "오픈채팅이 존재하지 않습니다."),
     ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 알림입니다."),
+    NO_GAME_SCHEDULED(HttpStatus.NOT_FOUND, "선택한 날짜에 경기가 존재하지 않습니다."),
 
     // 409 CONFLICT
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임입니다."),

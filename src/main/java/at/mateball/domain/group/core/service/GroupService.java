@@ -1,5 +1,6 @@
 package at.mateball.domain.group.core.service;
 
+import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupGetBaseRes;
@@ -35,12 +36,14 @@ import static at.mateball.domain.group.core.MatchType.DIRECT;
 import static at.mateball.domain.group.core.MatchType.GROUP;
 import static at.mateball.domain.group.core.validator.DateValidator.validate;
 import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
+import static at.mateball.exception.code.BusinessErrorCode.NO_GAME_SCHEDULED;
 
 @Service
 public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final MatchRequirementService matchRequirementService;
+    private final GameInformationRepository gameInformationRepository;
     private final GroupExecutor groupExecutor;
     private final AgeValidator ageValidator;
 
@@ -48,10 +51,11 @@ public class GroupService {
     private final static int MAX_GROUP_COUNT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
 
-    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, GroupExecutor groupExecutor, AgeValidator ageValidator) {
+    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, GameInformationRepository gameInformationRepository, GroupExecutor groupExecutor, AgeValidator ageValidator) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.matchRequirementService = matchRequirementService;
+        this.gameInformationRepository = gameInformationRepository;
         this.groupExecutor = groupExecutor;
         this.ageValidator = ageValidator;
     }
@@ -71,6 +75,7 @@ public class GroupService {
     }
 
     public DirectGetListRes getDirects(Long userId, LocalDate date) {
+        validateGameExists(date);
         validate(date);
 
         List<DirectGetBaseRes> result = groupRepository.findDirectGroupsByDate(userId, date);
@@ -169,10 +174,10 @@ public class GroupService {
     }
 
     public GroupGetListRes getGroups(Long userId, LocalDate date) {
+        validateGameExists(date);
         validate(date);
 
         List<GroupGetBaseRes> groupBases = groupRepository.findGroupsWithBaseInfo(userId, date);
-
         List<GroupGetBaseRes> filtered = groupBases.stream()
                 .filter(groupBase -> ageValidator.isAgeWithinRange(userId, groupBase.birthYear()))
                 .filter(groupBase ->
@@ -359,6 +364,12 @@ public class GroupService {
     private void validateMatchType(String matchType) {
         if (!String.valueOf(GROUP).equalsIgnoreCase(matchType) && !String.valueOf(DIRECT).equalsIgnoreCase(matchType)) {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MATCH_TYPE);
+        }
+    }
+
+    private void validateGameExists(LocalDate date) {
+        if (gameInformationRepository.findByGameDate(date).isEmpty()) {
+            throw new BusinessException(NO_GAME_SCHEDULED);
         }
     }
 }
