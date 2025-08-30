@@ -75,8 +75,8 @@ public class GroupService {
     }
 
     public DirectGetListRes getDirects(Long userId, LocalDate date) {
-        validateGameExists(date);
         validate(date);
+        validateGameExists(date);
 
         List<DirectGetBaseRes> result = groupRepository.findDirectGroupsByDate(userId, date);
 
@@ -174,8 +174,8 @@ public class GroupService {
     }
 
     public GroupGetListRes getGroups(Long userId, LocalDate date) {
-        validateGameExists(date);
         validate(date);
+        validateGameExists(date);
 
         List<GroupGetBaseRes> groupBases = groupRepository.findGroupsWithBaseInfo(userId, date);
         List<GroupGetBaseRes> filtered = groupBases.stream()
