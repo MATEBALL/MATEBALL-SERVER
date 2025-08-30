@@ -368,7 +368,7 @@ public class GroupService {
     }
 
     private void validateGameExists(LocalDate date) {
-        if (gameInformationRepository.findByGameDate(date).isEmpty()) {
+        if (!gameInformationRepository.existsByGameDate(date)) {
             throw new BusinessException(NO_GAME_SCHEDULED);
         }
     }
