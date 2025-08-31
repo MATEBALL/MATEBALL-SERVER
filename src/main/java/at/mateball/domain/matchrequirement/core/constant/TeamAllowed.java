@@ -31,7 +31,7 @@ public enum TeamAllowed {
             return SAME_TEAM_ONLY;
         }
         return Arrays.stream(values())
-                .filter(e -> e.label.equalsIgnoreCase(label))
+                .filter(e -> e.label.equals(label))
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
     }
