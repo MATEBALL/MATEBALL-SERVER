@@ -13,6 +13,7 @@ import at.mateball.domain.user.core.validator.NicknameValidator;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,9 +96,7 @@ public class UserV2Service {
 
     private void validateNickname(String nickname) {
         NicknameValidator.validate(nickname);
-        if (userRepository.existsByNickname(nickname)) {
-            throw new BusinessException(DUPLICATED_NICKNAME);
-        }
+        checkIsNicknameExists(nickname);
     }
 
     private void validateIntroduction(String introduction) {
@@ -113,6 +112,12 @@ public class UserV2Service {
         int age = LocalDate.now().getYear() - birthYear;
         if (age < LIMIT_AGE) {
             throw new BusinessException(AGE_NOT_APPROPRIATE);
+        }
+    }
+
+    public void checkIsNicknameExists(@NotNull String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
+            throw new BusinessException(DUPLICATED_NICKNAME);
         }
     }
 }
