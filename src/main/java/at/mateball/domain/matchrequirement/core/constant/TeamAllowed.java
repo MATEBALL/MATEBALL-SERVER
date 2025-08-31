@@ -27,20 +27,11 @@ public enum TeamAllowed {
     }
 
     public static TeamAllowed fromLabel(String label) {
+        if ("같은 팀 메이트".equalsIgnoreCase(label)) {
+            return SAME_TEAM_ONLY;
+        }
         return Arrays.stream(values())
                 .filter(e -> e.label.equalsIgnoreCase(label))
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
-    }
-
-    public static TeamAllowed fromLabelStrict(String input) {
-        return Arrays.stream(values())
-                .filter(e -> {
-                    if (e == SAME_TEAM_ONLY) {
-                        return "같은 팀 메이트".equalsIgnoreCase(input.strip());
-                    }
-                    return false;
-                })
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
     }
