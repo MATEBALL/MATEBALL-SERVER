@@ -10,14 +10,11 @@ import at.mateball.domain.user.core.service.UserV2Service;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/v2/users")
@@ -71,5 +68,17 @@ public class UserV2Controller {
         userV2Service.editUserInfo(userId, editUserInfoReq);
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.OK));
+    }
+
+    @GetMapping("/info")
+    @Operation(summary = "닉네임 중복 조회 api")
+    public ResponseEntity<MateballResponse<?>> createUserInfo(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @NotNull @RequestParam String nickname
+    ) {
+        Long userId = customUserDetails.getUserId();
+        userV2Service.checkIsNicknameExists(nickname);
+
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
     }
 }
