@@ -13,6 +13,7 @@ import at.mateball.domain.user.core.validator.NicknameValidator;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,7 +116,7 @@ public class UserV2Service {
         }
     }
 
-    public void checkIsNicknameExists(@NotNull String nickname) {
+    public void checkIsNicknameExists(@NotBlank String nickname) {
         if (userRepository.existsByNickname(nickname)) {
             throw new BusinessException(DUPLICATED_NICKNAME);
         }
