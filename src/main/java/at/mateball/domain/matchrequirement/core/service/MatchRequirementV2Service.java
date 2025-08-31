@@ -47,14 +47,14 @@ public class MatchRequirementV2Service {
             matchRequirement.updateTeam(selectedTeam.getValue());
 
             if (req.teamAllowed() != null) {
-                TeamAllowed selectedAllowed = TeamAllowed.fromLabel(req.teamAllowed());
+                TeamAllowed selectedAllowed = TeamAllowed.fromLabelStrict(req.teamAllowed());
                 if (selectedTeam == TeamName.NONE && selectedAllowed != TeamAllowed.NO_PREFERENCE) {
                     throw new BusinessException(BusinessErrorCode.INVALID_TEAM_ALLOWED);
                 }
                 matchRequirement.updateTeamAllowed(selectedAllowed.getValue());
             }
         } else if (req.teamAllowed() != null) {
-            TeamAllowed selectedAllowed = TeamAllowed.fromLabel(req.teamAllowed());
+            TeamAllowed selectedAllowed = TeamAllowed.fromLabelStrict(req.teamAllowed());
             matchRequirement.updateTeamAllowed(selectedAllowed.getValue());
         }
 
