@@ -1,5 +1,7 @@
 package at.mateball.domain.group.core.service;
 
+import at.mateball.domain.alarm.common.AlarmType;
+import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
@@ -43,6 +45,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final MatchRequirementService matchRequirementService;
+    private final AlarmService alarmService;
     private final GameInformationRepository gameInformationRepository;
     private final GroupExecutor groupExecutor;
     private final AgeValidator ageValidator;
@@ -51,10 +54,11 @@ public class GroupService {
     private final static int MAX_GROUP_COUNT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
 
-    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, GameInformationRepository gameInformationRepository, GroupExecutor groupExecutor, AgeValidator ageValidator) {
+    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, AlarmService alarmService, GameInformationRepository gameInformationRepository, GroupExecutor groupExecutor, AgeValidator ageValidator) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.matchRequirementService = matchRequirementService;
+        this.alarmService = alarmService;
         this.gameInformationRepository = gameInformationRepository;
         this.groupExecutor = groupExecutor;
         this.ageValidator = ageValidator;
@@ -122,6 +126,8 @@ public class GroupService {
                     group.getLeader().getId(), group.getId(), GroupMemberStatus.NEW_REQUEST.getValue()
             );
         }
+
+        alarmService.createAlarm(group.getLeader().getId(), AlarmType.NEW_REQUEST, group.getId());
     }
 
     private void validateRequest(Long userId, Group group) {
@@ -267,6 +273,9 @@ public class GroupService {
 
         groupMemberRepository.updateStatusesForDirectMatching(userId, requesterId, groupId, GroupMemberStatus.MATCHED.getValue());
         groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+
+        alarmService.createAlarm(userId, AlarmType.MATCHED, groupId);
+        alarmService.createAlarm(requesterId, AlarmType.MATCHED, groupId);
     }
 
     private void processGroup(Long userId, Long groupId) {
@@ -302,19 +311,24 @@ public class GroupService {
             return;
         }
 
-        groupMemberRepository.updateStatusAfterRequestApproval(
-                groupId, requesterId, GroupMemberStatus.APPROVED.getValue()
-        );
+        alarmService.createAlarm(requesterId, AlarmType.APPROVED, groupId);
 
-        groupMemberRepository.updateStatusForApprovedMembers(groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
+        groupMemberRepository.updateStatusAfterRequestApproval(
+                groupId, requesterId, GroupMemberStatus.APPROVED.getValue());
+        groupMemberRepository.updateStatusForApprovedMembers(groupId,
+                GroupMemberStatus.PENDING_REQUEST.getValue());
 
         Long participantCount = members.stream()
                 .filter(GroupMatchBaseRes::isParticipant)
                 .count();
 
         if (participantCount + 1 == TOTAL_GROUP_MEMBER) {
-            groupMemberRepository.updateStatusForAllMembers(groupId, GroupMemberStatus.MATCHED.getValue());
+            groupMemberRepository.updateStatusForAllMembers(groupId,
+                    GroupMemberStatus.MATCHED.getValue());
             groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+
+            members.forEach(m -> alarmService.createAlarm(m.userId(), AlarmType.MATCHED, groupId));
+            alarmService.createAlarm(requesterId, AlarmType.MATCHED, groupId);
         }
     }
 
