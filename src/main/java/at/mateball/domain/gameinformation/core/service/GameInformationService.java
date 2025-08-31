@@ -22,19 +22,16 @@ public class GameInformationService {
 
     public GameInformationsRes getGameInformation(Long userId, LocalDate date) {
         validate(date);
-        validateGameExists(date);
 
         List<GameInformationRes> list = gameInformationRepository.findByGameDate(date)
                 .stream()
                 .map(GameInformationRes::from)
                 .toList();
 
-        return new GameInformationsRes(list);
-    }
-
-    private void validateGameExists(LocalDate date) {
-        if (!gameInformationRepository.existsByGameDate(date)) {
+        if (list.isEmpty()) {
             throw new BusinessException(NO_GAME_SCHEDULED);
         }
+
+        return new GameInformationsRes(list);
     }
 }
