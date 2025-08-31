@@ -3,6 +3,7 @@ package at.mateball.domain.gameinformation.core.service;
 import at.mateball.domain.gameinformation.api.dto.response.GameInformationRes;
 import at.mateball.domain.gameinformation.api.dto.response.GameInformationsRes;
 import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
+import at.mateball.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static at.mateball.domain.group.core.validator.DateValidator.validate;
+import static at.mateball.exception.code.BusinessErrorCode.NO_GAME_SCHEDULED;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class GameInformationService {
 
     public GameInformationsRes getGameInformation(Long userId, LocalDate date) {
         validate(date);
+        validateGameExists(date);
 
         List<GameInformationRes> list = gameInformationRepository.findByGameDate(date)
                 .stream()
@@ -27,5 +30,11 @@ public class GameInformationService {
                 .toList();
 
         return new GameInformationsRes(list);
+    }
+
+    private void validateGameExists(LocalDate date) {
+        if (!gameInformationRepository.existsByGameDate(date)) {
+            throw new BusinessException(NO_GAME_SCHEDULED);
+        }
     }
 }
