@@ -35,4 +35,16 @@ public class GroupV2Controller {
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
     }
+
+    @DeleteMapping("/delete")
+    @Operation(summary = "클라이언트용 사용자 매칭 모두 제거하는 api")
+    public ResponseEntity<MateballResponse<?>> deleteMatch(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        groupV2Service.delelteMatch(userId);
+
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.OK));
+    }
 }

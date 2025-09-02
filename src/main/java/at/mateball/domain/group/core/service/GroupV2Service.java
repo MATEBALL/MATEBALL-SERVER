@@ -390,4 +390,9 @@ public class GroupV2Service {
         Chatting chatting = group.getChatting();
         return new ChattingRes(chatting.getChattingUrl());
     }
+
+    @Transactional
+    public void delelteMatch(Long userId) {
+        groupRepository.deleteAllByLeaderId(userId);
+    }
 }
