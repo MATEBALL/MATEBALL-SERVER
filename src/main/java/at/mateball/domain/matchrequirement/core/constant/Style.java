@@ -8,9 +8,9 @@ import java.util.Arrays;
 
 @Getter
 public enum Style {
-    PASSIONATE_SUPPORTER(1, "열정 응원러"),
-    FOCUSED_VIEWER(2, "경기 집중러"),
-    FOODIE_VIEWER(3, "직관 먹방러");
+    PASSIONATE_SUPPORTER(1, "열정응원러"),
+    FOCUSED_VIEWER(2, "경기집중러"),
+    FOODIE_VIEWER(3, "직관먹방러");
 
     private final int value;
     private final String label;
