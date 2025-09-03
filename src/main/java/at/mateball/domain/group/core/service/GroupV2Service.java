@@ -386,4 +386,9 @@ import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
         Chatting chatting = group.getChatting();
         return new ChattingRes(chatting.getChattingUrl());
     }
+
+    @Transactional
+    public void delelteMatch(Long userId) {
+        groupRepository.deleteAllByLeaderId(userId);
+    }
 }
