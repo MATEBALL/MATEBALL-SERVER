@@ -128,6 +128,7 @@ public class GroupService {
         }
 
         alarmService.createAlarm(group.getLeader().getId(), AlarmType.NEW_REQUEST, group.getId());
+        alarmService.createAlarm(userId, AlarmType.MATCHED, group.getId());
     }
 
     private void validateRequest(Long userId, Group group) {

@@ -1,5 +1,6 @@
 package at.mateball.domain.group.core.service;
 
+import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.chatting.core.Chatting;
 import at.mateball.domain.chatting.core.service.ChattingV2Service;
@@ -25,6 +26,7 @@ import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,26 +43,18 @@ import static at.mateball.domain.group.core.validator.DateValidator.validate;
 import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
 
 @Service
-public class GroupV2Service {
+@RequiredArgsConstructor public class GroupV2Service {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final MatchRequirementService matchRequirementService;
     private final ChattingV2Service chattingV2Service;
+    private final AlarmService alarmService;
     private final GroupExecutor groupExecutor;
     private final AgeValidator ageValidator;
 
     private final static int MAX_DIRECT_COUNT = 3;
     private final static int MAX_GROUP_COUNT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
-
-    public GroupV2Service(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, ChattingV2Service chattingV2Service, GroupExecutor groupExecutor, AgeValidator ageValidator) {
-        this.groupRepository = groupRepository;
-        this.groupMemberRepository = groupMemberRepository;
-        this.matchRequirementService = matchRequirementService;
-        this.chattingV2Service = chattingV2Service;
-        this.groupExecutor = groupExecutor;
-        this.ageValidator = ageValidator;
-    }
 
     public DirectCreateRes getDirectMatching(Long userId, Long matchId) {
         DirectCreateRes result = groupRepository.findDirectCreateResults(userId, matchId);
@@ -249,6 +243,8 @@ public class GroupV2Service {
         }
 
         GroupValidator.validate(group);
+
+        alarmService.updateAlarm(userId, groupId);
 
         if (!group.isGroup()) {
             processDirect(userId, groupId);
