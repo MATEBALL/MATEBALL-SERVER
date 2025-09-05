@@ -56,7 +56,7 @@ public class GroupMemberV2Service {
         List<GroupStatusResV2> result = baseResList.stream()
                 .map(base -> GroupStatusResV2.from(
                         base,
-                        countMap.getOrDefault(base.id(), 0) - 1,
+                        countMap.getOrDefault(base.id(), 0),
                         imgMap.getOrDefault(base.id(), List.of()),
                         userId
                 ))
@@ -78,7 +78,7 @@ public class GroupMemberV2Service {
         List<GroupStatusResV2> result = baseResList.stream()
                 .map(base -> GroupStatusResV2.from(
                         base,
-                        countMap.getOrDefault(base.id(), 0) - 1,
+                        countMap.getOrDefault(base.id(), 0),
                         imgMap.getOrDefault(base.id(), List.of()),
                         userId
                 ))
