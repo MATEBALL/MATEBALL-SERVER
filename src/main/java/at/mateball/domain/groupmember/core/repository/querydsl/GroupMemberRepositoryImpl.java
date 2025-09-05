@@ -522,7 +522,8 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .select(Projections.constructor(
                         RejectGroupMemberBaseRes.class,
                         groupMember.user.id,
-                        groupMember.status
+                        groupMember.status,
+                        groupMember.isParticipant
                 ))
                 .from(groupMember)
                 .where(groupMember.group.id.eq(groupId))
