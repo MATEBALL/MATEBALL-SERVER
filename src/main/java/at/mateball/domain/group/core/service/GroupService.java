@@ -344,7 +344,7 @@ public class GroupService {
         }
 
         Long requesterId = members.stream()
-                .filter(member -> member.status() == GroupMemberStatus.AWAITING_APPROVAL.getValue())
+                .filter(member -> !member.isParticipant())
                 .map(RejectGroupMemberBaseRes::userId)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
