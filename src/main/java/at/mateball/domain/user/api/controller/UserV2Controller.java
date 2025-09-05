@@ -6,12 +6,12 @@ import at.mateball.domain.user.api.dto.request.AcceptedReq;
 import at.mateball.domain.user.api.dto.request.EditUserInfoReq;
 import at.mateball.domain.user.api.dto.request.UserInfoV2Req;
 import at.mateball.domain.user.api.dto.response.InfoCheckRes;
+import at.mateball.domain.user.api.dto.response.UserIdRes;
 import at.mateball.domain.user.core.service.UserV2Service;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -54,9 +54,10 @@ public class UserV2Controller {
             @Valid @RequestBody UserInfoV2Req userInfoReq
     ) {
         Long userId = customUserDetails.getUserId();
+        UserIdRes userIdRes = new UserIdRes(userId);
         userV2Service.createUserInfo(userId, userInfoReq);
 
-        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.CREATED));
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.CREATED, userIdRes));
     }
 
     @PutMapping("/info")
