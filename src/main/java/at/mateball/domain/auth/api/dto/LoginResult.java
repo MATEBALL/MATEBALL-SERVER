@@ -6,7 +6,7 @@ public record LoginResult(
         String kakaoAccessToken,
         Long userId,
         String email,
-        String profile_image
+        String profileImage
 ) {
 
 }
