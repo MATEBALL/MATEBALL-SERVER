@@ -61,7 +61,8 @@ public class AlarmService {
             alarmRepository.save(alarm);
         }
     }
-    
+
+    @Transactional
     public void readAllAlarms(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
