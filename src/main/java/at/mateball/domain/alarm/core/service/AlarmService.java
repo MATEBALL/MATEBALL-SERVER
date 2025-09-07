@@ -61,4 +61,13 @@ public class AlarmService {
             alarmRepository.save(alarm);
         }
     }
+    
+    public void readAllAlarms(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
+
+        List<Alarm> alarms = alarmRepository.findByUserIdAndIsReadFalse(userId);
+
+        alarms.forEach(Alarm::markAsRead);
+    }
 }

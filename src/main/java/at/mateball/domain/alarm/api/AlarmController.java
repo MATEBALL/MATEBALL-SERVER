@@ -41,4 +41,15 @@ public class AlarmController {
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.OK));
     }
+
+    @PostMapping("/alarms")
+    public ResponseEntity<MateballResponse<?>> readAllAlarms(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        alarmService.readAllAlarms(userId);
+
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.OK));
+    }
 }
