@@ -27,7 +27,7 @@ kakao:
     redirect-uri: ${CLIENT_URL_PROD}
     scope:
       - account_email
-      - profile_image
+      - profile
 
 jwt:
   secret: ${JWT_SECRET}
