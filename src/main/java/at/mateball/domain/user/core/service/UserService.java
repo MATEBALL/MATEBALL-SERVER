@@ -88,8 +88,6 @@ public class UserService {
         }
         Gender genderStatus = Gender.fromLabel(gender);
 
-        user.updateProfileImage("https://mateball-file.s3.ap-northeast-2.amazonaws.com/profile.jpg");
-        user.updateIntroduction("메잇볼이 선택한 너");
         user.updateGenderAndBirthYear(genderStatus, birthYear);
     }
 

@@ -55,7 +55,8 @@ public class ReissueService {
                 newRefreshToken,
                 null,
                 user.getId(),
-                user.getEmail()
+                user.getEmail(),
+                user.getImgUrl()
         );
     }
 }

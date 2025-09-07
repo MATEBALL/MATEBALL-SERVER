@@ -12,6 +12,9 @@ import java.util.List;
 @Getter
 @Table(name = "`user`")
 public class User {
+    public static final String DEFAULT_PROFILE_IMAGE_URL =
+            "https://mateball-file.s3.ap-northeast-2.amazonaws.com/profile.jpg";
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,24 +51,22 @@ public class User {
 
     }
 
-    public User(Long kakaoUserId, String email) {
+    public User(Long kakaoUserId, String email, String imgUrl) {
         this.kakaoUserId = kakaoUserId;
         this.email = email;
+        this.imgUrl = (imgUrl != null) ? imgUrl : DEFAULT_PROFILE_IMAGE_URL;
     }
 
     public void updateNickname(final String nickname) {
         this.nickname = nickname;
     }
 
-    public void updateProfileImage(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-    public void updateIntroduction(final String introduction) {
-        this.introduction = introduction;
+    public void updateProfileImage(final String imgUrl) {
+        this.imgUrl = (imgUrl != null) ? imgUrl : DEFAULT_PROFILE_IMAGE_URL;
     }
 
-    public void updateImgUrl(final String imgUrl) {
-        this.imgUrl = imgUrl;
+    public void updateIntroduction(final String introduction) {
+        this.introduction = introduction;
     }
 
     public void updateGenderAndBirthYear(Gender gender, int birthYear) {
