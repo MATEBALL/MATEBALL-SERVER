@@ -45,4 +45,20 @@ public class AlarmService {
         }
         alarms.forEach(Alarm::markAsRead);
     }
+
+    @Transactional
+    public void createOrUpdateAlarm(Long userId, AlarmType type, Long groupId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
+
+        Alarm alarm = alarmRepository.findByUserIdAndGroupIdAndType(userId, groupId, type)
+                .orElse(null);
+
+        if (alarm != null) {
+            alarm.markAsUnread();
+        } else {
+            alarm = new Alarm(user, type, groupId);
+            alarmRepository.save(alarm);
+        }
+    }
 }
