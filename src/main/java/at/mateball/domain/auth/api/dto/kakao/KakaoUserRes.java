@@ -31,12 +31,21 @@ public record KakaoUserRes(
         @JsonProperty("kakao_account") KakaoAccount kakaoAccount
 ) {
     public User toEntity() {
-        return new User(
-                id,
-                kakaoAccount != null ? kakaoAccount.email() : null,
-                (kakaoAccount != null && kakaoAccount.profile() != null)
-                        ? kakaoAccount.profile().profileImageUrl()
-                        : null
-        );
+        String imgUrl = null;
+        if (kakaoAccount != null && kakaoAccount.profile() != null) {
+            imgUrl = kakaoAccount.profile().profileImageUrl();
+        }
+        return new User(id, kakaoAccount != null ? kakaoAccount.email() : null, imgUrl);
+    }
+
+    public String extractProfileImageUrl() {
+        if (kakaoAccount != null && kakaoAccount.profile() != null) {
+            return kakaoAccount.profile().profileImageUrl();
+        }
+        return null;
+    }
+
+    public boolean isProfileImageAgreed() {
+        return kakaoAccount != null && kakaoAccount.profileImageNeedsAgreement();
     }
 }

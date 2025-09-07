@@ -6,6 +6,9 @@ public record KakaoAccount(
 /*        String gender,
         @JsonProperty("birthyear") String birthyear*/
         String email,
-        KakaoProfile profile
+        @JsonProperty("profile") KakaoProfile profile,
+        @JsonProperty("profile_nickname_needs_agreement") boolean profileNicknameNeedsAgreement,
+        @JsonProperty("profile_image_needs_agreement") boolean profileImageNeedsAgreement
 ) {
+
 }
