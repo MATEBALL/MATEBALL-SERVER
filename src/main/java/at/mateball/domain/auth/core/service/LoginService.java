@@ -42,18 +42,36 @@ public class LoginService {
             throw new BusinessException(BusinessErrorCode.KAKAO_USER_INFO_FETCH_FAILED);
         }
 
+        log.info("카카오 유저 ID = {}", kakaoUser.id());
         if (kakaoUser.kakaoAccount() != null) {
             log.info("카카오 이메일 = {}", kakaoUser.kakaoAccount().email());
             if (kakaoUser.kakaoAccount().profile() != null) {
+                log.info("카카오 닉네임 = {}", kakaoUser.kakaoAccount().profile().nickname());
                 log.info("카카오 프로필 이미지 = {}", kakaoUser.kakaoAccount().profile().profileImageUrl());
-                log.info("카카오 썸네일 이미지 = {}", kakaoUser.kakaoAccount().profile().thumbnailImageUrl());
                 log.info("카카오 기본 이미지 여부 = {}", kakaoUser.kakaoAccount().profile().isDefaultImage());
             }
             log.info("카카오 profile_image_needs_agreement = {}", kakaoUser.kakaoAccount().profileImageNeedsAgreement());
         }
 
+        boolean isNewUser = !userRepository.findByKakaoUserId(kakaoUser.id()).isPresent();
+
         User user = userRepository.findByKakaoUserId(kakaoUser.id())
-                .orElseGet(() -> userRepository.save(kakaoUser.toEntity()));
+                .orElseGet(() -> {
+                    User newUser = kakaoUser.toEntity();
+                    log.info("신규 가입자 생성됨 : ", newUser.getImgUrl());
+                    return userRepository.save(newUser);
+                });
+
+        if (!isNewUser) {
+            if (kakaoUser.isProfileImageAgreed()) {
+                String profileImageUrl = kakaoUser.extractProfileImageUrl();
+                if (profileImageUrl != null) {
+                    user.updateProfileImage(profileImageUrl);
+                }
+            } else {
+                user.updateProfileImage(null); 
+            }
+        }
 
         String accessToken = jwtTokenGenerator.generateAccessToken(user.getId());
         String refreshToken = jwtTokenGenerator.generateRefreshToken(user.getId());
