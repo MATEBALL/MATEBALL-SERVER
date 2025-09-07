@@ -261,7 +261,7 @@ import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
                     .orElse(null);
 
             if (matchedRequesterId != null) {
-                List<Long> participantIds = groupMemberRepository.findAllParticipantUserIds(groupId);
+                List<Long> participantIds = groupMemberRepository.findParticipantUserIdsByGroupId(groupId);
 
                 for (Long participantId : participantIds) {
                     if (!participantId.equals(matchedRequesterId)) {

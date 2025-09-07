@@ -809,14 +809,4 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
 
         return Optional.ofNullable(requesterId);
     }
-
-    @Override
-    public List<Long> findAllParticipantUserIds(Long groupId) {
-        return queryFactory
-                .select(groupMember.user.id)
-                .from(groupMember)
-                .where(groupMember.group.id.eq(groupId)
-                        .and(groupMember.isParticipant.isTrue()))
-                .fetch();
-    }
 }
