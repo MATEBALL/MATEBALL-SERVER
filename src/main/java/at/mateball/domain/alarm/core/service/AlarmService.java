@@ -33,6 +33,10 @@ public class AlarmService {
         alarmRepository.save(alarm);
     }
 
+    public boolean hasUnreadAlarm(Long userId) {
+        return alarmRepository.existsByUserIdAndIsReadFalse(userId);
+    }
+
     @Transactional
     public void updateAlarm(Long userId, Long matchId) {
         List<Alarm> alarms = alarmRepository.findAllByUserIdAndGroupId(userId, matchId);
