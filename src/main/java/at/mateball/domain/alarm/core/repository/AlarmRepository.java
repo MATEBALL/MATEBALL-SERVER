@@ -24,4 +24,6 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     boolean existsByUserIdAndIsReadFalse(Long userId);
 
     List<Alarm> findAllByUserIdAndGroupId(Long userId, Long groupId);
+
+    Optional<Alarm> findByUserIdAndGroupIdAndType(Long userId, Long groupId, AlarmType type);
 }

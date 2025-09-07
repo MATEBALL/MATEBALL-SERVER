@@ -244,11 +244,10 @@ import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
 
         GroupValidator.validate(group);
 
-        alarmService.updateAlarm(userId, groupId);
-
         if (!group.isGroup()) {
             processDirect(userId, groupId);
         } else {
+
             processGroup(userId, groupId);
         }
     }

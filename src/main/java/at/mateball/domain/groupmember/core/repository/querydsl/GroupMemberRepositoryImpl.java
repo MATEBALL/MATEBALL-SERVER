@@ -772,4 +772,15 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 )
                 .fetch();
     }
+
+    @Override
+    public List<Long> findParticipantUserIdsByGroupId(Long groupId) {
+
+        return queryFactory
+                .select(groupMember.user.id)
+                .from(groupMember)
+                .where(groupMember.group.id.eq(groupId)
+                        .and(groupMember.isParticipant.isTrue()))
+                .fetch();
+    }
 }

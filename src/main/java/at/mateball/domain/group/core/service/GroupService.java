@@ -120,11 +120,19 @@ public class GroupService {
         groupMemberRepository.createGroupMember(userId, matchId);
 
         if (group.isGroup()) {
+            List<Long> participantIds = groupMemberRepository.findParticipantUserIdsByGroupId(group.getId());
+
+            if (participantIds.size() < 3) {
+                for (Long participantId : participantIds) {
+                    alarmService.createOrUpdateAlarm(participantId, AlarmType.NEW_REQUEST, group.getId());
+                }
+            }
+
             groupMemberRepository.updateStatusForAllParticipants(group.getId(), GroupMemberStatus.NEW_REQUEST.getValue());
         } else {
             alarmService.createAlarm(group.getLeader().getId(), AlarmType.NEW_REQUEST, group.getId());
             alarmService.createAlarm(userId, AlarmType.MATCHED, group.getId());
-            
+
             groupMemberRepository.updateLeaderStatus(
                     group.getLeader().getId(), group.getId(), GroupMemberStatus.NEW_REQUEST.getValue()
             );

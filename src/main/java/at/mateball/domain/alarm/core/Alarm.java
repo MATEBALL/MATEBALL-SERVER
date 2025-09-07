@@ -44,4 +44,8 @@ public class Alarm {
     public void markAsRead() {
         this.isRead = true;
     }
+
+    public void markAsUnread() {
+        this.isRead = false;
+    }
 }
