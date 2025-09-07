@@ -69,19 +69,12 @@ public class LoginService {
                     user.updateProfileImage(profileImageUrl);
                 }
             } else {
-                user.updateProfileImage(null); 
+                user.updateProfileImage(null);
             }
         }
 
         String accessToken = jwtTokenGenerator.generateAccessToken(user.getId());
         String refreshToken = jwtTokenGenerator.generateRefreshToken(user.getId());
-
-        if (kakaoUser.isProfileImageAgreed()) {
-            String profileImageUrl = kakaoUser.extractProfileImageUrl();
-            user.updateProfileImage(profileImageUrl);
-        } else {
-            user.updateProfileImage(null);
-        }
 
         tokenService.save(user.getId(), refreshToken);
         log.info("카카오 로그인 성공 - userId: {}", user.getId());
