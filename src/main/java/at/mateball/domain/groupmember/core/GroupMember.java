@@ -45,5 +45,6 @@ public class GroupMember {
         this.group = group;
         this.isParticipant = isParticipant;
         this.status = status;
+        this.createdAt = LocalDateTime.now();
     }
 }
