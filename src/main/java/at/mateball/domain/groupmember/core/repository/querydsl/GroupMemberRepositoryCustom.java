@@ -80,7 +80,4 @@ public interface GroupMemberRepositoryCustom {
 
     Optional<Long> findApprovedRequesterUserId(Long groupId);
 
-    Optional<Long> findMatchedRequesterUserId(Long groupId);
-
-    List<Long> findAllParticipantUserIds(Long groupId);
-}
+    Optional<Long> findMatchedRequesterUserId(Long groupId);}
