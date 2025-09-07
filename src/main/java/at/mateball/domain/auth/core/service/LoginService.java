@@ -48,7 +48,11 @@ public class LoginService {
         String accessToken = jwtTokenGenerator.generateAccessToken(user.getId());
         String refreshToken = jwtTokenGenerator.generateRefreshToken(user.getId());
 
-        user.updateProfileImage(kakaoUser.kakaoAccount().profileImage());
+        String profileImageUrl = (kakaoUser.kakaoAccount() != null && kakaoUser.kakaoAccount().profile() != null)
+                ? kakaoUser.kakaoAccount().profile().profileImageUrl()
+                : null;
+
+        user.updateProfileImage(profileImageUrl);
 
         tokenService.save(user.getId(), refreshToken);
         log.info("카카오 로그인 성공 - userId: {}", user.getId());

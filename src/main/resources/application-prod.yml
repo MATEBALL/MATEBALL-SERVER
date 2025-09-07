@@ -26,9 +26,7 @@ kakao:
     authorization-grant-type: authorization_code
     redirect-uri: ${CLIENT_URL_PROD}
     scope:
-      - birthday
-      - gender
-      - email
+      - account_email
       - profile_image
 
 jwt:
