@@ -2,5 +2,6 @@ package at.mateball.domain.auth.api.dto;
 
 public record LoginUserInfo(
         Long userId,
-        String email
+        String email,
+        String profile_image
 ) {}

@@ -28,6 +28,8 @@ kakao:
     scope:
       - birthday
       - gender
+      - email
+      - profile_image
 
 jwt:
   secret: ${JWT_SECRET}

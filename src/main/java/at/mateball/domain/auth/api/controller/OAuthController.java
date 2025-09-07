@@ -43,7 +43,8 @@ public class OAuthController {
 
         LoginUserInfo userInfo = new LoginUserInfo(
                 result.userId(),
-                result.email()
+                result.email(),
+                result.profile_image()
         );
 
         return withCookies(cookies).body(MateballResponse.success(SuccessCode.OK, userInfo));
@@ -65,7 +66,7 @@ public class OAuthController {
         LoginResult result = reissueService.reissue(request);
         List<ResponseCookie> cookies = jwtCookieProvider.createAllCookies(result);
 
-        LoginUserInfo userInfo = new LoginUserInfo(result.userId(), result.email());
+        LoginUserInfo userInfo = new LoginUserInfo(result.userId(), result.email(), result.profile_image());
 
         return withCookies(cookies).body(MateballResponse.success(SuccessCode.OK, userInfo));
     }
