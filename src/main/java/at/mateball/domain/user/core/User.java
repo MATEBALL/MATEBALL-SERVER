@@ -15,7 +15,6 @@ public class User {
     public static final String DEFAULT_PROFILE_IMAGE_URL =
             "https://mateball-file.s3.ap-northeast-2.amazonaws.com/profile.jpg";
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,7 +53,7 @@ public class User {
     public User(Long kakaoUserId, String email, String imgUrl) {
         this.kakaoUserId = kakaoUserId;
         this.email = email;
-        this.imgUrl = (imgUrl != null) ? imgUrl : DEFAULT_PROFILE_IMAGE_URL;
+        this.imgUrl = imgUrl;
     }
 
     public void updateNickname(final String nickname) {
