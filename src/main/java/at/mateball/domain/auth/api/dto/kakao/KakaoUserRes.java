@@ -46,7 +46,8 @@ public record KakaoUserRes(
     }
 
     public boolean isProfileImageAgreed() {
-        return kakaoAccount != null && !kakaoAccount.profileImageNeedsAgreement();
+        return kakaoAccount != null
+                && kakaoAccount.profile() != null
+                && kakaoAccount.profile().profileImageUrl() != null;
     }
-
 }
