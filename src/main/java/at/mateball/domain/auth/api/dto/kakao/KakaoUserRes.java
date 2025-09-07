@@ -28,15 +28,15 @@ import java.util.Optional;
 }*/
 public record KakaoUserRes(
         Long id,
-        @JsonProperty("kakao_account") KakaoAccount kakaoAccount,
-        String email,
-        String profileImage
+        @JsonProperty("kakao_account") KakaoAccount kakaoAccount
 ) {
     public User toEntity() {
         return new User(
                 id,
-                kakaoAccount.email(),
-                kakaoAccount.profileImage()
+                kakaoAccount != null ? kakaoAccount.email() : null,
+                (kakaoAccount != null && kakaoAccount.profile() != null)
+                        ? kakaoAccount.profile().profileImageUrl()
+                        : null
         );
     }
 }
