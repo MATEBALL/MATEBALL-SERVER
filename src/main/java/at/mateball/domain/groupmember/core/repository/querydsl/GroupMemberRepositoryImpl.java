@@ -82,6 +82,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         member.group.id.in(groupIds),
                         member.isParticipant.isTrue()
                 )
+                .orderBy(member.createdAt.asc())
                 .fetch()
                 .stream()
                 .collect(Collectors.groupingBy(
@@ -303,7 +304,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                                 )
                                 .exists()
                 )
-                .orderBy(groupMember.id.desc())
+                .orderBy(groupMember.createdAt.asc())
                 .fetch();
     }
 
@@ -354,7 +355,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         user.id.ne(userId),
                         alreadyJoined.not()
                 )
-                .orderBy(groupMember.id.desc())
+                .orderBy(groupMember.createdAt.asc())
                 .fetch();
     }
 

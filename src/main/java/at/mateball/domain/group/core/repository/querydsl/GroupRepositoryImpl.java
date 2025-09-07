@@ -157,6 +157,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                         groupMember.group.id.eq(matchId),
                         groupMember.isParticipant.isTrue()
                 )
+                .orderBy(groupMember.createdAt.asc())
                 .fetch();
 
         return Optional.of(GroupCreateRes.from(base, count, imgUrls));

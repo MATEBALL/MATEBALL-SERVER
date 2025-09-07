@@ -4,10 +4,15 @@ import at.mateball.domain.group.core.Group;
 import at.mateball.domain.user.core.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Table(name = "group_member")
+@EntityListeners(AuditingEntityListener.class)
 public class GroupMember {
 
     @Id
@@ -27,6 +32,10 @@ public class GroupMember {
 
     @Column(nullable = false)
     private int status;
+
+    @CreatedDate
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     protected GroupMember() {
     }
