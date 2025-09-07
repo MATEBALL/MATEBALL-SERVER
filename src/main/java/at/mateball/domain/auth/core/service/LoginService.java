@@ -58,8 +58,14 @@ public class LoginService {
         User user = userRepository.findByKakaoUserId(kakaoUser.id())
                 .orElseGet(() -> {
                     User newUser = kakaoUser.toEntity();
-                    log.info("신규 가입자 생성됨 : ", newUser.getImgUrl());
-                    return userRepository.save(newUser);
+                    if (kakaoUser.isProfileImageAgreed()) {
+                        String profileImageUrl = kakaoUser.extractProfileImageUrl();
+                        newUser.updateProfileImage(profileImageUrl);
+                    }
+                    User saved = userRepository.save(newUser);
+                    userRepository.flush();
+                    log.info("신규 가입자 생성됨 : imgUrl={}", saved.getImgUrl());
+                    return saved;
                 });
 
         if (!isNewUser) {
