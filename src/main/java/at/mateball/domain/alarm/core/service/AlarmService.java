@@ -33,23 +33,6 @@ public class AlarmService {
         alarmRepository.save(alarm);
     }
 
-
-    @Transactional
-    public void markAsRead(Long alarmId) {
-        Alarm alarm = alarmRepository.findById(alarmId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.ALARM_NOT_FOUND));
-        alarm.markAsRead();
-    }
-
-    @Transactional(readOnly = true)
-    public List<Alarm> getUnreadAlarms(Long userId) {
-        return alarmRepository.findByUserIdAndIsReadFalse(userId);
-    }
-
-    public boolean hasUnreadAlarm(Long userId) {
-        return alarmRepository.existsByUserIdAndIsReadFalse(userId);
-    }
-
     @Transactional
     public void updateAlarm(Long userId, Long matchId) {
         List<Alarm> alarms = alarmRepository.findAllByUserIdAndGroupId(userId, matchId);
