@@ -30,8 +30,6 @@ public class UserV2Service {
     private static final Integer LIMIT_AGE = 19;
     private static final Integer MIN_INTRODUCTION_LENGTH = 1;
     private static final Integer MAX_INTRODUCTION_LENGTH = 50;
-    private static final String DEFAULT_PROFILE_IMAGE_URL =
-            "https://mateball-file.s3.ap-northeast-2.amazonaws.com/profile.jpg";
 
     public UserV2Service(UserRepository userRepository, AlarmService alarmService) {
         this.userRepository = userRepository;
@@ -73,7 +71,6 @@ public class UserV2Service {
         user.updateNickname(req.nickname());
         user.updateIntroduction(req.introduction());
         user.updateGenderAndBirthYear(Gender.fromLabel(req.gender()), req.birthYear());
-        user.updateProfileImage(DEFAULT_PROFILE_IMAGE_URL);
     }
 
     @Transactional
