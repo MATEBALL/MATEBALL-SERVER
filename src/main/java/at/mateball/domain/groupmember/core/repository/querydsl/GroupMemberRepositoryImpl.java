@@ -783,4 +783,40 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         .and(groupMember.isParticipant.isTrue()))
                 .fetch();
     }
+
+    @Override
+    public Optional<Long> findApprovedRequesterUserId(Long groupId) {
+        Long requesterId = queryFactory
+                .select(groupMember.user.id)
+                .from(groupMember)
+                .where(groupMember.group.id.eq(groupId)
+                        .and(groupMember.isParticipant.isTrue())
+                        .and(groupMember.status.eq(GroupMemberStatus.APPROVED.getValue())))
+                .fetchFirst();
+
+        return Optional.ofNullable(requesterId);
+    }
+
+    @Override
+    public Optional<Long> findMatchedRequesterUserId(Long groupId) {
+        Long requesterId = queryFactory
+                .select(groupMember.user.id)
+                .from(groupMember)
+                .where(groupMember.group.id.eq(groupId)
+                        .and(groupMember.isParticipant.isTrue())
+                        .and(groupMember.status.eq(GroupMemberStatus.MATCHED.getValue())))
+                .fetchFirst();
+
+        return Optional.ofNullable(requesterId);
+    }
+
+    @Override
+    public List<Long> findAllParticipantUserIds(Long groupId) {
+        return queryFactory
+                .select(groupMember.user.id)
+                .from(groupMember)
+                .where(groupMember.group.id.eq(groupId)
+                        .and(groupMember.isParticipant.isTrue()))
+                .fetch();
+    }
 }

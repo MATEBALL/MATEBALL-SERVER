@@ -1,5 +1,6 @@
 package at.mateball.domain.group.core.service;
 
+import at.mateball.domain.alarm.common.AlarmType;
 import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.chatting.core.Chatting;
@@ -247,8 +248,27 @@ import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
         if (!group.isGroup()) {
             processDirect(userId, groupId);
         } else {
-
             processGroup(userId, groupId);
+
+            Long requesterId = groupMemberRepository.findApprovedRequesterUserId(groupId)
+                    .orElse(null);
+
+            if (requesterId != null) {
+                alarmService.createOrUpdateAlarm(requesterId, AlarmType.APPROVED, groupId);
+            }
+
+            Long matchedRequesterId = groupMemberRepository.findMatchedRequesterUserId(groupId)
+                    .orElse(null);
+
+            if (matchedRequesterId != null) {
+                List<Long> participantIds = groupMemberRepository.findAllParticipantUserIds(groupId);
+
+                for (Long participantId : participantIds) {
+                    if (!participantId.equals(matchedRequesterId)) {
+                        alarmService.createOrUpdateAlarm(participantId, AlarmType.MATCHED, groupId);
+                    }
+                }
+            }
         }
     }
 
