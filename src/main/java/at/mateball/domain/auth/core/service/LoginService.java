@@ -63,7 +63,6 @@ public class LoginService {
                         newUser.updateProfileImage(profileImageUrl);
                     }
                     User saved = userRepository.save(newUser);
-                    userRepository.flush();
                     log.info("신규 가입자 생성됨 : imgUrl={}", saved.getImgUrl());
                     return saved;
                 });
