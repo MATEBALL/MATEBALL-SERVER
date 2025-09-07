@@ -31,8 +31,20 @@ public record KakaoUserRes(
         @JsonProperty("kakao_account") KakaoAccount kakaoAccount
 ) {
     public User toEntity() {
-        return new User(id, kakaoAccount != null ? kakaoAccount.email() : null, null);
+        String email = kakaoAccount != null ? kakaoAccount.email() : null;
+
+        String profileImageUrl = null;
+        if (kakaoAccount != null && kakaoAccount.profile() != null) {
+            profileImageUrl = kakaoAccount.profile().profileImageUrl();
+        }
+
+        return new User(
+                id,
+                email,
+                profileImageUrl != null ? profileImageUrl : User.DEFAULT_PROFILE_IMAGE_URL
+        );
     }
+
 
     public String extractProfileImageUrl() {
         if (kakaoAccount != null && kakaoAccount.profile() != null) {
