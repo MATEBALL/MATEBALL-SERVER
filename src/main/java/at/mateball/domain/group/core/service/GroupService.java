@@ -122,13 +122,13 @@ public class GroupService {
         if (group.isGroup()) {
             groupMemberRepository.updateStatusForAllParticipants(group.getId(), GroupMemberStatus.NEW_REQUEST.getValue());
         } else {
+            alarmService.createAlarm(group.getLeader().getId(), AlarmType.NEW_REQUEST, group.getId());
+            alarmService.createAlarm(userId, AlarmType.MATCHED, group.getId());
+            
             groupMemberRepository.updateLeaderStatus(
                     group.getLeader().getId(), group.getId(), GroupMemberStatus.NEW_REQUEST.getValue()
             );
         }
-
-        alarmService.createAlarm(group.getLeader().getId(), AlarmType.NEW_REQUEST, group.getId());
-        alarmService.createAlarm(userId, AlarmType.MATCHED, group.getId());
     }
 
     private void validateRequest(Long userId, Group group) {
