@@ -10,6 +10,7 @@ import at.mateball.domain.user.core.UserInfoField;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.domain.user.core.validator.IntroductionValidator;
 import at.mateball.domain.user.core.validator.NicknameValidator;
+import at.mateball.domain.webhook.WebhookService;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.validation.Valid;
@@ -25,15 +26,14 @@ import static at.mateball.exception.code.BusinessErrorCode.*;
 @Service
 public class UserV2Service {
     private final UserRepository userRepository;
-    private final AlarmService alarmService;
-
+    private final WebhookService webhookService;
     private static final Integer LIMIT_AGE = 19;
     private static final Integer MIN_INTRODUCTION_LENGTH = 1;
     private static final Integer MAX_INTRODUCTION_LENGTH = 50;
 
-    public UserV2Service(UserRepository userRepository, AlarmService alarmService) {
+    public UserV2Service(UserRepository userRepository, WebhookService webhookService) {
         this.userRepository = userRepository;
-        this.alarmService = alarmService;
+        this.webhookService = webhookService;
     }
 
     public InfoCheckRes getInfoCheck(Long userId) {
@@ -71,6 +71,22 @@ public class UserV2Service {
         user.updateNickname(req.nickname());
         user.updateIntroduction(req.introduction());
         user.updateGenderAndBirthYear(Gender.fromLabel(req.gender()), req.birthYear());
+
+        Long totalMembers = userRepository.count();
+        String message = String.format(
+                "✉️ 메잇볼의 %d번째 메이트 정보가 도착했어요! \n\n" +
+                        "✔️ 닉네임: %s\n" +
+                        "✔️ 성별: %s\n" +
+                        "✔️ 출생연도: %d\n" +
+                        "✔️ 소개: %s",
+                totalMembers,
+                user.getNickname(),
+                user.getGender(),
+                user.getBirthYear(),
+                user.getIntroduction()
+        );
+
+        webhookService.sendDiscordNotification(message);
     }
 
     @Transactional
