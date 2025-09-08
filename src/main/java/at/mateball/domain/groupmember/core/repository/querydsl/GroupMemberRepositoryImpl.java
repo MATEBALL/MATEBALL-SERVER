@@ -789,6 +789,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         gameInformation.gameDate,
                         groupMember.status
                 ))
+                .distinct()
                 .from(groupMember)
                 .join(groupMember.group, group)
                 .join(group.leader, leader)
