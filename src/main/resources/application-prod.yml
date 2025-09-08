@@ -51,3 +51,7 @@ cloud:
       instance-profile: true
     stack:
       auto: false
+
+discord:
+  webhook:
+    url: ${DISCORD_WEBHOOK_URL}
