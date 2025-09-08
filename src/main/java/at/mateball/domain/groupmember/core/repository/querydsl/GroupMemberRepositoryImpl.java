@@ -799,6 +799,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         group.isGroup.isTrue(),
                         (groupMember.user.id.eq(userId)
                                 .or(group.leader.id.eq(userId))),
+                        groupMember.user.id.ne(group.leader.id),
                         statusCondition
                 )
                 .fetch();
