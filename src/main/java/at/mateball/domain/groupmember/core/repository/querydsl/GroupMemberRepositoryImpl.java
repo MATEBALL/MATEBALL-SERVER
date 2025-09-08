@@ -744,11 +744,11 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         gameInformation.gameDate,
                         groupMember.status
                 ))
+                .distinct()
                 .from(groupMember)
                 .join(groupMember.group, group)
                 .join(group.leader, leader)
                 .join(group.gameInformation, gameInformation)
-                .join(leaderMatchRequirement).on(leaderMatchRequirement.user.id.eq(leader.id))
                 .where(
                         group.isGroup.isTrue(),
                         leader.id.eq(userId),
