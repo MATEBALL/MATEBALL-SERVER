@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static at.mateball.domain.matchrequirement.core.QMatchRequirement.matchRequirement;
 
@@ -709,7 +710,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
         QGameInformation gameInformation = QGameInformation.gameInformation;
         QMatchRequirement leaderMatchRequirement = new QMatchRequirement("leaderMatchRequirement");
 
-        return queryFactory
+        List<GroupStatusBaseResV2> asMember = queryFactory
                 .select(Projections.constructor(GroupStatusBaseResV2.class,
                         group.id,
                         leader.id,
@@ -726,10 +727,38 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                 .join(group.gameInformation, gameInformation)
                 .join(leaderMatchRequirement).on(leaderMatchRequirement.user.id.eq(leader.id))
                 .where(
+                        group.isGroup.isTrue(),
                         groupMember.user.id.eq(userId),
-                        group.isGroup.isTrue()
+                        groupMember.user.id.ne(group.leader.id)
                 )
                 .fetch();
+
+        List<GroupStatusBaseResV2> asLeader = queryFactory
+                .select(Projections.constructor(GroupStatusBaseResV2.class,
+                        group.id,
+                        leader.id,
+                        leader.nickname,
+                        gameInformation.awayTeamName,
+                        gameInformation.homeTeamName,
+                        gameInformation.stadiumName,
+                        gameInformation.gameDate,
+                        groupMember.status
+                ))
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(group.leader, leader)
+                .join(group.gameInformation, gameInformation)
+                .join(leaderMatchRequirement).on(leaderMatchRequirement.user.id.eq(leader.id))
+                .where(
+                        group.isGroup.isTrue(),
+                        leader.id.eq(userId),
+                        groupMember.user.id.eq(leader.id)
+                )
+                .fetch();
+
+        return Stream.concat(asMember.stream(), asLeader.stream())
+                .distinct()
+                .toList();
     }
 
     @Override
