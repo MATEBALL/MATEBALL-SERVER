@@ -1,7 +1,7 @@
 package at.mateball.domain.user.core.service;
 
-import at.mateball.domain.s3.ImageUploadRes;
-import at.mateball.domain.s3.S3Service;
+import at.mateball.domain.s3.api.dto.ImageUploadRes;
+import at.mateball.domain.s3.core.S3Service;
 import at.mateball.domain.user.api.dto.response.ProfileImageUploadRes;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
