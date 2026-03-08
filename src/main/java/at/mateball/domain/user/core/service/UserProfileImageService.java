@@ -1,7 +1,7 @@
 package at.mateball.domain.user.core.service;
 
+import at.mateball.storage.FileStorage;
 import at.mateball.storage.dto.ImageUploadRes;
-import at.mateball.storage.S3Service;
 import at.mateball.domain.user.api.dto.response.ProfileImageUploadRes;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
@@ -17,18 +17,18 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserProfileImageService {
 
     private final UserRepository userRepository;
-    private final S3Service s3Service;
+    private final FileStorage fileStorage;
 
     @Transactional
     public ProfileImageUploadRes uploadProfileImage(Long userId, MultipartFile file) throws Exception {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
 
-        ImageUploadRes uploadResult = s3Service.uploadProfileImage(file);
+        ImageUploadRes uploadResult = fileStorage.uploadProfileImage(file);
 
         user.updateProfileImageKey(uploadResult.objectKey());
 
-        String profileImageUrl = s3Service.getImageUrl(uploadResult.objectKey());
+        String profileImageUrl = fileStorage.getImageUrl(uploadResult.objectKey());
 
         return new ProfileImageUploadRes(
                 user.getProfileImageKey(),
@@ -42,6 +42,6 @@ public class UserProfileImageService {
             return User.DEFAULT_PROFILE_IMAGE_URL;
         }
 
-        return s3Service.getImageUrl(user.getProfileImageKey());
+        return fileStorage.getImageUrl(user.getProfileImageKey());
     }
 }
