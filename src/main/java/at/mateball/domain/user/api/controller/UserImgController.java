@@ -46,4 +46,16 @@ public class UserImgController {
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
     }
+
+    @DeleteMapping("/profile-image")
+    @Operation(summary = "프로필 이미지 삭제 api")
+    public ResponseEntity<MateballResponse<?>> deleteProfileImage(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getUserId();
+
+        ProfileImageUpdateRes data = userProfileImageService.deleteProfileImage(userId);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
+    }
 }
