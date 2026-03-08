@@ -64,6 +64,15 @@ public class S3FileStorage implements FileStorage {
         return amazonS3.getUrl(s3Properties.getBucket(), key).toString();
     }
 
+    @Override
+    public void deleteObject(String objectKey) {
+        if (objectKey == null || objectKey.isBlank()) {
+            return;
+        }
+
+        amazonS3.deleteObject(s3Properties.getBucket(), objectKey);
+    }
+
     private void validateImage(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new BusinessException(BusinessErrorCode.EMPTY_PROFILE_IMAGE);
