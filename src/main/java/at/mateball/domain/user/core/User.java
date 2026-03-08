@@ -53,6 +53,11 @@ public class User {
 
     }
 
+    /*
+    * imgUrl s3 안정화 되면 기본 이미지 URL 반환 로직 수정
+    * this.profileImageKey = DEFAULT_PROFILE_IMAGE_KEY; 추가
+    * 서비스에서 URL 상수를 직접 쓰는게 아니라 porfileImgKey 보고 URL 생성
+    * */
     public User(Long kakaoUserId, String email, String imgUrl) {
         this.kakaoUserId = kakaoUserId;
         this.email = email;

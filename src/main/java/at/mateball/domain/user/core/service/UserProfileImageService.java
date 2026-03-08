@@ -14,12 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class UserProfileImageService {
 
     private final UserRepository userRepository;
     private final S3Service s3Service;
 
+    @Transactional
     public ProfileImageUploadRes uploadProfileImage(Long userId, MultipartFile file) throws Exception {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
@@ -34,5 +34,13 @@ public class UserProfileImageService {
                 user.getProfileImageKey(),
                 profileImageUrl
         );
+    }
+
+    public String getProfileImageUrl(User user) {
+        if (user.getProfileImageKey() == null || user.getProfileImageKey().isBlank()) {
+            return User.DEFAULT_PROFILE_IMAGE_URL;
+        }
+
+        return s3Service.getImageUrl(user.getProfileImageKey());
     }
 }

@@ -18,6 +18,10 @@ spring:
         static: ${S3_REGION}
       s3:
         bucket: ${S3_BUCKET}
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
   data:
     redis:
