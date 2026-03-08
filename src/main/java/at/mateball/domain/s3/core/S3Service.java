@@ -1,5 +1,6 @@
-package at.mateball.domain.s3;
+package at.mateball.domain.s3.core;
 
+import at.mateball.domain.s3.api.dto.ImageUploadRes;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import com.amazonaws.services.s3.AmazonS3;

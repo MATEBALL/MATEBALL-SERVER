@@ -1,5 +1,7 @@
-package at.mateball.domain.s3;
+package at.mateball.domain.s3.api.controller;
 
+import at.mateball.domain.s3.api.dto.ImageUploadRes;
+import at.mateball.domain.s3.core.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
