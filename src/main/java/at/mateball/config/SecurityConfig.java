@@ -54,7 +54,6 @@ public class SecurityConfig {
                         .requestMatchers("/v1/users/**").authenticated()
                         .requestMatchers("/v2/users/**").authenticated()
                         .requestMatchers("/v3/users/**").authenticated()
-                        .requestMatchers("/s3/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
