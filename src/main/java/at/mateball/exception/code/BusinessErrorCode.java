@@ -26,6 +26,9 @@ public enum BusinessErrorCode implements ErrorCode {
     GROUP_NOT_FOUND_OR_ALREADY_UPDATED(HttpStatus.BAD_REQUEST, "업데이트할 그룹이 없거나 이미 업데이트된 상태입니다."),
     INVALID_INTRODUCTION_LENGTH(HttpStatus.BAD_REQUEST, "한줄소개는 1자 이상 50자 이하로 입력해야 합니다."),
     INVALID_TEAM_ALLOWED(HttpStatus.BAD_REQUEST, "'응원하는 팀이 없어요'는 '상관 없어요'만 선택가능합니다."),
+    EMPTY_PROFILE_IMAGE(HttpStatus.BAD_REQUEST, "업로드할 프로필 이미지가 없습니다."),
+    INVALID_PROFILE_IMAGE_FORMAT(HttpStatus.BAD_REQUEST, "프로필 이미지는 jpg, png, webp 형식만 업로드할 수 있습니다."),
+    INVALID_PROFILE_IMAGE_SIZE(HttpStatus.BAD_REQUEST, "프로필 이미지는 5MB 이하만 업로드할 수 있습니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),

@@ -1,5 +1,7 @@
 package at.mateball.domain.s3;
 
+import at.mateball.exception.BusinessException;
+import at.mateball.exception.code.BusinessErrorCode;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -16,6 +19,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3Service {
 
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+    private static final List<String> ALLOWED_CONTENT_TYPES = List.of(
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+    );
     private final AmazonS3 amazonS3;
 
     @Value("${spring.cloud.aws.s3.bucket}")
@@ -51,17 +61,29 @@ public class S3Service {
 
     private void validateImage(MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("업로드할 파일이 없습니다.");
+            throw new BusinessException(BusinessErrorCode.EMPTY_PROFILE_IMAGE);
         }
 
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            throw new IllegalArgumentException("이미지 파일만 업로드할 수 있습니다.");
-        }
+        validateContentType(file);
+        validateFileSize(file);
     }
 
     private String createObjectKey(String dirName, String originalFileName) {
         String safeFileName = originalFileName.replaceAll("\\s+", "_");
         return dirName + "/" + UUID.randomUUID() + "_" + safeFileName;
+    }
+
+    private void validateContentType(MultipartFile file) {
+        String contentType = file.getContentType();
+
+        if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
+            throw new BusinessException(BusinessErrorCode.INVALID_PROFILE_IMAGE_FORMAT);
+        }
+    }
+
+    private void validateFileSize(MultipartFile file) {
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new BusinessException(BusinessErrorCode.INVALID_PROFILE_IMAGE_SIZE);
+        }
     }
 }
