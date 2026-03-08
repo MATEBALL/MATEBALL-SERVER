@@ -2,6 +2,7 @@ package at.mateball.domain.user.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
+import at.mateball.domain.user.api.dto.response.ProfileImageUpdateRes;
 import at.mateball.domain.user.api.dto.response.ProfileImageUploadRes;
 import at.mateball.domain.user.core.service.UserProfileImageService;
 import at.mateball.exception.code.SuccessCode;
@@ -29,6 +30,19 @@ public class UserImgController {
         Long userId = userDetails.getUserId();
 
         ProfileImageUploadRes data = userProfileImageService.uploadProfileImage(userId, file);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
+    }
+
+    @PatchMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "프로필 이미지 수정 api")
+    public ResponseEntity<MateballResponse<?>> updateProfileImage(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestPart("file") MultipartFile file
+    ) throws Exception {
+        Long userId = userDetails.getUserId();
+
+        ProfileImageUpdateRes data = userProfileImageService.updateProfileImage(userId, file);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
     }
