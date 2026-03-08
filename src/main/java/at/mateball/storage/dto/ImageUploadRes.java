@@ -1,4 +1,4 @@
-package at.mateball.domain.s3.api.dto;
+package at.mateball.storage.dto;
 
 public record ImageUploadRes(
         String objectKey,

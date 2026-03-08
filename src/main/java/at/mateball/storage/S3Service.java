@@ -1,13 +1,12 @@
-package at.mateball.domain.s3.core;
+package at.mateball.storage;
 
-import at.mateball.domain.s3.api.dto.ImageUploadRes;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
+import at.mateball.storage.dto.ImageUploadRes;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,10 +26,9 @@ public class S3Service {
             "image/png",
             "image/webp"
     );
-    private final AmazonS3 amazonS3;
 
-    @Value("${spring.cloud.aws.s3.bucket}")
-    private String bucket;
+    private final S3Properties s3Properties;
+    private final AmazonS3 amazonS3;
 
     public ImageUploadRes uploadProfileImage(MultipartFile file) throws IOException {
         validateImage(file);
@@ -45,7 +43,7 @@ public class S3Service {
         metadata.setContentType(contentType);
 
         PutObjectRequest putObjectRequest =
-                new PutObjectRequest(bucket, objectKey, file.getInputStream(), metadata);
+                new PutObjectRequest(s3Properties.getBucket(), objectKey, file.getInputStream(), metadata);
 
         amazonS3.putObject(putObjectRequest);
 
@@ -57,7 +55,11 @@ public class S3Service {
     }
 
     public String getImageUrl(String objectKey) {
-        return amazonS3.getUrl(bucket, objectKey).toString();
+        String key = (objectKey == null || objectKey.isBlank())
+                ? s3Properties.getDefaultProfileKey()
+                : objectKey;
+
+        return amazonS3.getUrl(s3Properties.getBucket(), key).toString();
     }
 
     private void validateImage(MultipartFile file) {
