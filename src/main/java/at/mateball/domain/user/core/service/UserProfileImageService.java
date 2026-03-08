@@ -72,6 +72,22 @@ public class UserProfileImageService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public ProfileImageUpdateRes deleteProfileImage(Long userId) {
+        User user = getUser(userId);
+
+        String oldProfileImageKey = user.getProfileImageKey();
+
+        user.clearProfileImageKey();
+
+        if (hasText(oldProfileImageKey)) {
+            eventPublisher.publishEvent(new ProfileImageDeleteEvent(oldProfileImageKey));
+        }
+
+        String defaultImageUrl = fileStorage.getImageUrl(null);
+        return new ProfileImageUpdateRes(defaultImageUrl);
+    }
+
     // objectKey 기반 구조로 변경 예정
     public String getProfileImageUrl(User user) {
         if (user.getProfileImageKey() == null || user.getProfileImageKey().isBlank()) {
