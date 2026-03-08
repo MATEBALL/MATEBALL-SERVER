@@ -2,8 +2,6 @@ package at.mateball.domain.user.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
-import at.mateball.common.swagger.CustomExceptionDescription;
-import at.mateball.common.swagger.SwaggerResponseDescription;
 import at.mateball.domain.user.api.dto.response.ProfileImageUploadRes;
 import at.mateball.domain.user.core.service.UserProfileImageService;
 import at.mateball.exception.code.SuccessCode;

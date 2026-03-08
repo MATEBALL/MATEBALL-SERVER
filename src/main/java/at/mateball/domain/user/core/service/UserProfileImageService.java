@@ -36,6 +36,7 @@ public class UserProfileImageService {
         );
     }
 
+    // objectKey 기반 구조로 변경 예정
     public String getProfileImageUrl(User user) {
         if (user.getProfileImageKey() == null || user.getProfileImageKey().isBlank()) {
             return User.DEFAULT_PROFILE_IMAGE_URL;
