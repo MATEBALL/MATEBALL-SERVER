@@ -9,6 +9,15 @@ spring:
     hibernate:
       ddl-auto: none
       dialect: org.hibernate.dialect.MySQL8Dialect
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      region:
+        static: ${S3_REGION}
+      s3:
+        bucket: ${S3_BUCKET}
 
   data:
     redis:
@@ -39,18 +48,6 @@ client:
   url:
     local: ${CLIENT_URL_LOCAL}
     prod: ${CLIENT_URL_PROD}
-
-cloud:
-  aws:
-    region:
-      static: ${S3_REGION}
-    s3:
-
-      base-url: ${S3_BASE_URL}
-    credentials:
-      instance-profile: true
-    stack:
-      auto: false
 
 discord:
   webhook:
