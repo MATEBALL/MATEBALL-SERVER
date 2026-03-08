@@ -76,6 +76,10 @@ public class User {
         this.profileImageKey = profileImageKey;
     }
 
+    public void clearProfileImageKey() {
+        this.profileImageKey = null;
+    }
+
     public void updateIntroduction(final String introduction) {
         this.introduction = introduction;
     }
