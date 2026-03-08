@@ -18,6 +18,7 @@ spring:
         static: ${S3_REGION}
       s3:
         bucket: ${S3_BUCKET}
+        default-profile-key: profile.jpg
   servlet:
     multipart:
       max-file-size: 5MB
