@@ -45,7 +45,7 @@ cloud:
     region:
       static: ${S3_REGION}
     s3:
-      bucket: ${S3_BUCKET_NAME}
+
       base-url: ${S3_BASE_URL}
     credentials:
       instance-profile: true

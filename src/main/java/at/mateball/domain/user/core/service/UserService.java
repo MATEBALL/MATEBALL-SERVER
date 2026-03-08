@@ -27,7 +27,6 @@ import static at.mateball.exception.code.BusinessErrorCode.*;
 public class UserService {
     private final UserRepository userRepository;
     private final MatchRequirementRepository matchRequirementRepository;
-    private final S3UploadService s3UploadService;
 
     public KaKaoInformationRes getKakaoInformation(final Long userId) {
         User user = userRepository.findById(userId)
