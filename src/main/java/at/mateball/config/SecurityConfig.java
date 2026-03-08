@@ -53,6 +53,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/v1/users/**").authenticated()
                         .requestMatchers("/v2/users/**").authenticated()
+                        .requestMatchers("/v3/users/**").authenticated()
                         .requestMatchers("/s3/**").permitAll()
                         .anyRequest().authenticated()
                 )

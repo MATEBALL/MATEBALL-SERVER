@@ -37,6 +37,9 @@ public class User {
     @Column(nullable = true, length = 500)
     private String imgUrl;
 
+    @Column(name = "profile_image_key", length = 500)
+    private String profileImageKey;
+
     @Column(nullable = true)
     private String email;
 
@@ -62,6 +65,10 @@ public class User {
 
     public void updateProfileImage(final String imgUrl) {
         this.imgUrl = (imgUrl != null) ? imgUrl : DEFAULT_PROFILE_IMAGE_URL;
+    }
+
+    public void updateProfileImageKey(String profileImageKey) {
+        this.profileImageKey = profileImageKey;
     }
 
     public void updateIntroduction(final String introduction) {

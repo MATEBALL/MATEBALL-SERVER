@@ -45,6 +45,10 @@ public class S3Service {
         );
     }
 
+    public String getImageUrl(String objectKey) {
+        return amazonS3.getUrl(bucket, objectKey).toString();
+    }
+
     private void validateImage(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("업로드할 파일이 없습니다.");
