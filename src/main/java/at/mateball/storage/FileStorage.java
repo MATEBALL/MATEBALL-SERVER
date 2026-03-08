@@ -10,4 +10,6 @@ public interface FileStorage {
     ImageUploadRes uploadProfileImage(MultipartFile file) throws IOException;
 
     String getImageUrl(String objectKey);
+
+    void deleteObject(String objectKey);
 }
