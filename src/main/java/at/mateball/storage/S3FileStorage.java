@@ -7,7 +7,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class S3Service {
+public class S3FileStorage implements FileStorage {
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -30,6 +30,7 @@ public class S3Service {
     private final S3Properties s3Properties;
     private final AmazonS3 amazonS3;
 
+    @Override
     public ImageUploadRes uploadProfileImage(MultipartFile file) throws IOException {
         validateImage(file);
 
@@ -54,6 +55,7 @@ public class S3Service {
         );
     }
 
+    @Override
     public String getImageUrl(String objectKey) {
         String key = (objectKey == null || objectKey.isBlank())
                 ? s3Properties.getDefaultProfileKey()
