@@ -4,7 +4,7 @@ import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
 import at.mateball.domain.matchrequirement.api.dto.request.MatchRequirementV3Req;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementV3Service;
-import at.mateball.domain.user.core.repository.UserRepository;
+import at.mateball.domain.user.core.service.UserV3Service;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v3/users/match-condition")
 public class MatchRequirementV3Controller {
     private final MatchRequirementV3Service matchRequirementV3Service;
+    private final UserV3Service userV3Service;
 
-    public MatchRequirementV3Controller(MatchRequirementV3Service matchRequirementV3Service, UserRepository userRepository) {
+    public MatchRequirementV3Controller(MatchRequirementV3Service matchRequirementV3Service, UserV3Service userV3Service) {
         this.matchRequirementV3Service = matchRequirementV3Service;
+        this.userV3Service = userV3Service;
     }
 
     @PostMapping
@@ -31,11 +33,11 @@ public class MatchRequirementV3Controller {
     ) {
         Long userId = userDetails.getUserId();
 
+        userV3Service.setAvgSeason(userId, matchRequirementV3Req.avgSeason());
         matchRequirementV3Service.setMatchRequirement(
                 userId,
                 matchRequirementV3Req.team(),
                 matchRequirementV3Req.teamAllowed(),
-                matchRequirementV3Req.avgSeason(),
                 matchRequirementV3Req.style()
         );
 
