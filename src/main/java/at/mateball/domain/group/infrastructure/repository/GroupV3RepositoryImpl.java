@@ -21,7 +21,7 @@ import static at.mateball.domain.group.core.QGroup.group;
 
 @Repository
 @RequiredArgsConstructor
-public class GroupV3QueryRepositoryImpl implements GroupV3QueryRepository {
+public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 

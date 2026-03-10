@@ -7,7 +7,7 @@ import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
 import java.util.List;
 import java.util.Optional;
 
-public interface GroupV3QueryRepository {
+public interface GroupV3RepositoryCustom {
 
     Optional<GameInfoQueryDto> findGameInfoByGameId(Long gameId);
 
