@@ -26,7 +26,7 @@ public class GroupV3Controller {
     ) {
         Long userId = customUserDetails.getUserId();
 
-        GroupMatchRes result = groupV3Service.getGroupMatchs(userId, gameId);
+        GroupMatchRes result = groupV3Service.getGroupMatches(userId, gameId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
 
