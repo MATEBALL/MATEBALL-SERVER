@@ -15,7 +15,6 @@ public class MatchingScoreCalculator {
     public int calculate(MatchingTarget loginUser, MatchingTarget member) {
         int teamScore = teamMatchingScorePolicy.calculate(loginUser, member);
         int styleScore = styleMatchingScorePolicy.calculate(loginUser, member);
-
         return teamScore + styleScore;
     }
 }
