@@ -25,7 +25,7 @@ public class GroupV3Service {
     private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final MatchingScoreCalculator matchingScoreCalculator;
 
-    public GroupMatchRes getGroupMatchs(Long userId, Long gameId) {
+    public GroupMatchRes getGroupMatches(Long userId, Long gameId) {
         GameInfoQueryDto gameInfo = groupV3RepositoryCustom.findGameInfoByGameId(gameId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GAME_NOT_FOUND));
 
