@@ -40,6 +40,13 @@ public class MatchRequirement {
         this.genderPreference = genderPreference;
     }
 
+    public MatchRequirement(User user, Integer team, Integer teamAllowed, Integer style) {
+        this.user = user;
+        this.team = team;
+        this.teamAllowed = teamAllowed;
+        this.style = style;
+    }
+
     public void updateAll(Integer team, Integer teamAllowed, Integer style, Integer genderPreference) {
         this.team = team;
         this.teamAllowed = teamAllowed;
