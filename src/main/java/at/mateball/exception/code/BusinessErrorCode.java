@@ -29,6 +29,7 @@ public enum BusinessErrorCode implements ErrorCode {
     EMPTY_PROFILE_IMAGE(HttpStatus.BAD_REQUEST, "업로드할 프로필 이미지가 없습니다."),
     INVALID_PROFILE_IMAGE_FORMAT(HttpStatus.BAD_REQUEST, "프로필 이미지는 jpg, png, webp 형식만 업로드할 수 있습니다."),
     INVALID_PROFILE_IMAGE_SIZE(HttpStatus.BAD_REQUEST, "프로필 이미지는 5MB 이하만 업로드할 수 있습니다."),
+    INVALID_AVG_SEASON(HttpStatus.BAD_REQUEST, "시즌 평균 직관 수는 0-999까지 입력 가능합니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
