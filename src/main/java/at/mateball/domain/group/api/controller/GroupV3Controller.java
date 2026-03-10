@@ -19,7 +19,7 @@ public class GroupV3Controller {
     private final GroupV3Service groupV3Service;
 
     @GetMapping("/match/{gameId}")
-    @Operation(summary = "특정 경기 기준 매칭 가능한 그룹 및 개인 목록 조회 API")
+    @Operation(summary = "매칭 경기 화면 매칭 그룹 리스트 조회 api")
     public ResponseEntity<MateballResponse<GroupMatchRes>> getAvailableMatches(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable Long gameId
