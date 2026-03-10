@@ -50,7 +50,7 @@ public class User {
     private List<MatchRequirement> matchRequirements = new ArrayList<>();
 
     @Column(nullable = true)
-    private Integer avgSeason;
+    private Integer avgSeason = 0;
 
     protected User() {
 
