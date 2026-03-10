@@ -7,7 +7,7 @@ import at.mateball.domain.group.core.calculator.MatchingTarget;
 import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
 import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
 import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
-import at.mateball.domain.group.infrastructure.repository.GroupV3QueryRepository;
+import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.user.core.User;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
@@ -22,18 +22,18 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class GroupV3Service {
 
-    private final GroupV3QueryRepository groupV3QueryRepository;
+    private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final MatchingScoreCalculator matchingScoreCalculator;
 
     public GroupMatchRes getGroupMatchs(Long userId, Long gameId) {
-        GameInfoQueryDto gameInfo = groupV3QueryRepository.findGameInfoByGameId(gameId)
+        GameInfoQueryDto gameInfo = groupV3RepositoryCustom.findGameInfoByGameId(gameId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GAME_NOT_FOUND));
 
-        LoginUserMatchRequirementDto loginRequirement = groupV3QueryRepository.findLoginUserMatchRequirement(userId)
+        LoginUserMatchRequirementDto loginRequirement = groupV3RepositoryCustom.findLoginUserMatchRequirement(userId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND));
 
         List<GroupMatchCandidateFlatDto> flatRows =
-                groupV3QueryRepository.findMatchCandidatesByGameId(userId, gameId);
+                groupV3RepositoryCustom.findMatchCandidatesByGameId(userId, gameId);
         if (flatRows.isEmpty()) {
             return new GroupMatchRes(
                     gameInfo.awayTeam(),
