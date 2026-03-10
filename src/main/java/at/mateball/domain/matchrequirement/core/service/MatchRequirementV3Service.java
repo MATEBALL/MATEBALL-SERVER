@@ -24,15 +24,13 @@ public class MatchRequirementV3Service {
     }
 
     @Transactional
-    public void setMatchRequirement(Long userId, String team, String teamAllowed, int avgSeason, String style) {
+    public void setMatchRequirement(Long userId, String team, String teamAllowed, String style) {
         User user = entityManager.getReference(User.class, userId);
         MatchRequirement matchRequirement = matchRequirementRepository.findUserMatchRequirement(userId);
 
         if (matchRequirement != null) {
             throw new BusinessException(BusinessErrorCode.DUPLICATED_MATCH_REQUIREMENT);
         }
-
-        user.updateAvgSeason(avgSeason);
 
         matchRequirement = new MatchRequirement(
                 user,
