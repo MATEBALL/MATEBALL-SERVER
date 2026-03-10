@@ -7,10 +7,7 @@ import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -55,6 +52,12 @@ public class GroupMatchAggregator {
 
         return aggregateMap.values().stream()
                 .map(GroupMatchAggregate::toResponse)
+                .sorted(
+                        Comparator.comparing(
+                                GroupMatchBaseRes::matchRate,
+                                Comparator.nullsLast(Comparator.reverseOrder())
+                        )
+                )
                 .toList();
     }
 }
