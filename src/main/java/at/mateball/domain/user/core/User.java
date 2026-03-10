@@ -95,4 +95,8 @@ public class User {
     public void updateHasAccepted(boolean hasAccepted) {
         this.hasAccepted = hasAccepted;
     }
+
+    public void updateAvgSeason(int avgSeason) {
+        this.avgSeason = avgSeason;
+    }
 }
