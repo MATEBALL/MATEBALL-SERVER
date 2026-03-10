@@ -49,8 +49,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchRequirement> matchRequirements = new ArrayList<>();
 
-    @Column(nullable = true)
-    private Integer avgSeason = 0;
+    @Column(nullable = false)
+    private int avgSeason = 0;
 
     protected User() {
 
