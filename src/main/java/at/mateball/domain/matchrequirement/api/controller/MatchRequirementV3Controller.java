@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v3/users/match-condition")
 public class MatchRequirementV3Controller {
     private final MatchRequirementV3Service matchRequirementV3Service;
-    private final UserV3Service userV3Service;
 
     @PostMapping
     @Operation(summary = "매칭 조건 설정 api")
@@ -30,12 +29,12 @@ public class MatchRequirementV3Controller {
     ) {
         Long userId = userDetails.getUserId();
 
-        userV3Service.setAvgSeason(userId, matchRequirementV3Req.avgSeason());
-        matchRequirementV3Service.setMatchRequirement(
+        matchRequirementV3Service.setAvgSeasonAndMatchRequirement(
                 userId,
                 matchRequirementV3Req.team(),
                 matchRequirementV3Req.teamAllowed(),
-                matchRequirementV3Req.style()
+                matchRequirementV3Req.style(),
+                matchRequirementV3Req.avgSeason()
         );
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.CREATED));
