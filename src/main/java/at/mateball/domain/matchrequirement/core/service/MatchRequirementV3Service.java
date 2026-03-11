@@ -28,7 +28,7 @@ public class MatchRequirementV3Service {
         setMatchRequirement(userId, team, teamAllowed, style);
     }
 
-    public void setMatchRequirement(Long userId, String team, String teamAllowed, String style) {
+    private void setMatchRequirement(Long userId, String team, String teamAllowed, String style) {
         User user = entityManager.getReference(User.class, userId);
         MatchRequirement matchRequirement = matchRequirementRepository.findUserMatchRequirement(userId);
 
