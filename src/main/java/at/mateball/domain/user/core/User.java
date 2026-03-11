@@ -2,11 +2,14 @@ package at.mateball.domain.user.core;
 
 import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import at.mateball.domain.matchrequirement.core.constant.Gender;
+import at.mateball.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static at.mateball.exception.code.BusinessErrorCode.INVALID_AVG_SEASON;
 
 @Entity
 @Getter
@@ -14,6 +17,8 @@ import java.util.List;
 public class User {
     public static final String DEFAULT_PROFILE_IMAGE_URL =
             "https://mateball-file.s3.ap-northeast-2.amazonaws.com/profile.jpg";
+    private static final int MIN_AVG_SEASON = 0;
+    private static final int MAX_AVG_SEASON = 999;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,10 +62,10 @@ public class User {
     }
 
     /*
-    * imgUrl s3 안정화 되면 기본 이미지 URL 반환 로직 수정
-    * this.profileImageKey = DEFAULT_PROFILE_IMAGE_KEY; 추가
-    * 서비스에서 URL 상수를 직접 쓰는게 아니라 porfileImgKey 보고 URL 생성
-    * */
+     * imgUrl s3 안정화 되면 기본 이미지 URL 반환 로직 수정
+     * this.profileImageKey = DEFAULT_PROFILE_IMAGE_KEY; 추가
+     * 서비스에서 URL 상수를 직접 쓰는게 아니라 porfileImgKey 보고 URL 생성
+     * */
     public User(Long kakaoUserId, String email, String imgUrl) {
         this.kakaoUserId = kakaoUserId;
         this.email = email;
@@ -97,6 +102,9 @@ public class User {
     }
 
     public void updateAvgSeason(int avgSeason) {
+        if (avgSeason > MAX_AVG_SEASON || avgSeason < MIN_AVG_SEASON) {
+            throw new BusinessException(INVALID_AVG_SEASON);
+        }
         this.avgSeason = avgSeason;
     }
 }
