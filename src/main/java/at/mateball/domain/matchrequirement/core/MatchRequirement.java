@@ -6,7 +6,11 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "match_requirement")
+@Table(name = "match_requirement",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_match_requirement_user", columnNames = "user_id")
+        }
+)
 public class MatchRequirement {
 
     @Id
