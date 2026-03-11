@@ -3,6 +3,7 @@ package at.mateball.domain.user.core.service;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,14 +11,11 @@ import static at.mateball.exception.code.BusinessErrorCode.INVALID_AVG_SEASON;
 import static at.mateball.exception.code.BusinessErrorCode.USER_NOT_FOUND;
 
 @Service
+@RequiredArgsConstructor
 public class UserV3Service {
     private final UserRepository userRepository;
     private static final int MIN_AVG_SEASON = 0;
     private static final int MAX_AVG_SEASON = 999;
-
-    public UserV3Service(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     public void setAvgSeason(final Long userId, final int avgSeason) {
