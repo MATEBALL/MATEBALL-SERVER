@@ -12,8 +12,8 @@ import static at.mateball.exception.code.BusinessErrorCode.USER_NOT_FOUND;
 @Service
 public class UserV3Service {
     private final UserRepository userRepository;
-    private final int MIN_AVG_SEASON = 0;
-    private final int MAX_AVG_SEASON = 999;
+    private static final int MIN_AVG_SEASON = 0;
+    private static final int MAX_AVG_SEASON = 999;
 
     public UserV3Service(UserRepository userRepository) {
         this.userRepository = userRepository;
