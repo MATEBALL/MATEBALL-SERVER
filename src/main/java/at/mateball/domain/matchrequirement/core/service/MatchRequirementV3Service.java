@@ -44,6 +44,12 @@ public class MatchRequirementV3Service {
         MatchRequirement matchRequirement = Optional.ofNullable(matchRequirementRepository.findUserMatchRequirement(userId))
                 .orElseThrow(() -> new BusinessException(MATCH_REQUIREMENT_NOT_FOUND));
 
+        if (matchRequirement.getTeam() == null
+                || matchRequirement.getTeamAllowed() == null
+                || matchRequirement.getStyle() == null) {
+            throw new BusinessException(MATCH_REQUIREMENT_NOT_FOUND);
+        }
+
         return matchRequirement;
     }
 }
