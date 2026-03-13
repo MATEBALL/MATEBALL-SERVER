@@ -3,7 +3,7 @@ package at.mateball.domain.matchrequirement.api.controller;
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
 import at.mateball.domain.matchrequirement.api.dto.request.MatchRequirementV3Req;
-import at.mateball.domain.matchrequirement.core.service.OnboardingService;
+import at.mateball.domain.matchrequirement.core.service.MatchRequirementAndAvgSeasonService;
 import at.mateball.domain.matchrequirement.api.dto.response.MatchRequirementV3Res;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementV3Service;
 import at.mateball.exception.code.SuccessCode;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/v3/users/match-condition")
 public class MatchRequirementV3Controller {
-    private final OnboardingService onboardingService;
+    private final MatchRequirementAndAvgSeasonService matchRequirementAndAvgSeasonService;
     private final MatchRequirementV3Service matchRequirementV3Service;
 
     @PostMapping
@@ -28,7 +28,7 @@ public class MatchRequirementV3Controller {
     ) {
         Long userId = userDetails.getUserId();
 
-        onboardingService.setOnboardingInformation(
+        matchRequirementAndAvgSeasonService.setMatchRequirementAndAvgSeason(
                 userId,
                 onboardingReq.team(),
                 onboardingReq.teamAllowed(),
@@ -46,7 +46,7 @@ public class MatchRequirementV3Controller {
     ) {
         Long userId = userDetails.getUserId();
 
-        MatchRequirementV3Res result = onboardingService.getMatchRequirementAndAvgSeason(userId);
+        MatchRequirementV3Res result = matchRequirementAndAvgSeasonService.getMatchRequirementAndAvgSeason(userId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }
