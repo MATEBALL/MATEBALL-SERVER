@@ -1,6 +1,6 @@
 package at.mateball.domain.matchrequirement.core.service;
 
-import at.mateball.domain.matchrequirement.api.dto.response.MatchRequirementV3Res;
+import at.mateball.domain.matchrequirement.api.dto.response.MatchRequirementAndAvgSeasonRes;
 import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.matchrequirement.core.constant.TeamAllowed;
@@ -22,11 +22,11 @@ public class MatchRequirementAndAvgSeasonService {
         matchRequirementV3Service.setMatchRequirement(userId, team, teamAllowed, style);
     }
 
-    public MatchRequirementV3Res getMatchRequirementAndAvgSeason(Long userId) {
+    public MatchRequirementAndAvgSeasonRes getMatchRequirementAndAvgSeason(Long userId) {
         int avgSeason = userV3Service.getAvgSeason(userId);
         MatchRequirement matchRequirement = matchRequirementV3Service.getMatchRequirement(userId);
 
-        return new MatchRequirementV3Res(
+        return new MatchRequirementAndAvgSeasonRes(
                 TeamName.from(matchRequirement.getTeam()).getLabel(),
                 TeamAllowed.from(matchRequirement.getTeamAllowed()).getLabel(),
                 Style.from(matchRequirement.getStyle()).getLabel(),
