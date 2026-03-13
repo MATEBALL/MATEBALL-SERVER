@@ -1,6 +1,6 @@
 package at.mateball.domain.matchrequirement.api.dto.response;
 
-public record MatchRequirementV3Res(
+public record MatchRequirementAndAvgSeasonRes(
         String team,
         String teamAllowed,
         String style,
