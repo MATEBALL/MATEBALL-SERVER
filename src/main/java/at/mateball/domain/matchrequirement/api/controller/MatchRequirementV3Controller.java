@@ -4,21 +4,21 @@ import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
 import at.mateball.domain.matchrequirement.api.dto.request.MatchRequirementV3Req;
 import at.mateball.domain.matchrequirement.core.service.OnboardingService;
+import at.mateball.domain.matchrequirement.api.dto.response.MatchRequirementV3Res;
+import at.mateball.domain.matchrequirement.core.service.MatchRequirementV3Service;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v3/users/match-condition")
 public class MatchRequirementV3Controller {
     private final OnboardingService onboardingService;
+    private final MatchRequirementV3Service matchRequirementV3Service;
 
     @PostMapping
     @Operation(summary = "매칭 조건 설정 api")
@@ -37,5 +37,17 @@ public class MatchRequirementV3Controller {
         );
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.CREATED));
+    }
+
+    @GetMapping
+    @Operation(summary = "매칭 조건 조회 api")
+    public ResponseEntity<MateballResponse<?>> getMatchRequirement(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getUserId();
+
+        MatchRequirementV3Res result = matchRequirementV3Service.getMatchRequirement(userId);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }
 }
