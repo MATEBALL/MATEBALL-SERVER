@@ -1,5 +1,6 @@
 package at.mateball.domain.matchrequirement.core.service;
 
+import at.mateball.domain.matchrequirement.api.dto.response.MatchRequirementV3Res;
 import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.matchrequirement.core.constant.TeamAllowed;
@@ -11,6 +12,11 @@ import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+import static at.mateball.exception.code.BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +40,17 @@ public class MatchRequirementV3Service {
                 Style.fromLabel(style).getValue()
         );
         matchRequirementRepository.save(matchRequirement);
+    }
+
+    public MatchRequirementV3Res getMatchRequirement(Long userId) {
+        MatchRequirement requirement = Optional.ofNullable(matchRequirementRepository.findUserMatchRequirement(userId))
+                .orElseThrow(() -> new BusinessException(MATCH_REQUIREMENT_NOT_FOUND));
+
+        return new MatchRequirementV3Res(
+                TeamName.from(requirement.getTeam()).getLabel(),
+                TeamAllowed.from(requirement.getTeamAllowed()).getLabel(),
+                Style.from(requirement.getStyle()).getLabel(),
+                requirement.getUser().getAvgSeason()
+        );
     }
 }
