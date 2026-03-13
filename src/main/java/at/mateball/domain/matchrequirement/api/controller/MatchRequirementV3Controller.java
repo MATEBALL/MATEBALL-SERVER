@@ -46,7 +46,7 @@ public class MatchRequirementV3Controller {
     ) {
         Long userId = userDetails.getUserId();
 
-        MatchRequirementV3Res result = matchRequirementV3Service.getMatchRequirement(userId);
+        MatchRequirementV3Res result = onboardingService.getMatchRequirementAndAvgSeason(userId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }
