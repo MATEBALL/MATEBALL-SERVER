@@ -21,4 +21,8 @@ public class UserV3Service {
         return userRepository.getUser(userId).orElseThrow(()
                 -> new BusinessException(USER_NOT_FOUND));
     }
+
+    public int getAvgSeason(final Long userId) {
+        return findUser(userId).getAvgSeason();
+    }
 }
