@@ -8,7 +8,7 @@ public record MatchRequirementUpdateReq(
         @Schema(description = "응원 팀 허용 여부")
         String teamAllowed,
         @Schema(description = "시즌 평균 직관 수")
-        int avgSeason,
+        Integer avgSeason,
         @Schema(description = "관람스타일")
         String style
 ) {
