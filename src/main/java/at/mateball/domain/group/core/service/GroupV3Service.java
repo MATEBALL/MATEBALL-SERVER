@@ -1,12 +1,15 @@
 package at.mateball.domain.group.core.service;
 
 import at.mateball.domain.group.api.dto.*;
+import at.mateball.domain.chatting.api.dto.response.ChattingRes;
+import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.assembler.MatchImageAssembler;
 import at.mateball.domain.group.core.calculator.MatchingScoreCalculator;
 import at.mateball.domain.group.core.calculator.MatchingTarget;
 import at.mateball.domain.group.core.calculator.common.GroupMatchAggregator;
+import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.group.infrastructure.dto.CreateGroupQueryDto;
 import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
 import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
@@ -14,11 +17,13 @@ import at.mateball.domain.group.infrastructure.dto.GroupMatchMemberQueryDto;
 import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
 import at.mateball.domain.group.infrastructure.dto.MemberMatchCountDto;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
+import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.matchrequirement.core.constant.StyleMatch;
 import at.mateball.domain.team.core.TeamNameMatch;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import at.mateball.storage.FileStorage;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +44,7 @@ public class GroupV3Service {
 
     private static final String NEW_REQUEST_LABEL = "새요청";
 
+    private final GroupRepository groupRepository;
     private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final GroupMatchAggregator groupMatchAggregator;
     private final MatchImageAssembler matchImageAssembler;
@@ -270,5 +276,26 @@ public class GroupV3Service {
 
     private String resolveRequestUpdateLabel(GroupMemberStatus status) {
         return status == GroupMemberStatus.MATCH_FAILED ? GroupMemberStatus.MATCH_FAILED.getLabel() : null;
+    }
+
+    public ChattingRes getChattingUrl(Long userId, Long matchId) {
+
+        ChattingAccessRes data = groupRepository.findChattingAccessInfo(userId, matchId);
+
+        if (data == null) {
+            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
+        }
+        if (data.chattingUrl() == null) {
+            throw new BusinessException(BusinessErrorCode.CHATTING_NOT_FOUND);
+        }
+
+        GroupMemberStatus status = GroupMemberStatus.from(data.memberStatus());
+
+        if (status == GroupMemberStatus.AWAITING_APPROVAL
+                || status == GroupMemberStatus.MATCH_FAILED) {
+            throw new BusinessException(BusinessErrorCode.INVALID_CHATTING_REQUEST_MEMBER);
+        }
+
+        return new ChattingRes(data.chattingUrl());
     }
 }
