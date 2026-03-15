@@ -74,14 +74,4 @@ public class MatchRequirementV3Controller {
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
     }
-
-    @DeleteMapping
-    public ResponseEntity<MateballResponse<?>> deleteMatchRequirement(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ) {
-        Long userId = customUserDetails.getUserId();
-        matchRequirementV3Service.deleteByUserId(userId);
-
-        return ResponseEntity.ok(MateballResponse.success(SuccessCode.NO_CONTENT, null));
-    }
 }
