@@ -1,8 +1,6 @@
 package at.mateball.domain.group.core.service;
 
-import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
-import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
 import at.mateball.domain.group.core.GroupStatus;
@@ -11,12 +9,7 @@ import at.mateball.domain.group.core.calculator.MatchingScoreCalculator;
 import at.mateball.domain.group.core.calculator.MatchingTarget;
 import at.mateball.domain.group.core.calculator.common.GroupMatchAggregator;
 import at.mateball.domain.group.core.repository.GroupRepository;
-import at.mateball.domain.group.infrastructure.dto.CreateGroupQueryDto;
-import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchMemberQueryDto;
-import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
-import at.mateball.domain.group.infrastructure.dto.MemberMatchCountDto;
+import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.matchrequirement.core.constant.StyleMatch;
@@ -24,12 +17,9 @@ import at.mateball.domain.team.core.TeamNameMatch;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import at.mateball.storage.FileStorage;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import at.mateball.domain.groupmember.GroupMemberStatus;
-import at.mateball.domain.group.infrastructure.dto.RequestGroupQueryDto;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -298,18 +288,5 @@ public class GroupV3Service {
         }
 
         return new ChattingRes(data.chattingUrl());
-    }
-
-    private void validateRequestGroupStatuses(List<RequestGroupQueryDto> groups) {
-        boolean hasPendingRequest = groups.stream()
-                .anyMatch(group -> group.statusEnum() == GroupMemberStatus.PENDING_REQUEST);
-
-        if (hasPendingRequest) {
-            throw new BusinessException(BusinessErrorCode.WAITING_MATE_ACCEPTANCE);
-        }
-    }
-
-    private String resolveRequestUpdateLabel(GroupMemberStatus status) {
-        return status == GroupMemberStatus.MATCH_FAILED ? GroupMemberStatus.MATCH_FAILED.getLabel() : null;
     }
 }
