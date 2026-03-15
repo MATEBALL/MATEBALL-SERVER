@@ -3,6 +3,7 @@ package at.mateball.domain.group.infrastructure.repository;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
 import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
+import at.mateball.domain.group.infrastructure.dto.GroupMatchMeberQueryDto;
 import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.QGroupMember;
@@ -93,6 +94,43 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                         member.status.ne(GroupMemberStatus.MATCH_FAILED.getValue())
                 )
                 .orderBy(group.id.asc(), member.id.asc())
+                .fetch();
+    }
+
+    @Override
+    public Optional<Long> findLeaderIdByMatchId(Long matchId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .select(group.leader.id)
+                        .from(group)
+                        .where(group.id.eq(matchId))
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public List<GroupMatchMeberQueryDto> findMatchMembersByMatchId(Long matchId) {
+        QGroupMember groupMember = new QGroupMember("groupMember");
+        QUser memberUser = new QUser("memberUser");
+        QMatchRequirement memberRequirement = new QMatchRequirement("memberRequirement");
+
+        return queryFactory
+                .select(Projections.constructor(
+                        GroupMatchMeberQueryDto.class,
+                        memberUser.id,
+                        memberUser.nickname,
+                        memberRequirement.team,
+                        memberRequirement.style,
+                        memberUser.profileImageKey
+                ))
+                .from(groupMember)
+                .join(groupMember.user, memberUser)
+                .leftJoin(memberRequirement).on(memberRequirement.user.id.eq(memberUser.id))
+                .where(
+                        groupMember.group.id.eq(matchId),
+                        groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue())
+                )
+                .orderBy(groupMember.id.asc())
                 .fetch();
     }
 }
