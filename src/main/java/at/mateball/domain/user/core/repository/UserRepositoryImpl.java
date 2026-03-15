@@ -1,10 +1,9 @@
 package at.mateball.domain.user.core.repository;
 
+import at.mateball.domain.groupmember.GroupMemberStatus;
+import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
-import at.mateball.domain.user.api.dto.response.CheckUserRes;
-import at.mateball.domain.user.api.dto.response.InfoCheckRes;
-import at.mateball.domain.user.api.dto.response.UserInformationBaseRes;
-import at.mateball.domain.user.api.dto.response.UserInformationRes;
+import at.mateball.domain.user.api.dto.response.*;
 import at.mateball.domain.user.core.QUser;
 import at.mateball.domain.user.core.User;
 import at.mateball.exception.BusinessException;
@@ -132,5 +131,43 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         boolean accepted = hasAccepted != null && hasAccepted;
 
         return new InfoCheckRes(nicknameExists, allConditionsPresent, accepted);
+    }
+
+    @Override
+    public MyPageInformationRes findMyPageInformation(Long userId) {
+        QUser user = QUser.user;
+        QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
+        QGroupMember groupMember = QGroupMember.groupMember;
+
+        var baseUserInformation = queryFactory
+                .select(Projections.constructor(
+                        MyPageInformationBaseRes.class,
+                        user.nickname,
+                        matchRequirement.team,
+                        matchRequirement.style,
+                        user.imgUrl,
+                        groupMember.id.count(),
+                        user.avgSeason
+                ))
+                .from(user)
+                .leftJoin(matchRequirement)
+                .on(matchRequirement.user.id.eq(user.id))
+                .leftJoin(groupMember)
+                .on(
+                        groupMember.user.id.eq(user.id)
+                                .and(groupMember.status.eq(GroupMemberStatus.MATCHED.getValue()))
+                )
+                .where(user.id.eq(userId))
+                .groupBy(
+                        user.id,
+                        user.nickname,
+                        matchRequirement.team,
+                        matchRequirement.style,
+                        user.imgUrl,
+                        user.avgSeason
+                )
+                .fetchOne();
+
+        return MyPageInformationRes.fromBase(baseUserInformation);
     }
 }

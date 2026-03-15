@@ -1,5 +1,7 @@
 package at.mateball.domain.user.core.service;
 
+import at.mateball.domain.matchrequirement.core.repository.MatchRequirementRepository;
+import at.mateball.domain.user.api.dto.response.MyPageInformationRes;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
@@ -14,6 +16,7 @@ import static at.mateball.exception.code.BusinessErrorCode.USER_NOT_FOUND;
 @RequiredArgsConstructor
 public class UserV3Service {
     private final UserRepository userRepository;
+    private final MatchRequirementRepository matchRequirementRepository;
 
     public void setAvgSeason(final Long userId, final int avgSeason) {
         findUser(userId).updateAvgSeason(avgSeason);
@@ -27,7 +30,7 @@ public class UserV3Service {
     public int getAvgSeason(final Long userId) {
         return findUser(userId).getAvgSeason();
     }
-
+      
     @Transactional
     public void clearOnboardingInfo(Long userId) {
         User user = userRepository.findById(userId)
@@ -42,4 +45,7 @@ public class UserV3Service {
         }
     }
 
+    public MyPageInformationRes getMyPageInformation(Long userId) {
+        return userRepository.findMyPageInformation(userId);
+    }
 }
