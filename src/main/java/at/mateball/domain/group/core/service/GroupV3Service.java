@@ -65,7 +65,6 @@ public class GroupV3Service {
     }
 
     public GroupMatchMemberListRes getMatchGroupMembers(Long userId, Long matchId) {
-        validateNotOwnMatch(userId, matchId);
 
         LoginUserMatchRequirementDto loginRequirement = groupV3RepositoryCustom.findLoginUserMatchRequirement(userId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND));
@@ -94,15 +93,6 @@ public class GroupV3Service {
                 .toList();
 
         return new GroupMatchMemberListRes(results);
-    }
-
-    private void validateNotOwnMatch(Long userId, Long matchId) {
-        Long leaderId = groupV3RepositoryCustom.findLeaderIdByMatchId(matchId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
-
-        if (leaderId.equals(userId)) {
-            throw new BusinessException(BusinessErrorCode.OWN_MATCH_MEMBER_VIEW_NOT_ALLOWED);
-        }
     }
 
     private GroupMatchMemberRes toGroupMatchMemberRes(
