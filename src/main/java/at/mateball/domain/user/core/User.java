@@ -107,4 +107,11 @@ public class User {
         }
         this.avgSeason = avgSeason;
     }
+
+    public void clearOnboardingInfo() {
+        this.nickname = null;
+        this.introduction = null;
+        this.birthYear = null;
+        this.gender = null;
+    }
 }
