@@ -6,7 +6,11 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "match_requirement")
+@Table(name = "match_requirement",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_match_requirement_user", columnNames = "user_id")
+        }
+)
 public class MatchRequirement {
 
     @Id
@@ -38,6 +42,13 @@ public class MatchRequirement {
         this.teamAllowed = teamAllowed;
         this.style = style;
         this.genderPreference = genderPreference;
+    }
+
+    public MatchRequirement(User user, Integer team, Integer teamAllowed, Integer style) {
+        this.user = user;
+        this.team = team;
+        this.teamAllowed = teamAllowed;
+        this.style = style;
     }
 
     public void updateAll(Integer team, Integer teamAllowed, Integer style, Integer genderPreference) {
