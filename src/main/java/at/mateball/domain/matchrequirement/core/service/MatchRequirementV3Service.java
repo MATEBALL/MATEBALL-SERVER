@@ -11,6 +11,11 @@ import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+import static at.mateball.exception.code.BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +39,26 @@ public class MatchRequirementV3Service {
                 Style.fromLabel(style).getValue()
         );
         matchRequirementRepository.save(matchRequirement);
+    }
+
+    public MatchRequirement getMatchRequirement(Long userId) {
+        MatchRequirement matchRequirement = Optional.ofNullable(matchRequirementRepository.findUserMatchRequirement(userId))
+                .orElseThrow(() -> new BusinessException(MATCH_REQUIREMENT_NOT_FOUND));
+
+        if (matchRequirement.getTeam() == null
+                || matchRequirement.getTeamAllowed() == null
+                || matchRequirement.getStyle() == null) {
+            throw new BusinessException(MATCH_REQUIREMENT_NOT_FOUND);
+        }
+
+        return matchRequirement;
+    }
+
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        MatchRequirement matchRequirement = matchRequirementRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND));
+
+        matchRequirementRepository.delete(matchRequirement);
     }
 }

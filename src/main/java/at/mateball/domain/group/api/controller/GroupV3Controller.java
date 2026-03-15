@@ -3,6 +3,7 @@ package at.mateball.domain.group.api.controller;
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
 import at.mateball.domain.group.api.dto.CreateGroupListRes;
+import at.mateball.domain.group.api.dto.GroupMatchMemberListRes;
 import at.mateball.domain.group.api.dto.GroupMatchRes;
 import at.mateball.domain.group.core.service.GroupV3Service;
 import at.mateball.exception.code.SuccessCode;
@@ -41,6 +42,17 @@ public class GroupV3Controller {
         Long userId = customUserDetails.getUserId();
 
         CreateGroupListRes result = groupV3Service.getCreateGroupList(userId);
+    }
+  
+  @GetMapping("/match/members/{matchId}")
+    @Operation(summary = "매칭된 그룹원 리스트 조회 api")
+    public ResponseEntity<MateballResponse<GroupMatchMemberListRes>> getMatchGroupMembers(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long matchId
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        GroupMatchMemberListRes result = groupV3Service.getMatchGroupMembers(userId, matchId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }

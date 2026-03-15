@@ -1,7 +1,14 @@
 package at.mateball.domain.group.infrastructure.repository;
 
 import at.mateball.domain.group.core.GroupStatus;
-import at.mateball.domain.group.infrastructure.dto.*;
+import at.mateball.domain.group.infrastructure.dto.CreateGroupImageQueryDto;
+import at.mateball.domain.group.infrastructure.dto.CreateGroupQueryDto;
+import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
+import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
+import at.mateball.domain.group.infrastructure.dto.GroupMatchImageQueryDto;
+import at.mateball.domain.group.infrastructure.dto.GroupMatchMemberQueryDto;
+import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
+import at.mateball.domain.group.infrastructure.dto.MemberMatchCountDto;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
@@ -76,7 +83,7 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                         group.isGroup,
 
                         memberUser.id,
-
+                        memberUser.profileImageKey,
                         memberRequirement.team,
                         memberRequirement.teamAllowed,
                         memberRequirement.style
@@ -177,6 +184,68 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .join(groupMember.user, memberUser)
                 .where(groupMember.group.id.in(matchIds))
                 .orderBy(groupMember.group.id.asc(), groupMember.id.asc())
+                .fetch();
+    }
+
+    @Override
+    public Optional<Long> findLeaderIdByMatchId(Long matchId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .select(group.leader.id)
+                        .from(group)
+                        .where(group.id.eq(matchId))
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public List<GroupMatchMemberQueryDto> findMatchMembersByMatchId(Long matchId) {
+        QGroupMember groupMember = new QGroupMember("groupMember");
+        QUser memberUser = new QUser("memberUser");
+        QMatchRequirement memberRequirement = new QMatchRequirement("memberRequirement");
+
+        return queryFactory
+                .select(Projections.constructor(
+                        GroupMatchMemberQueryDto.class,
+                        memberUser.id,
+                        memberUser.gender,
+                        memberUser.birthYear,
+                        memberUser.nickname,
+                        memberUser.introduction,
+                        memberRequirement.team,
+                        memberRequirement.teamAllowed,
+                        memberRequirement.style,
+                        memberUser.avgSeason,
+                        memberUser.profileImageKey
+                ))
+                .from(groupMember)
+                .join(groupMember.user, memberUser)
+                .leftJoin(memberRequirement).on(memberRequirement.user.id.eq(memberUser.id))
+                .where(
+                        groupMember.group.id.eq(matchId),
+                        groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue())
+                )
+                .orderBy(groupMember.id.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<MemberMatchCountDto> countGroupMembersByUserIds(List<Long> memberIds) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+
+        if (memberIds == null || memberIds.isEmpty()) {
+            return List.of();
+        }
+
+        return queryFactory
+                .select(Projections.constructor(
+                        MemberMatchCountDto.class,
+                        groupMember.user.id,
+                        groupMember.count().intValue()
+                ))
+                .from(groupMember)
+                .where(groupMember.user.id.in(memberIds))
+                .groupBy(groupMember.user.id)
                 .fetch();
     }
 }
