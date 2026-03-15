@@ -93,5 +93,12 @@ public class MatchRequirementV3Service {
         if (req.style() != null) {
             matchRequirement.updateStyle(Style.fromLabel(req.style()).getValue());
         }
+      
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        MatchRequirement matchRequirement = matchRequirementRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND));
+
+        matchRequirementRepository.delete(matchRequirement);
     }
 }
