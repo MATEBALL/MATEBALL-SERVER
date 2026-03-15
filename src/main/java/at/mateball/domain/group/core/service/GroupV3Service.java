@@ -8,7 +8,7 @@ import at.mateball.domain.group.core.calculator.MatchingTarget;
 import at.mateball.domain.group.core.calculator.common.GroupMatchAggregator;
 import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
 import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchMeberQueryDto;
+import at.mateball.domain.group.infrastructure.dto.GroupMatchMemberQueryDto;
 import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.matchrequirement.core.constant.StyleMatch;
@@ -66,7 +66,7 @@ public class GroupV3Service {
     public GroupMatchMemberListRes getMatchGroupMembers(Long userId, Long matchId) {
         validateNotOwnMatch(userId, matchId);
 
-        List<GroupMatchMeberQueryDto> members =
+        List<GroupMatchMemberQueryDto> members =
                 groupV3RepositoryCustom.findMatchMembersByMatchId(matchId);
 
         List<GroupMatchMemberRes> results = members.stream()
@@ -85,7 +85,7 @@ public class GroupV3Service {
         }
     }
 
-    private GroupMatchMemberRes toGroupMatchMemberRes(GroupMatchMeberQueryDto member) {
+    private GroupMatchMemberRes toGroupMatchMemberRes(GroupMatchMemberQueryDto member) {
         return new GroupMatchMemberRes(
                 member.memberId(),
                 member.nickname(),

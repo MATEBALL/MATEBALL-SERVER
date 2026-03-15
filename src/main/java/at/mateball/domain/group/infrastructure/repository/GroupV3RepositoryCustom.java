@@ -2,7 +2,7 @@ package at.mateball.domain.group.infrastructure.repository;
 
 import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
 import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchMeberQueryDto;
+import at.mateball.domain.group.infrastructure.dto.GroupMatchMemberQueryDto;
 import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
 
 import java.util.List;
@@ -18,5 +18,5 @@ public interface GroupV3RepositoryCustom {
 
     Optional<Long> findLeaderIdByMatchId(Long matchId);
 
-    List<GroupMatchMeberQueryDto> findMatchMembersByMatchId(Long matchId);
+    List<GroupMatchMemberQueryDto> findMatchMembersByMatchId(Long matchId);
 }
