@@ -41,12 +41,5 @@ public class UserV3Service {
             findUser(userId).updateAvgSeason(avgSeason);
         }
     }
-      
-    @Transactional
-    public void clearOnboardingInfo(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
 
-        user.clearOnboardingInfo();
-    }
 }
