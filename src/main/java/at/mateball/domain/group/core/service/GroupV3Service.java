@@ -1,10 +1,6 @@
 package at.mateball.domain.group.core.service;
 
-import at.mateball.domain.group.api.dto.CreateGroupListRes;
-import at.mateball.domain.group.api.dto.CreateGroupRes;
-import at.mateball.domain.group.api.dto.GroupMatchMemberListRes;
-import at.mateball.domain.group.api.dto.GroupMatchMemberRes;
-import at.mateball.domain.group.api.dto.GroupMatchRes;
+import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.assembler.MatchImageAssembler;
@@ -26,6 +22,8 @@ import at.mateball.storage.FileStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import at.mateball.domain.groupmember.GroupMemberStatus;
+import at.mateball.domain.group.infrastructure.dto.RequestGroupQueryDto;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -197,6 +195,45 @@ public class GroupV3Service {
         );
     }
 
+    public RequestGroupListRes getRequestGroupList(Long userId) {
+        List<RequestGroupQueryDto> groups = groupV3RepositoryCustom.findRequestGroupsByUserId(userId);
+
+        if (groups.isEmpty()) {
+            return new RequestGroupListRes(List.of());
+        }
+
+        validateRequestGroupStatuses(groups);
+
+        List<Long> matchIds = groups.stream()
+                .map(RequestGroupQueryDto::matchId)
+                .toList();
+
+        Map<Long, List<String>> imageMap = matchImageAssembler.assemble(
+                groupV3RepositoryCustom.findRequestGroupImagesByMatchIds(matchIds)
+        );
+
+        List<RequestGroupRes> results = groups.stream()
+                .map(group -> {
+                    GroupMemberStatus status = group.statusEnum();
+
+                    return new RequestGroupRes(
+                            group.matchId(),
+                            group.nickname(),
+                            group.count(),
+                            group.isGroup(),
+                            group.awayTeam(),
+                            group.homeTeam(),
+                            group.date(),
+                            status.toResponseLabel(),
+                            resolveRequestUpdateLabel(status),
+                            imageMap.getOrDefault(group.matchId(), Collections.emptyList())
+                    );
+                })
+                .toList();
+
+        return new RequestGroupListRes(results);
+    }
+
     private String resolveUpdateLabel(Boolean hasNewRequest) {
         return Boolean.TRUE.equals(hasNewRequest) ? NEW_REQUEST_LABEL : null;
     }
@@ -220,5 +257,18 @@ public class GroupV3Service {
 
     private String resolveProfileImageUrl(String profileImageKey) {
         return fileStorage.getImageUrl(profileImageKey);
+    }
+
+    private void validateRequestGroupStatuses(List<RequestGroupQueryDto> groups) {
+        boolean hasPendingRequest = groups.stream()
+                .anyMatch(group -> group.statusEnum() == GroupMemberStatus.PENDING_REQUEST);
+
+        if (hasPendingRequest) {
+            throw new BusinessException(BusinessErrorCode.WAITING_MATE_ACCEPTANCE);
+        }
+    }
+
+    private String resolveRequestUpdateLabel(GroupMemberStatus status) {
+        return status == GroupMemberStatus.MATCH_FAILED ? GroupMemberStatus.MATCH_FAILED.getLabel() : null;
     }
 }

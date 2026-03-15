@@ -37,6 +37,9 @@ public class GroupMember {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "is_leader")
+    private Boolean isLeader;
+
     protected GroupMember() {
     }
 

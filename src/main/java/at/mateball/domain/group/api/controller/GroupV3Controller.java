@@ -5,6 +5,7 @@ import at.mateball.common.security.CustomUserDetails;
 import at.mateball.domain.group.api.dto.CreateGroupListRes;
 import at.mateball.domain.group.api.dto.GroupMatchMemberListRes;
 import at.mateball.domain.group.api.dto.GroupMatchRes;
+import at.mateball.domain.group.api.dto.RequestGroupListRes;
 import at.mateball.domain.group.core.service.GroupV3Service;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,8 +46,8 @@ public class GroupV3Controller {
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }
-  
-  @GetMapping("/match/members/{matchId}")
+
+    @GetMapping("/match/members/{matchId}")
     @Operation(summary = "매칭된 그룹원 리스트 조회 api")
     public ResponseEntity<MateballResponse<GroupMatchMemberListRes>> getMatchGroupMembers(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -57,5 +58,17 @@ public class GroupV3Controller {
         GroupMatchMemberListRes result = groupV3Service.getMatchGroupMembers(userId, matchId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
+    }
+
+    @GetMapping("request")
+    @Operation(summary = "요청한 매칭 리스트 조회 api")
+    public ResponseEntity<MateballResponse<RequestGroupListRes>> getRequestGroupList(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        RequestGroupListRes ressult = groupV3Service.getRequestGroupList(userId);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, ressult));
     }
 }
