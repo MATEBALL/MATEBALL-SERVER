@@ -1,5 +1,6 @@
 package at.mateball.domain.group.core.repository.querydsl;
 
+import at.mateball.domain.group.api.dto.ChattingAccessRes;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
@@ -27,4 +28,6 @@ public interface GroupRepositoryCustom {
     int bulkUpdateGroupStatusToFailed(List<Long> groupIds);
 
     int bulkUpdateGroupMemberStatusToMatchFailed(List<Long> groupIds);
+
+    ChattingAccessRes findChattingAccessInfo(Long userId, Long groupId);
 }

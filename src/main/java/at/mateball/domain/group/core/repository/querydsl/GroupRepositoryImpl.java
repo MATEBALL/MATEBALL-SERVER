@@ -1,6 +1,8 @@
 package at.mateball.domain.group.core.repository.querydsl;
 
+import at.mateball.domain.chatting.core.QChatting;
 import at.mateball.domain.gameinformation.core.QGameInformation;
+import at.mateball.domain.group.api.dto.ChattingAccessRes;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
 import at.mateball.domain.group.api.dto.base.DirectCreateBaseRes;
@@ -264,5 +266,28 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .set(groupMember.status, GroupMemberStatus.MATCH_FAILED.getValue())
                 .where(groupMember.group.id.in(groupIds))
                 .execute();
+    }
+
+    @Override
+    public ChattingAccessRes findChattingAccessInfo(Long userId, Long groupId) {
+
+        QGroup group = QGroup.group;
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QChatting chatting = QChatting.chatting;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        ChattingAccessRes.class,
+                        chatting.chattingUrl,
+                        group.leader.id,
+                        groupMember.status
+                ))
+                .from(group)
+                .leftJoin(group.chatting, chatting)
+                .leftJoin(groupMember)
+                .on(groupMember.group.id.eq(group.id)
+                        .and(groupMember.user.id.eq(userId)))
+                .where(group.id.eq(groupId))
+                .fetchOne();
     }
 }
