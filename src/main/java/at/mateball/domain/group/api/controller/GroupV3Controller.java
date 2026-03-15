@@ -43,4 +43,5 @@ public class GroupV3Controller {
         CreateGroupListRes result = groupV3Service.getCreateGroupList(userId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
-    }}
+    }
+}

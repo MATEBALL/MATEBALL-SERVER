@@ -14,19 +14,19 @@ import java.util.*;
 public class GroupMatchAggregator {
 
     private final MatchingScoreCalculator matchingScoreCalculator;
-    private final GroupProfileImageResolver groupProfileImageResolver;
 
     public List<GroupMatchBaseRes> aggregate(
             List<GroupMatchCandidateFlatDto> flatRows,
             MatchingTarget loginUserTarget,
-            Long loginUserId
+            Long loginUserId,
+            Map<Long, List<String>> imageMap
     ) {
-        Map<Long, GroupMatchAggregate> aggregateMap = new LinkedHashMap<>();
+        Map<Long, MatchAggregate> aggregateMap = new LinkedHashMap<>();
 
         for (GroupMatchCandidateFlatDto row : flatRows) {
-            GroupMatchAggregate aggregate = aggregateMap.computeIfAbsent(
+            MatchAggregate aggregate = aggregateMap.computeIfAbsent(
                     row.groupId(),
-                    ignored -> new GroupMatchAggregate(
+                    ignored -> new MatchAggregate(
                             row.groupId(),
                             row.leaderId(),
                             row.leaderNickname(),
@@ -34,15 +34,13 @@ public class GroupMatchAggregator {
                     )
             );
 
-            aggregate.addImage(
-                    groupProfileImageResolver.resolve(row.memberProfileImageKey())
-            );
+            aggregate.increaseCount();
 
             if (Objects.equals(row.memberUserId(), loginUserId)) {
                 continue;
             }
 
-            if (Objects.equals(aggregate.getLeaderId(), loginUserId)) {
+            if (Objects.equals(row.leaderId(), loginUserId)) {
                 continue;
             }
 
@@ -51,13 +49,54 @@ public class GroupMatchAggregator {
         }
 
         return aggregateMap.values().stream()
-                .map(GroupMatchAggregate::toResponse)
-                .sorted(
-                        Comparator.comparing(
-                                GroupMatchBaseRes::matchRate,
-                                Comparator.nullsLast(Comparator.reverseOrder())
-                        )
-                )
+                .map(aggregate -> aggregate.toResponse(imageMap.getOrDefault(aggregate.matchId(), Collections.emptyList())))
                 .toList();
+    }
+
+    private static final class MatchAggregate {
+        private final Long matchId;
+        private final Long leaderId;
+        private final String nickname;
+        private final boolean isGroup;
+
+        private int count;
+        private int scoreSum;
+        private int scoreCount;
+
+        private MatchAggregate(Long matchId, Long leaderId, String nickname, boolean isGroup) {
+            this.matchId = matchId;
+            this.leaderId = leaderId;
+            this.nickname = nickname;
+            this.isGroup = isGroup;
+        }
+
+        private Long matchId() {
+            return matchId;
+        }
+
+        private void increaseCount() {
+            count++;
+        }
+
+        private void addScore(int score) {
+            scoreSum += score;
+            scoreCount++;
+        }
+
+        private GroupMatchBaseRes toResponse(List<String> images) {
+            Integer matchRate = null;
+            if (scoreCount > 0) {
+                matchRate = (int) Math.round((double) scoreSum / scoreCount);
+            }
+
+            return new GroupMatchBaseRes(
+                    matchId,
+                    nickname,
+                    count,
+                    isGroup,
+                    matchRate,
+                    images
+            );
+        }
     }
 }

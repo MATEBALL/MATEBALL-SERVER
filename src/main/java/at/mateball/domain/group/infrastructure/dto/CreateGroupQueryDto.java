@@ -1,9 +1,8 @@
-package at.mateball.domain.group.api.dto;
+package at.mateball.domain.group.infrastructure.dto;
 
 import java.time.LocalDate;
-import java.util.List;
 
-public record CreateGroupRes(
+public record CreateGroupQueryDto(
         Long matchId,
         String nickname,
         Integer count,
@@ -11,8 +10,7 @@ public record CreateGroupRes(
         String awayTeam,
         String homeTeam,
         LocalDate date,
-        String stateLabel,
-        String update,
-        List<String> img
+        Integer status,
+        Boolean hasNewRequest
 ) {
 }
