@@ -11,6 +11,7 @@ import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -51,5 +52,13 @@ public class MatchRequirementV3Service {
         }
 
         return matchRequirement;
+    }
+
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        MatchRequirement matchRequirement = matchRequirementRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND));
+
+        matchRequirementRepository.delete(matchRequirement);
     }
 }
