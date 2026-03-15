@@ -3,7 +3,7 @@ package at.mateball.domain.matchrequirement.api.controller;
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
 import at.mateball.domain.matchrequirement.api.dto.request.MatchRequirementV3Req;
-import at.mateball.domain.matchrequirement.core.repository.querydsl.MatchRequirementUpdateReq;
+import at.mateball.domain.matchrequirement.api.dto.request.MatchRequirementUpdateReq;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementAndAvgSeasonService;
 import at.mateball.domain.matchrequirement.api.dto.response.MatchRequirementAndAvgSeasonRes;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementV3Service;
