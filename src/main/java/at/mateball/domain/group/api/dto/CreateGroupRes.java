@@ -1,0 +1,18 @@
+package at.mateball.domain.group.api.dto;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public record CreateGroupRes(
+        Long matchId,
+        String nickname,
+        Long count,
+        Boolean isGroup,
+        String awayTeam,
+        String homeTeam,
+        LocalDate date,
+        String stateLabel,
+        String update,
+        List<String> img
+) {
+}

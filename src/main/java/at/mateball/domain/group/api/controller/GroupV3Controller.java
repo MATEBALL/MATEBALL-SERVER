@@ -2,6 +2,7 @@ package at.mateball.domain.group.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
+import at.mateball.domain.group.api.dto.CreateGroupListRes;
 import at.mateball.domain.group.api.dto.GroupMatchRes;
 import at.mateball.domain.group.core.service.GroupV3Service;
 import at.mateball.exception.code.SuccessCode;
@@ -31,4 +32,15 @@ public class GroupV3Controller {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
 
     }
-}
+
+    @GetMapping("/create")
+    @Operation(summary = "생성한 매칭 리스트 조회 api")
+    public ResponseEntity<MateballResponse<CreateGroupListRes>> getCreateGroupList(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        CreateGroupListRes result = groupV3Service.getCreateGroupList(userId);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
+    }}
