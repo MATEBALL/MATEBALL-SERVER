@@ -35,4 +35,10 @@ public class UserV3Service {
 
         user.clearOnboardingInfo();
     }
+
+    public void updateAvgSeason(Long userId, Integer avgSeason) {
+        if (avgSeason != null) {
+            findUser(userId).updateAvgSeason(avgSeason);
+        }
+    }
 }

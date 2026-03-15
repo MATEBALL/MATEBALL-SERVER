@@ -3,6 +3,7 @@ package at.mateball.domain.matchrequirement.api.controller;
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
 import at.mateball.domain.matchrequirement.api.dto.request.MatchRequirementV3Req;
+import at.mateball.domain.matchrequirement.core.repository.querydsl.MatchRequirementUpdateReq;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementAndAvgSeasonService;
 import at.mateball.domain.matchrequirement.api.dto.response.MatchRequirementAndAvgSeasonRes;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementV3Service;
@@ -59,5 +60,18 @@ public class MatchRequirementV3Controller {
         matchRequirementV3Service.deleteByUserId(userId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.NO_CONTENT, null));
+    }
+
+    @PatchMapping
+    @Operation(summary = "매칭 조건 수정 api")
+    public ResponseEntity<MateballResponse<?>> updateMatchRequirement(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody MatchRequirementUpdateReq matchRequirementUpdateReq
+    ) {
+        Long userId = userDetails.getUserId();
+
+        matchRequirementAndAvgSeasonService.updateMatchRequirementAndAvgSeason(userId, matchRequirementUpdateReq);
+
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
     }
 }
