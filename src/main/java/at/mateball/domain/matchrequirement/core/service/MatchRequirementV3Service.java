@@ -64,22 +64,30 @@ public class MatchRequirementV3Service {
     }
 
     public void updateMatchRequirement(Long userId, MatchRequirementUpdateReq req) {
-        MatchRequirement matchRequirement = matchRequirementRepository.findUserMatchRequirement(userId);
+        MatchRequirement matchRequirement =
+                matchRequirementRepository.findUserMatchRequirement(userId);
+
+        TeamName currentTeam = TeamName.from(matchRequirement.getTeam());
+        TeamAllowed currentAllowed = TeamAllowed.from(matchRequirement.getTeamAllowed());
+
+        TeamName newTeam = req.team() != null
+                ? TeamName.fromLabel(req.team())
+                : currentTeam;
+
+        TeamAllowed newAllowed = req.teamAllowed() != null
+                ? TeamAllowed.fromLabel(req.teamAllowed())
+                : currentAllowed;
+
+        if (newTeam == TeamName.NONE && newAllowed != TeamAllowed.NO_PREFERENCE) {
+            throw new BusinessException(BusinessErrorCode.INVALID_TEAM_ALLOWED);
+        }
 
         if (req.team() != null) {
-            TeamName selectedTeam = TeamName.fromLabel(req.team());
-            matchRequirement.updateTeam(selectedTeam.getValue());
+            matchRequirement.updateTeam(newTeam.getValue());
+        }
 
-            if (req.teamAllowed() != null) {
-                TeamAllowed selectedAllowed = TeamAllowed.fromLabel(req.teamAllowed());
-                if (selectedTeam == TeamName.NONE && selectedAllowed != TeamAllowed.NO_PREFERENCE) {
-                    throw new BusinessException(BusinessErrorCode.INVALID_TEAM_ALLOWED);
-                }
-                matchRequirement.updateTeamAllowed(selectedAllowed.getValue());
-            }
-        } else if (req.teamAllowed() != null) {
-            TeamAllowed selectedAllowed = TeamAllowed.fromLabel(req.teamAllowed());
-            matchRequirement.updateTeamAllowed(selectedAllowed.getValue());
+        if (req.teamAllowed() != null) {
+            matchRequirement.updateTeamAllowed(newAllowed.getValue());
         }
 
         if (req.style() != null) {
