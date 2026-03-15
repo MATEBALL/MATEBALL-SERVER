@@ -1,10 +1,7 @@
 package at.mateball.domain.group.infrastructure.repository;
 
 import at.mateball.domain.group.core.GroupStatus;
-import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchMemberQueryDto;
-import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
+import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
@@ -118,9 +115,14 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .select(Projections.constructor(
                         GroupMatchMemberQueryDto.class,
                         memberUser.id,
+                        memberUser.gender,
+                        memberUser.birthYear,
                         memberUser.nickname,
+                        memberUser.introduction,
                         memberRequirement.team,
+                        memberRequirement.teamAllowed,
                         memberRequirement.style,
+                        memberUser.avgSeason,
                         memberUser.profileImageKey
                 ))
                 .from(groupMember)
@@ -131,6 +133,26 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                         groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue())
                 )
                 .orderBy(groupMember.id.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<MemberMatchCountDto> countGroupMembersByUserIds(List<Long> memberIds) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+
+        if (memberIds == null || memberIds.isEmpty()) {
+            return List.of();
+        }
+
+        return queryFactory
+                .select(Projections.constructor(
+                        MemberMatchCountDto.class,
+                        groupMember.user.id,
+                        groupMember.count().intValue()
+                ))
+                .from(groupMember)
+                .where(groupMember.user.id.in(memberIds))
+                .groupBy(groupMember.user.id)
                 .fetch();
     }
 }

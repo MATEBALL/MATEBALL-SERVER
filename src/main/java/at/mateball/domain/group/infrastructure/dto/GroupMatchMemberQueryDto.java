@@ -11,7 +11,6 @@ public record GroupMatchMemberQueryDto(
         Integer team,
         Integer teamAllowed,
         Integer style,
-        Integer avgGame,
         Integer avgSeason,
         String profileImageKey
 ) {

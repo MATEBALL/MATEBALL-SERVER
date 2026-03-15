@@ -7,10 +7,7 @@ import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
 import at.mateball.domain.group.core.calculator.MatchingScoreCalculator;
 import at.mateball.domain.group.core.calculator.MatchingTarget;
 import at.mateball.domain.group.core.calculator.common.GroupMatchAggregator;
-import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchMemberQueryDto;
-import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
+import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.matchrequirement.core.constant.StyleMatch;
 import at.mateball.domain.team.core.TeamNameMatch;
@@ -22,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,12 +70,27 @@ public class GroupV3Service {
         LoginUserMatchRequirementDto loginRequirement = groupV3RepositoryCustom.findLoginUserMatchRequirement(userId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND));
 
-        List<GroupMatchMemberQueryDto> members = groupV3RepositoryCustom.findMatchMembersByMatchId(matchId);
+        List<GroupMatchMemberQueryDto> members =
+                groupV3RepositoryCustom.findMatchMembersByMatchId(matchId);
 
         MatchingTarget loginUserTarget = loginRequirement.toTarget(userId);
 
+        List<Long> memberIds = members.stream()
+                .map(GroupMatchMemberQueryDto::memberId)
+                .toList();
+
+        Map<Long, Integer> matchCountMap = groupV3RepositoryCustom.countGroupMembersByUserIds(memberIds).stream()
+                .collect(Collectors.toMap(
+                        MemberMatchCountDto::memberId,
+                        MemberMatchCountDto::matchCount
+                ));
+
         List<GroupMatchMemberRes> results = members.stream()
-                .map(member -> toGroupMatchMemberRes(member, loginUserTarget))
+                .map(member -> toGroupMatchMemberRes(
+                        member,
+                        loginUserTarget,
+                        matchCountMap.getOrDefault(member.memberId(), 0)
+                ))
                 .toList();
 
         return new GroupMatchMemberListRes(results);
@@ -94,7 +107,8 @@ public class GroupV3Service {
 
     private GroupMatchMemberRes toGroupMatchMemberRes(
             GroupMatchMemberQueryDto member,
-            MatchingTarget loginUserTarget
+            MatchingTarget loginUserTarget,
+            Integer matchCount
     ) {
         Long matchRate = (long) matchingScoreCalculator.calculate(
                 loginUserTarget,
@@ -110,7 +124,7 @@ public class GroupV3Service {
                 member.introduction(),
                 resolveTeamLabel(member.team()),
                 resolveStyleLabel(member.style()),
-                member.avgGame(),
+                matchCount,
                 member.avgSeason(),
                 resolveProfileImageUrl(member.profileImageKey())
         );
