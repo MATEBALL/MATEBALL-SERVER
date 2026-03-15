@@ -93,6 +93,7 @@ public class MatchRequirementV3Service {
         if (req.style() != null) {
             matchRequirement.updateStyle(Style.fromLabel(req.style()).getValue());
         }
+    }
       
     @Transactional
     public void deleteByUserId(Long userId) {

@@ -40,6 +40,7 @@ public class UserV3Service {
         if (avgSeason != null) {
             findUser(userId).updateAvgSeason(avgSeason);
         }
+    }
       
     @Transactional
     public void clearOnboardingInfo(Long userId) {
