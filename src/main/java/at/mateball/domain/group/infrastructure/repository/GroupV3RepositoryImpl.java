@@ -1,21 +1,16 @@
 package at.mateball.domain.group.infrastructure.repository;
 
 import at.mateball.domain.group.core.GroupStatus;
-import at.mateball.domain.group.infrastructure.dto.CreateGroupImageQueryDto;
-import at.mateball.domain.group.infrastructure.dto.CreateGroupQueryDto;
-import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchCandidateFlatDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchImageQueryDto;
-import at.mateball.domain.group.infrastructure.dto.GroupMatchMemberQueryDto;
-import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
-import at.mateball.domain.group.infrastructure.dto.MemberMatchCountDto;
+import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.core.QUser;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -246,6 +241,70 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .from(groupMember)
                 .where(groupMember.user.id.in(memberIds))
                 .groupBy(groupMember.user.id)
+                .fetch();
+    }
+
+    @Override
+    public List<RequestGroupQueryDto> findRequestGroupsByUserId(Long userId) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+        QGroupMember leaderGroupMember = new QGroupMember("leaderGroupMember");
+        QGroupMember countGroupMember = new QGroupMember("countGroupMember");
+        QUser leaderUser = new QUser("leaderUser");
+
+        return queryFactory
+                .select(Projections.constructor(
+                        RequestGroupQueryDto.class,
+                        group.id,
+                        leaderUser.nickname,
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(countGroupMember.count().intValue())
+                                        .from(countGroupMember)
+                                        .where(countGroupMember.group.id.eq(group.id)),
+                                "count"
+                        ),
+                        group.isGroup,
+                        gameInformation.awayTeamName,
+                        gameInformation.homeTeamName,
+                        gameInformation.gameDate,
+                        groupMember.status
+                ))
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .join(group.gameInformation, gameInformation)
+                .join(leaderGroupMember).on(
+                        leaderGroupMember.group.id.eq(group.id)
+                                .and(leaderGroupMember.isLeader.isTrue())
+                )
+                .join(leaderGroupMember.user, leaderUser)
+                .where(
+                        groupMember.user.id.eq(userId),
+                        groupMember.isLeader.isFalse()
+                )
+                .orderBy(gameInformation.gameDate.asc(), group.id.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<GroupMatchImageQueryDto> findRequestGroupImagesByMatchIds(List<Long> matchIds) {
+        QGroupMember groupMember = QGroupMember.groupMember;
+
+        if (matchIds == null || matchIds.isEmpty()) {
+            return List.of();
+        }
+
+        return queryFactory
+                .select(Projections.constructor(
+                        GroupMatchImageQueryDto.class,
+                        group.id,
+                        groupMember.user.profileImageKey
+                ))
+                .from(groupMember)
+                .join(groupMember.group, group)
+                .where(
+                        group.id.in(matchIds),
+                        groupMember.isParticipant.isTrue()
+                )
                 .fetch();
     }
 }

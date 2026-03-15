@@ -31,6 +31,7 @@ public enum BusinessErrorCode implements ErrorCode {
     INVALID_PROFILE_IMAGE_SIZE(HttpStatus.BAD_REQUEST, "프로필 이미지는 5MB 이하만 업로드할 수 있습니다."),
     OWN_MATCH_MEMBER_VIEW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "내가 만든 매칭은 매칭현황에서 확인 가능해요."),
     INVALID_AVG_SEASON(HttpStatus.BAD_REQUEST, "시즌 평균 직관 수는 0-999까지 입력 가능합니다."),
+    WAITING_MATE_ACCEPTANCE(HttpStatus.BAD_REQUEST,"메이트의 수락을 기다리는 중입니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
