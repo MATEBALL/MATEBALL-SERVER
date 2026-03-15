@@ -9,7 +9,6 @@ public record GroupMatchCandidateFlatDto(
         boolean isGroup,
 
         Long memberUserId,
-        String memberProfileImageKey,
 
         Integer memberTeam,
         Integer memberTeamAllowed,

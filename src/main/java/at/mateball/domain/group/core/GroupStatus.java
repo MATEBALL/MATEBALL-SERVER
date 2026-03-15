@@ -33,4 +33,12 @@ public enum GroupStatus {
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
     }
+
+    public String toResponseLabel() {
+        return switch (this) {
+            case PENDING -> "그룹원 모집중";
+            case COMPLETED -> "완료";
+            case FAILED -> "실패";
+        };
+    }
 }
