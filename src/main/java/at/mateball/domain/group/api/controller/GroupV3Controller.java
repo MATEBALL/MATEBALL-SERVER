@@ -42,6 +42,8 @@ public class GroupV3Controller {
         Long userId = customUserDetails.getUserId();
 
         CreateGroupListRes result = groupV3Service.getCreateGroupList(userId);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }
   
   @GetMapping("/match/members/{matchId}")
