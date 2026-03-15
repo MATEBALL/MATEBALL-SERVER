@@ -3,8 +3,10 @@ package at.mateball.domain.user.core.service;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
+import at.mateball.exception.code.BusinessErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static at.mateball.exception.code.BusinessErrorCode.USER_NOT_FOUND;
 
@@ -24,5 +26,13 @@ public class UserV3Service {
 
     public int getAvgSeason(final Long userId) {
         return findUser(userId).getAvgSeason();
+    }
+
+    @Transactional
+    public void clearOnboardingInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
+
+        user.clearOnboardingInfo();
     }
 }
