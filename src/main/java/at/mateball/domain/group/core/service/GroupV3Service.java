@@ -96,9 +96,6 @@ public class GroupV3Service {
     }
 
     private String resolveTeamLabel(Integer team) {
-        if (team == null) {
-            return TeamNameMatch.NONE.getLabel();
-        }
         return TeamNameMatch.from(team).getLabel();
     }
 

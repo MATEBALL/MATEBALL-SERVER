@@ -58,12 +58,4 @@ public enum TeamNameMatch {
         }
         return teamNameMatch;
     }
-
-    public static boolean isNone(Integer value) {
-        return value != null && NONE.value == value;
-    }
-
-    public static boolean isSameTeam(Integer teamValue, Integer otherTeamValue) {
-        return teamValue != null && teamValue.equals(otherTeamValue);
-    }
 }
