@@ -4,7 +4,7 @@ import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.matchrequirement.core.constant.TeamAllowed;
 import at.mateball.domain.matchrequirement.core.repository.MatchRequirementRepository;
-import at.mateball.domain.matchrequirement.core.repository.querydsl.MatchRequirementUpdateReq;
+import at.mateball.domain.matchrequirement.api.dto.request.MatchRequirementUpdateReq;
 import at.mateball.domain.team.core.TeamName;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;

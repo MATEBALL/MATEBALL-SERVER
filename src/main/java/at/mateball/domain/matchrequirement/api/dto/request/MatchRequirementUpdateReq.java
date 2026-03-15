@@ -1,4 +1,4 @@
-package at.mateball.domain.matchrequirement.core.repository.querydsl;
+package at.mateball.domain.matchrequirement.api.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

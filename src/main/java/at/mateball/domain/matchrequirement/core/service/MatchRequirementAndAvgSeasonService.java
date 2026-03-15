@@ -4,7 +4,7 @@ import at.mateball.domain.matchrequirement.api.dto.response.MatchRequirementAndA
 import at.mateball.domain.matchrequirement.core.MatchRequirement;
 import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.matchrequirement.core.constant.TeamAllowed;
-import at.mateball.domain.matchrequirement.core.repository.querydsl.MatchRequirementUpdateReq;
+import at.mateball.domain.matchrequirement.api.dto.request.MatchRequirementUpdateReq;
 import at.mateball.domain.team.core.TeamName;
 import at.mateball.domain.user.core.service.UserV3Service;
 import lombok.RequiredArgsConstructor;
