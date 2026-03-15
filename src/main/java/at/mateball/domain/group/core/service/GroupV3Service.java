@@ -3,6 +3,7 @@ package at.mateball.domain.group.core.service;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.group.api.dto.*;
+import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.assembler.MatchImageAssembler;
@@ -297,5 +298,18 @@ public class GroupV3Service {
         }
 
         return new ChattingRes(data.chattingUrl());
+    }
+
+    private void validateRequestGroupStatuses(List<RequestGroupQueryDto> groups) {
+        boolean hasPendingRequest = groups.stream()
+                .anyMatch(group -> group.statusEnum() == GroupMemberStatus.PENDING_REQUEST);
+
+        if (hasPendingRequest) {
+            throw new BusinessException(BusinessErrorCode.WAITING_MATE_ACCEPTANCE);
+        }
+    }
+
+    private String resolveRequestUpdateLabel(GroupMemberStatus status) {
+        return status == GroupMemberStatus.MATCH_FAILED ? GroupMemberStatus.MATCH_FAILED.getLabel() : null;
     }
 }
