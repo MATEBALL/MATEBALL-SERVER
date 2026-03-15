@@ -34,6 +34,7 @@ public enum BusinessErrorCode implements ErrorCode {
     WAITING_MATE_ACCEPTANCE(HttpStatus.BAD_REQUEST,"메이트의 수락을 기다리는 중입니다."),
     INVALID_CHATTING_REQUEST_MEMBER(HttpStatus.BAD_REQUEST, "생성자와 승인된 요청자만 채팅방에 입장할 수 있습니다."),
     WAITING_MATE_ACCEPTANCE(HttpStatus.BAD_REQUEST,"메이트의 수락을 기다리는 중입니다."),
+    INVALID_CHATTING_REQUEST_MEMBER(HttpStatus.BAD_REQUEST, "생성자와 승인된 요청자만 채팅방에 입장할 수 있습니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
