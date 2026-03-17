@@ -33,6 +33,8 @@ public enum BusinessErrorCode implements ErrorCode {
     INVALID_AVG_SEASON(HttpStatus.BAD_REQUEST, "시즌 평균 직관 수는 0-999까지 입력 가능합니다."),
     WAITING_MATE_ACCEPTANCE(HttpStatus.BAD_REQUEST,"메이트의 수락을 기다리는 중입니다."),
     INVALID_CHATTING_REQUEST_MEMBER(HttpStatus.BAD_REQUEST, "생성자와 승인된 요청자만 채팅방에 입장할 수 있습니다."),
+    ALREADY_FINISHED_MATCH(HttpStatus.BAD_REQUEST, "이미 종료된 매칭입니다."),
+    CANNOT_REQUEST_OWN_MATCH(HttpStatus.BAD_REQUEST, "내가 만든 매칭에는 요청을 보낼 수 없습니다."),
 
     // 401 UNAUTHORIZED
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
@@ -65,6 +67,7 @@ public enum BusinessErrorCode implements ErrorCode {
     DUPLICATED_INFO(HttpStatus.BAD_REQUEST, "이미 사용자 정보가 존재합니다. 사용자 정보 설정은 최초 한 번만 가능합니다."),
     DUPLICATED_MATCH_REQUIREMENT(HttpStatus.CONFLICT, "이미 매칭 조건이 존재합니다."),
     CHATTING_ALREADY_USED(HttpStatus.CONFLICT, "이미 배정된 오픈채팅입니다. 매칭에 오픈채팅을 할당할 수 없습니다."),
+    DUPLICATED_MATCH_REQUEST(HttpStatus.CONFLICT, "요청 이력이 있는 매칭입니다."),
 
     // 429 TOO MANY REQUESTS
     EXCEED_GROUP_MATCHING_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "그룹 매칭은 최대 2개까지만 가능합니다."),
