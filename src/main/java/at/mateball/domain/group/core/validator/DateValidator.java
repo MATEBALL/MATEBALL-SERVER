@@ -22,15 +22,14 @@ public class DateValidator {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_PAST);
         }
 
-        LocalDate minAvailableDate = today.plusDays(2);
-        if (minAvailableDate.getDayOfWeek() == DayOfWeek.MONDAY) {
-            minAvailableDate = today.plusDays(2);
-//                        minAvailableDate = today.plusDays(3);
-        }
+//        LocalDate minAvailableDate = today.plusDays(2);
+//        if (minAvailableDate.getDayOfWeek() == DayOfWeek.MONDAY) {
+//            minAvailableDate = today.plusDays(2);
+//            minAvailableDate = today.plusDays(3);
+//        }
 
-        if (date.isBefore(minAvailableDate)) {
-            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_DATE);
-
-        }
+//        if (date.isBefore(minAvailableDate)) {
+//            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_DATE);
+//        }
     }
 }
