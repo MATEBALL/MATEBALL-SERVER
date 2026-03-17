@@ -351,6 +351,10 @@ public class GroupV3Service {
             throw new BusinessException(BusinessErrorCode.CANNOT_REQUEST_OWN_MATCH);
         }
 
+        if (group.getStatus() == GroupStatus.COMPLETED.getValue()) {
+            throw new BusinessException(BusinessErrorCode.ALREADY_FINISHED_MATCH);
+        }
+
         RequestValidationRes data =
                 groupV3RepositoryCustom.getValidation(userId, group.getId());
 
@@ -360,10 +364,6 @@ public class GroupV3Service {
 
         if (data.hasPendingRequest()) {
             throw new BusinessException(BusinessErrorCode.ALREADY_HAS_PENDING_REQUEST);
-        }
-
-        if (group.getStatus() == GroupStatus.COMPLETED.getValue()) {
-            throw new BusinessException(BusinessErrorCode.ALREADY_FINISHED_MATCH);
         }
     }
 }
