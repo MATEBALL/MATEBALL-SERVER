@@ -50,4 +50,13 @@ public class GroupMember {
         this.status = status;
         this.createdAt = LocalDateTime.now();
     }
+
+    public GroupMember(User user, Group group, Boolean isParticipant, int status, boolean isLeader) {
+        this.user = user;
+        this.group = group;
+        this.isParticipant = isParticipant;
+        this.status = status;
+        this.createdAt = LocalDateTime.now();
+        this.isLeader = isLeader;
+    }
 }
