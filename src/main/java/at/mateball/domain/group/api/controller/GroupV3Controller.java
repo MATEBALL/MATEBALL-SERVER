@@ -6,9 +6,11 @@ import at.mateball.domain.group.api.dto.CreateGroupListRes;
 import at.mateball.domain.group.api.dto.GroupMatchMemberListRes;
 import at.mateball.domain.group.api.dto.GroupMatchRes;
 import at.mateball.domain.group.api.dto.RequestGroupListRes;
+import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.core.service.GroupV3Service;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -70,5 +72,18 @@ public class GroupV3Controller {
         RequestGroupListRes ressult = groupV3Service.getRequestGroupList(userId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, ressult));
+    }
+
+    @PostMapping("/match")
+    @Operation(summary = "매칭 생성 api")
+    public ResponseEntity<MateballResponse<?>> createMatch(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @Valid @RequestBody CreateMatchReq createMatchReq
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        CreateMatchRes createMatchRes = groupV3Service.createMatch(userId, createMatchReq.gameId(), createMatchReq.matchType());
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, createMatchRes));
     }
 }

@@ -2,13 +2,17 @@ package at.mateball.domain.group.core.service;
 
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.group.api.dto.*;
+import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
+import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
+import at.mateball.domain.group.core.GroupExecutorV3;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.assembler.MatchImageAssembler;
 import at.mateball.domain.group.core.calculator.MatchingScoreCalculator;
 import at.mateball.domain.group.core.calculator.MatchingTarget;
 import at.mateball.domain.group.core.calculator.common.GroupMatchAggregator;
 import at.mateball.domain.group.core.repository.GroupRepository;
+import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.groupmember.GroupMemberStatus;
@@ -28,6 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static at.mateball.domain.group.core.MatchType.DIRECT;
+import static at.mateball.domain.group.core.MatchType.GROUP;
+import static at.mateball.domain.group.core.validator.DateValidator.validate;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -36,11 +44,13 @@ public class GroupV3Service {
     private static final String NEW_REQUEST_LABEL = "새요청";
 
     private final GroupRepository groupRepository;
+    private final GameInformationRepository gameInformationRepository;
     private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final GroupMatchAggregator groupMatchAggregator;
     private final MatchImageAssembler matchImageAssembler;
     private final MatchingScoreCalculator matchingScoreCalculator;
     private final FileStorage fileStorage;
+    private final GroupExecutorV3 groupExecutor;
 
     public GroupMatchRes getGroupMatches(Long userId, Long gameId) {
         GameInfoQueryDto gameInfo = groupV3RepositoryCustom.findGameInfoByGameId(gameId)
@@ -288,5 +298,34 @@ public class GroupV3Service {
         }
 
         return new ChattingRes(data.chattingUrl());
+    }
+
+    @Transactional
+    public CreateMatchRes createMatch(Long userId, Long gameId, String matchType) {
+
+        boolean isGroup = validateMatchType(matchType);
+
+        MatchValidationDto data = groupV3RepositoryCustom.getMatchValidationInfo(userId, gameId);
+
+        if (data == null) {
+            throw new BusinessException(BusinessErrorCode.GAME_NOT_FOUND);
+        }
+
+        validate(data.gameDate());
+
+        if (data.existsMatchOnSameGameInformation()) {
+            throw new BusinessException(BusinessErrorCode.EXCEED_MATCHING_LIMIT);
+        }
+
+        return new CreateMatchRes(
+                groupExecutor.createGroup(userId, gameId, isGroup)
+        );
+    }
+
+    private boolean validateMatchType(String matchType) {
+        if (!String.valueOf(GROUP).equalsIgnoreCase(matchType) && !String.valueOf(DIRECT).equalsIgnoreCase(matchType)) {
+            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MATCH_TYPE);
+        }
+        return matchType.equalsIgnoreCase(String.valueOf(GROUP));
     }
 }
