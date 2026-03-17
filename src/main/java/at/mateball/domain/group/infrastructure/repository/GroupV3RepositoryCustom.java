@@ -1,7 +1,7 @@
 package at.mateball.domain.group.infrastructure.repository;
 
 import at.mateball.domain.group.infrastructure.dto.*;
-import at.mateball.domain.group.api.dto.MatchValidationDto;
+import at.mateball.domain.group.api.dto.MatchValidationRes;
 import at.mateball.domain.group.infrastructure.dto.CreateGroupImageQueryDto;
 import at.mateball.domain.group.infrastructure.dto.CreateGroupQueryDto;
 import at.mateball.domain.group.infrastructure.dto.GameInfoQueryDto;
@@ -38,5 +38,5 @@ public interface GroupV3RepositoryCustom {
 
     List<GroupMatchImageQueryDto> findRequestGroupImagesByMatchIds(List<Long> matchIds);
 
-    MatchValidationDto getMatchValidationInfo(Long userId, Long gameId);
+    MatchValidationRes getMatchValidationInfo(Long userId, Long gameId);
 }

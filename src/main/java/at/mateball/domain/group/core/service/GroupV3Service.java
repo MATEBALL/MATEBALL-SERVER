@@ -305,7 +305,7 @@ public class GroupV3Service {
 
         boolean isGroup = validateMatchType(matchType);
 
-        MatchValidationDto data = groupV3RepositoryCustom.getMatchValidationInfo(userId, gameId);
+        MatchValidationRes data = groupV3RepositoryCustom.getMatchValidationInfo(userId, gameId);
 
         if (data == null) {
             throw new BusinessException(BusinessErrorCode.GAME_NOT_FOUND);

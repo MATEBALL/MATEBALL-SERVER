@@ -2,7 +2,7 @@ package at.mateball.domain.group.api.dto;
 
 import java.time.LocalDate;
 
-public record MatchValidationDto(
+public record MatchValidationRes(
         LocalDate gameDate,
         Boolean existsMatchOnSameGameInformation
 ) {}
