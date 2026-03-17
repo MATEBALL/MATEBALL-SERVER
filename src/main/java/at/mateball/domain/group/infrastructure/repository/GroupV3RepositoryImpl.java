@@ -1,6 +1,7 @@
 package at.mateball.domain.group.infrastructure.repository;
 
 import at.mateball.domain.group.api.dto.MatchValidationRes;
+import at.mateball.domain.group.api.dto.RequestValidationRes;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.groupmember.GroupMemberStatus;
@@ -21,6 +22,8 @@ import java.util.Optional;
 
 import static at.mateball.domain.gameinformation.core.QGameInformation.gameInformation;
 import static at.mateball.domain.group.core.QGroup.group;
+import static at.mateball.domain.groupmember.GroupMemberStatus.AWAITING_APPROVAL;
+import static at.mateball.domain.groupmember.core.QGroupMember.groupMember;
 
 @Repository
 @RequiredArgsConstructor
@@ -338,6 +341,36 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                                 .and(group.leader.id.eq(userId))
                 )
                 .where(gameInformation.id.eq(gameId))
+                .fetchOne();
+    }
+
+    public RequestValidationRes getValidation(Long userId, Long groupId) {
+
+        return queryFactory
+                .select(Projections.constructor(
+                        RequestValidationRes.class,
+
+                        JPAExpressions
+                                .selectOne()
+                                .from(groupMember)
+                                .where(
+                                        groupMember.user.id.eq(userId),
+                                        groupMember.group.id.eq(groupId)
+                                )
+                                .exists(),
+
+                        JPAExpressions
+                                .selectOne()
+                                .from(groupMember)
+                                .where(
+                                        groupMember.group.id.eq(groupId),
+                                        groupMember.user.id.ne(userId),
+                                        groupMember.status.eq(AWAITING_APPROVAL.getValue())
+                                )
+                                .exists()
+                ))
+                .from(group)
+                .where(group.id.eq(groupId))
                 .fetchOne();
     }
 }
