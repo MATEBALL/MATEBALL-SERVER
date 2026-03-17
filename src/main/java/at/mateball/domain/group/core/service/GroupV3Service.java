@@ -1,9 +1,12 @@
 package at.mateball.domain.group.core.service;
 
+import at.mateball.domain.alarm.common.AlarmType;
+import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
+import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupExecutorV3;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.MatchType;
@@ -15,6 +18,7 @@ import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.groupmember.GroupMemberStatus;
+import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.core.constant.StyleMatch;
 import at.mateball.domain.team.core.TeamNameMatch;
 import at.mateball.exception.BusinessException;
@@ -42,6 +46,8 @@ public class GroupV3Service {
 
     private final GroupRepository groupRepository;
     private final GameInformationRepository gameInformationRepository;
+    private final GroupMemberRepository groupMemberRepository;
+    private final AlarmService alarmService;
     private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final GroupMatchAggregator groupMatchAggregator;
     private final MatchImageAssembler matchImageAssembler;
@@ -321,5 +327,43 @@ public class GroupV3Service {
 
     private boolean isGroupMatch(MatchType matchType) {
         return matchType == MatchType.GROUP;
+    }
+
+    @Transactional
+    public void createRequest(Long userId, Long groupId) {
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        validateRequest(userId, group);
+
+        groupMemberRepository.createGroupMember(userId, groupId);
+        groupMemberRepository.updateMemberStatus(group.getLeader().getId(), group.getId(), GroupMemberStatus.NEW_REQUEST.getValue());
+
+        alarmService.createAlarm(group.getLeader().getId(), AlarmType.NEW_REQUEST, group.getId());
+    }
+
+    private void validateRequest(Long userId, Group group) {
+
+        validate(group.getGameInformation().getGameDate());
+
+        if (group.getLeader().getId().equals(userId)) {
+            throw new BusinessException(BusinessErrorCode.CANNOT_REQUEST_OWN_MATCH);
+        }
+
+        RequestValidationRes data =
+                groupV3RepositoryCustom.getValidation(userId, group.getId());
+
+        if (data.isDuplicatedRequest()) {
+            throw new BusinessException(BusinessErrorCode.DUPLICATED_MATCH_REQUEST);
+        }
+
+        if (data.hasPendingRequest()) {
+            throw new BusinessException(BusinessErrorCode.ALREADY_HAS_PENDING_REQUEST);
+        }
+
+        if (group.getStatus() == GroupStatus.COMPLETED.getValue()) {
+            throw new BusinessException(BusinessErrorCode.ALREADY_FINISHED_MATCH);
+        }
     }
 }

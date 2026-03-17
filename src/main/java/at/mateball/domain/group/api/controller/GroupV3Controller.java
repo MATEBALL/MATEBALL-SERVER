@@ -86,4 +86,17 @@ public class GroupV3Controller {
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, createMatchRes));
     }
+
+    @PostMapping("/match-request/{matchId}")
+    @Operation(summary = "매칭 요청 api")
+    public ResponseEntity<MateballResponse<?>> createRequest(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long matchId
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        groupV3Service.createRequest(userId, matchId);
+
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.CREATED));
+    }
 }
