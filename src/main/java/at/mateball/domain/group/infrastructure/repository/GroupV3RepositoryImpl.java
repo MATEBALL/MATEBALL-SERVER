@@ -1,5 +1,6 @@
 package at.mateball.domain.group.infrastructure.repository;
 
+import at.mateball.domain.group.api.dto.MatchValidationDto;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.groupmember.GroupMemberStatus;
@@ -310,5 +311,23 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                         groupMember.id.asc()
                 )
                 .fetch();
+    }
+
+    @Override
+    public MatchValidationDto getMatchValidationInfo(Long userId, Long gameId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        MatchValidationDto.class,
+                        gameInformation.gameDate,
+                        group.id.isNotNull()
+                ))
+                .from(gameInformation)
+                .leftJoin(group)
+                .on(
+                        group.gameInformation.id.eq(gameInformation.id)
+                                .and(group.leader.id.eq(userId))
+                )
+                .where(gameInformation.id.eq(gameId))
+                .fetchOne();
     }
 }
