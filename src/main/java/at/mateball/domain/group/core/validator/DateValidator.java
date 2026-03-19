@@ -13,7 +13,7 @@ public class DateValidator {
 
     public static void validate(LocalDate date) {
         LocalDate today = LocalDate.now();
-
+//        경기가 없는 월요일을 선택한 경우
 //        if (date.getDayOfWeek() == DayOfWeek.MONDAY) {
 //            throw new BusinessException(BusinessErrorCode.BAD_REQUEST_MONDAY);
 //        }
@@ -22,6 +22,7 @@ public class DateValidator {
             throw new BusinessException(BusinessErrorCode.BAD_REQUEST_PAST);
         }
 
+//        경기 이틀전 매칭을 생성하려는 경우
 //        LocalDate minAvailableDate = today.plusDays(2);
 //        if (minAvailableDate.getDayOfWeek() == DayOfWeek.MONDAY) {
 //            minAvailableDate = today.plusDays(2);
