@@ -77,8 +77,8 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .select(user.nickname,
                         matchRequirement.team,
                         matchRequirement.teamAllowed,
-                        matchRequirement.style,
-                        matchRequirement.genderPreference)
+                        matchRequirement.style
+                )
                 .from(user)
                 .leftJoin(matchRequirement).on(matchRequirement.user.id.eq(user.id))
                 .where(user.id.eq(userId))
