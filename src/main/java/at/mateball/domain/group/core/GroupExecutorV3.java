@@ -7,6 +7,7 @@ import at.mateball.domain.user.core.User;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +31,17 @@ public class GroupExecutorV3 {
 
         GameInformation game = entityManager.find(GameInformation.class, gameId);
 
-        Group group = new Group(user, game, LocalDateTime.now(), GroupStatus.PENDING.getValue(), isGroup);
-        entityManager.persist(group);
+        try {
+            Group group = new Group(user, game, LocalDateTime.now(), GroupStatus.PENDING.getValue(), isGroup);
+            entityManager.persist(group);
+            entityManager.flush();
 
-        GroupMember leader = GroupMember.leader(user,group,GroupMemberStatus.PENDING_REQUEST.getValue());
-        entityManager.persist(leader);
+            GroupMember leader = GroupMember.leader(user, group, GroupMemberStatus.PENDING_REQUEST.getValue());
+            entityManager.persist(leader);
 
-        return group.getId();
+            return group.getId();
+        } catch (PersistenceException e) {
+            throw new BusinessException(BusinessErrorCode.EXCEED_MATCHING_LIMIT);
+        }
     }
 }
