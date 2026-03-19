@@ -113,6 +113,7 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .join(groupMember.group, group)
                 .where(
                         group.gameInformation.id.eq(gameId),
+                        groupMember.isParticipant.isTrue(),
                         group.status.eq(GroupStatus.PENDING.getValue()),
                         groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue())
                 )
@@ -177,7 +178,10 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 ))
                 .from(groupMember)
                 .join(groupMember.user, memberUser)
-                .where(groupMember.group.id.in(matchIds))
+                .where(
+                        group.id.in(matchIds),
+                        groupMember.isParticipant.isTrue()
+                )
                 .orderBy(groupMember.group.id.asc(), groupMember.id.asc())
                 .fetch();
     }
