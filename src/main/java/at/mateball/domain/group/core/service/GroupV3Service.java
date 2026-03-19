@@ -345,7 +345,7 @@ public class GroupV3Service {
             groupMemberRepository.updateMemberStatus(group.leaderId(), groupId, GroupMemberStatus.NEW_REQUEST.getValue());
             alarmService.createAlarm(group.leaderId(), AlarmType.NEW_REQUEST, groupId);
         } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(BusinessErrorCode.NOT_ALLOWED_AGE);
+            throw new BusinessException(BusinessErrorCode.DUPLICATED_MATCH_REQUEST);
         }
     }
 
