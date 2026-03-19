@@ -1,5 +1,7 @@
 package at.mateball.domain.group.core;
 
+import at.mateball.domain.chatting.core.Chatting;
+import at.mateball.domain.chatting.core.service.ChattingV2Service;
 import at.mateball.domain.gameinformation.core.GameInformation;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.GroupMember;
@@ -7,7 +9,6 @@ import at.mateball.domain.user.core.User;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +18,11 @@ import java.time.LocalDateTime;
 public class GroupExecutorV3 {
 
     private final EntityManager entityManager;
+    private final ChattingV2Service chattingV2Service;
 
-    public GroupExecutorV3(EntityManager entityManager) {
+    public GroupExecutorV3(EntityManager entityManager, ChattingV2Service chattingV2Service) {
         this.entityManager = entityManager;
+        this.chattingV2Service = chattingV2Service;
     }
 
     @Transactional
@@ -31,17 +34,20 @@ public class GroupExecutorV3 {
 
         GameInformation game = entityManager.find(GameInformation.class, gameId);
 
-        try {
-            Group group = new Group(user, game, LocalDateTime.now(), GroupStatus.PENDING.getValue(), isGroup);
-            entityManager.persist(group);
-            entityManager.flush();
-
-            GroupMember leader = GroupMember.leader(user, group, GroupMemberStatus.PENDING_REQUEST.getValue());
-            entityManager.persist(leader);
-
-            return group.getId();
-        } catch (PersistenceException e) {
-            throw new BusinessException(BusinessErrorCode.EXCEED_MATCHING_LIMIT);
+        Chatting chatting = chattingV2Service.assignChatting();
+        if (chatting == null) {
+            throw new BusinessException(BusinessErrorCode.CHATTING_NOT_FOUND);
         }
+
+        Group group = Group.create(user, game, isGroup);
+        group.assignChatting(chatting);
+
+        entityManager.persist(group);
+        entityManager.flush();
+
+        GroupMember leader = GroupMember.leader(user, group, GroupMemberStatus.PENDING_REQUEST.getValue());
+        entityManager.persist(leader);
+
+        return group.getId();
     }
 }

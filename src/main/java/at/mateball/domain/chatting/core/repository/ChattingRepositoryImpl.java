@@ -3,6 +3,7 @@ package at.mateball.domain.chatting.core.repository;
 import at.mateball.domain.chatting.core.Chatting;
 import at.mateball.domain.chatting.core.QChatting;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.LockModeType;
 
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ public class ChattingRepositoryImpl implements ChattingRepositoryCustom {
                 .selectFrom(chatting)
                 .where(chatting.isUsed.eq(false))
                 .orderBy(chatting.id.asc())
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetchFirst();
 
         return Optional.ofNullable(result);

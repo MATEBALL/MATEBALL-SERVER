@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "match_group",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"user_id", "game_information_id"})
+                @UniqueConstraint(columnNames = {"user_id", "game_information_id"}),
+                @UniqueConstraint(columnNames = {"chatting_id"})
         }
 )
 public class Group {
@@ -51,5 +52,13 @@ public class Group {
         this.createdAt = createdAt;
         this.status = status;
         this.isGroup = isGroup;
+    }
+
+    public static Group create(User leader, GameInformation gameInformation, boolean isGroup) {
+        return new Group(leader, gameInformation, LocalDateTime.now(), GroupStatus.PENDING.getValue(), isGroup);
+    }
+
+    public void assignChatting(Chatting chatting) {
+        this.chatting = chatting;
     }
 }
