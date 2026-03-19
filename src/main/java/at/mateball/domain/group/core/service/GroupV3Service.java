@@ -4,6 +4,7 @@ import at.mateball.domain.alarm.common.AlarmType;
 import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
+import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
 import at.mateball.domain.group.core.Group;
@@ -24,7 +25,9 @@ import at.mateball.domain.team.core.TeamNameMatch;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import at.mateball.storage.FileStorage;
+import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -337,10 +340,14 @@ public class GroupV3Service {
 
         validateRequest(userId, group);
 
-        groupMemberRepository.createGroupMember(userId, groupId);
-        groupMemberRepository.updateMemberStatus(group.getLeader().getId(), group.getId(), GroupMemberStatus.NEW_REQUEST.getValue());
+        try {
+            groupMemberRepository.createGroupMember(userId, groupId);
+            groupMemberRepository.updateMemberStatus(group.getLeader().getId(), group.getId(), GroupMemberStatus.NEW_REQUEST.getValue());
 
-        alarmService.createAlarm(group.getLeader().getId(), AlarmType.NEW_REQUEST, group.getId());
+            alarmService.createAlarm(group.getLeader().getId(), AlarmType.NEW_REQUEST, group.getId());
+        } catch (DataIntegrityViolationException | PersistenceException e) {
+            throw new BusinessException(BusinessErrorCode.DUPLICATED_MATCH_REQUEST);
+        }
     }
 
     private void validateRequest(Long userId, Group group) {
