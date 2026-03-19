@@ -4,7 +4,6 @@ public record MyPageInformationBaseRes(
         String nickname,
         Integer team,
         Integer style,
-        String imgUrl,
         Long matchCnt,
         Integer avgSeason
 ) {
