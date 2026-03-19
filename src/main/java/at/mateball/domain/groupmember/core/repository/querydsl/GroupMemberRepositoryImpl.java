@@ -33,7 +33,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final EntityManager entityManager;
 
-    QGroupMember gm = QGroupMember.groupMember;
     QGroupMember groupMember = QGroupMember.groupMember;
     QGroup group = QGroup.group;
     QGameInformation game = QGameInformation.gameInformation;
@@ -868,18 +867,18 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                                 GroupMatchSummaryRes.class,
                                 Expressions.numberTemplate(Long.class,
                                         "MAX(CASE WHEN {0} = false AND {1} = {2} THEN {3} END)",
-                                        gm.isParticipant,
-                                        gm.status,
+                                        groupMember.isParticipant,
+                                        groupMember.status,
                                         GroupMemberStatus.AWAITING_APPROVAL.getValue(),
-                                        gm.user.id
+                                        groupMember.user.id
                                 ),
                                 Expressions.numberTemplate(Long.class,
                                         "COALESCE(SUM(CASE WHEN {0} = true THEN 1 ELSE 0 END), 0)",
-                                        gm.isParticipant
+                                        groupMember.isParticipant
                                 )
                         ))
-                        .from(gm)
-                        .where(gm.group.id.eq(groupId))
+                        .from(groupMember)
+                        .where(groupMember.group.id.eq(groupId))
                         .fetchOne()
         );
     }
