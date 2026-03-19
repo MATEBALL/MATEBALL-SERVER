@@ -48,6 +48,7 @@ public enum BusinessErrorCode implements ErrorCode {
     // 403 FORBIDDEN
     AGE_NOT_APPROPRIATE(HttpStatus.FORBIDDEN, "만 19세 이상부터 가입이 가능합니다."),
     NOT_GROUP_MEMBER(HttpStatus.FORBIDDEN, "요청을 처리할 권한이 없습니다. 그룹의 참가자가 아닙니다."),
+    NOT_MATCH_LEADER(HttpStatus.FORBIDDEN, "요청을 처리할 권한이 없습니다. 매칭 생성자가 아닙니다."),
 
     // 404 NOT FOUND
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "요청에 해당하는 토큰이 존재하지 않습니다."),
@@ -59,6 +60,7 @@ public enum BusinessErrorCode implements ErrorCode {
     CHATTING_NOT_FOUND(HttpStatus.NOT_FOUND, "오픈채팅이 존재하지 않습니다."),
     ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 알림입니다."),
     NO_GAME_SCHEDULED(HttpStatus.NOT_FOUND, "선택한 날짜에 경기가 존재하지 않습니다."),
+    REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "요청 정보를 찾을 수 없습니다."),
 
     // 409 CONFLICT
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
