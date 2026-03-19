@@ -85,8 +85,10 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 ))
                 .from(group)
                 .join(group.leader, leaderUser)
-                .join(member).on(member.group.id.eq(group.id))
-                .join(member.user, memberUser)
+                .join(member).on(
+                        member.group.id.eq(group.id)
+                                .and(member.isParticipant.isTrue())
+                )                .join(member.user, memberUser)
                 .leftJoin(memberRequirement).on(memberRequirement.user.id.eq(memberUser.id))
                 .where(
                         group.gameInformation.id.eq(gameId),
@@ -146,8 +148,10 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 ))
                 .from(group)
                 .join(group.leader, leaderUser)
-                .join(groupMember).on(groupMember.group.id.eq(group.id))
-                .where(group.leader.id.eq(userId))
+                .join(groupMember).on(
+                        groupMember.group.id.eq(group.id)
+                                .and(groupMember.isParticipant.isTrue())
+                )                .where(group.leader.id.eq(userId))
                 .groupBy(
                         group.id,
                         leaderUser.nickname,
@@ -179,7 +183,7 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .from(groupMember)
                 .join(groupMember.user, memberUser)
                 .where(
-                        group.id.in(matchIds),
+                        groupMember.group.id.in(matchIds),
                         groupMember.isParticipant.isTrue()
                 )
                 .orderBy(groupMember.group.id.asc(), groupMember.id.asc())
@@ -264,7 +268,9 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                                 JPAExpressions
                                         .select(countGroupMember.count().intValue())
                                         .from(countGroupMember)
-                                        .where(countGroupMember.group.id.eq(group.id)),
+                                        .where(countGroupMember.group.id.eq(group.id),
+                                                countGroupMember.isParticipant.isTrue()
+                                        ),
                                 "count"
                         ),
                         group.isGroup,
