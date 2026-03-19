@@ -305,6 +305,10 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                         group.id.in(matchIds),
                         groupMember.isParticipant.isTrue()
                 )
+                .orderBy(
+                        group.id.asc(),
+                        groupMember.id.asc()
+                )
                 .fetch();
     }
 }
