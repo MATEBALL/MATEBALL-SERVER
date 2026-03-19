@@ -32,8 +32,8 @@ public enum GroupMemberStatus {
 
     public String toResponseLabel() {
         return switch (this) {
-            case AWAITING_APPROVAL -> "그룹원 모집 중";
-            case APPROVED -> "매칭완료";
+            case AWAITING_APPROVAL -> "수락 대기 중";
+            case APPROVED -> "수락완료";
             default -> null;
         };
     }
