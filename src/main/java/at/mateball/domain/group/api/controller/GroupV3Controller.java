@@ -109,4 +109,17 @@ public class GroupV3Controller {
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
     }
+
+    @Operation(summary = "요청 거절 api")
+    @PatchMapping("/match-reject/{matchId}")
+    public ResponseEntity<MateballResponse<?>> rejectRequest(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long matchId
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        groupV3Service.rejectRequest(userId, matchId);
+
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
+    }
 }

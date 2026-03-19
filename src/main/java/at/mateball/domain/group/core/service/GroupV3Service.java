@@ -355,4 +355,22 @@ public class GroupV3Service {
         groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
     }
 
+    @Transactional
+    public void rejectRequest(Long userId, Long matchId) {
+        getValidatedGroup(userId, matchId);
+
+        GroupMatchSummaryRes summary = groupMemberRepository.getMatchSummary(matchId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUEST_NOT_FOUND));
+        Long requesterId = Optional.ofNullable(summary.requesterId())
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
+
+        updateLeaderStatusPending(userId, matchId);
+        updateMemberStatusFailed(requesterId, matchId);
+
+        alarmService.readAllAlarms(userId);
+    }
+
+    private void updateMemberStatusFailed(Long userId, Long groupId) {
+        groupMemberRepository.updateStatus(userId, groupId, GroupMemberStatus.MATCH_FAILED.getValue());
+    }
 }
