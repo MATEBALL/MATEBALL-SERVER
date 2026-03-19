@@ -76,8 +76,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .select(user.nickname,
                         matchRequirement.team,
                         matchRequirement.teamAllowed,
-                        matchRequirement.style,
-                        matchRequirement.genderPreference
+                        matchRequirement.style
                 )
                 .from(user)
                 .leftJoin(matchRequirement).on(matchRequirement.user.id.eq(user.id))
@@ -93,8 +92,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         boolean allConditionsPresent =
                 result.get(matchRequirement.team) != null &&
                         result.get(matchRequirement.teamAllowed) != null &&
-                        result.get(matchRequirement.style) != null &&
-                        result.get(matchRequirement.genderPreference) != null;
+                        result.get(matchRequirement.style) != null;
 
         return new CheckUserRes(nicknameExists, allConditionsPresent);
     }
@@ -109,7 +107,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         matchRequirement.team,
                         matchRequirement.teamAllowed,
                         matchRequirement.style,
-                        matchRequirement.genderPreference,
                         user.hasAccepted)
                 .from(user)
                 .leftJoin(matchRequirement).on(matchRequirement.user.id.eq(user.id))
@@ -125,8 +122,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         boolean allConditionsPresent =
                 result.get(matchRequirement.team) != null &&
                         result.get(matchRequirement.teamAllowed) != null &&
-                        result.get(matchRequirement.style) != null &&
-                        result.get(matchRequirement.genderPreference) != null;
+                        result.get(matchRequirement.style) != null;
 
         Boolean hasAccepted = result.get(user.hasAccepted);
         boolean accepted = hasAccepted != null && hasAccepted;
