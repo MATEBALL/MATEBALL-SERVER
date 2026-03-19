@@ -134,18 +134,17 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public MyPageInformationRes findMyPageInformation(Long userId) {
+    public MyPageInformationBaseRes findMyPageInformation(Long userId) {
         QUser user = QUser.user;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
         QGroupMember groupMember = QGroupMember.groupMember;
 
-        var baseUserInformation = queryFactory
+        return queryFactory
                 .select(Projections.constructor(
                         MyPageInformationBaseRes.class,
                         user.nickname,
                         matchRequirement.team,
                         matchRequirement.style,
-                        user.imgUrl,
                         groupMember.id.count(),
                         user.avgSeason
                 ))
@@ -163,11 +162,8 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         user.nickname,
                         matchRequirement.team,
                         matchRequirement.style,
-                        user.imgUrl,
                         user.avgSeason
                 )
                 .fetchOne();
-
-        return MyPageInformationRes.fromBase(baseUserInformation);
     }
 }
