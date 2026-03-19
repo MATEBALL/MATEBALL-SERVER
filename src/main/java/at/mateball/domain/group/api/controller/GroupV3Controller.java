@@ -78,7 +78,7 @@ public class GroupV3Controller {
     @Operation(summary = "매칭 생성 api")
     public ResponseEntity<MateballResponse<?>> createMatch(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @Valid @RequestBody CreateMatchReq createMatchReq
+            @Valid @RequestBody CreateMatchV3Req createMatchReq
     ) {
         Long userId = customUserDetails.getUserId();
 
