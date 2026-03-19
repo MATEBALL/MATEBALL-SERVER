@@ -78,7 +78,7 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                         group.isGroup,
 
                         memberUser.id,
-                        memberUser.profileImageKey,
+
                         memberRequirement.team,
                         memberRequirement.teamAllowed,
                         memberRequirement.style
