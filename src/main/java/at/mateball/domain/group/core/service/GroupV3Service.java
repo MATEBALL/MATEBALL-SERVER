@@ -371,6 +371,6 @@ public class GroupV3Service {
     }
 
     private void updateMemberStatusFailed(Long userId, Long groupId) {
-        groupMemberRepository.updateStatus(userId, groupId, GroupMemberStatus.MATCH_FAILED.getValue());
+        groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.MATCH_FAILED.getValue());
     }
 }

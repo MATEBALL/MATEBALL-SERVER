@@ -882,12 +882,4 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         .fetchOne()
         );
     }
-
-    @Override
-    public void updateStatus(Long userId, Long groupId, int status) {
-        queryFactory.update(groupMember)
-                .set(groupMember.status, status)
-                .where(groupMember.user.id.eq(userId), groupMember.group.id.eq(groupId))
-                .execute();
-    }
 }
