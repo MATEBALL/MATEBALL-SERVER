@@ -18,17 +18,17 @@ public record MyPageInformationRes(
         @Schema(description = "시즌 평균 직관")
         Integer avgSeason
 ) {
-    public static MyPageInformationRes of(
+    public static MyPageInformationRes from(
             MyPageInformationBaseRes base,
             String imageUrl
     ) {
         return new MyPageInformationRes(
-                base.nickname(),
+                base.user().getNickname(),
                 TeamName.from(base.team()).getLabel(),
                 Style.from(base.style()).getLabel(),
                 imageUrl,
                 base.matchCnt(),
-                base.avgSeason()
+                base.user().getAvgSeason()
         );
     }
 }

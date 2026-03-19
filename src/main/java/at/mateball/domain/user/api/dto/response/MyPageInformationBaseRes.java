@@ -1,11 +1,11 @@
 package at.mateball.domain.user.api.dto.response;
 
+import at.mateball.domain.user.core.User;
+
 public record MyPageInformationBaseRes(
-        String nickname,
+        User user,
         Integer team,
         Integer style,
-        Long matchCnt,
-        Integer avgSeason
+        Long matchCnt
 ) {
-
 }

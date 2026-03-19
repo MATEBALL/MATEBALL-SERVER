@@ -1,6 +1,8 @@
 package at.mateball.domain.user.core.service;
 
+import at.mateball.domain.matchrequirement.core.constant.Style;
 import at.mateball.domain.matchrequirement.core.repository.MatchRequirementRepository;
+import at.mateball.domain.team.core.TeamName;
 import at.mateball.domain.user.api.dto.response.MyPageInformationBaseRes;
 import at.mateball.domain.user.api.dto.response.MyPageInformationRes;
 import at.mateball.domain.user.core.User;
@@ -48,13 +50,12 @@ public class UserV3Service {
     }
 
     public MyPageInformationRes getMyPageInformation(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
+        MyPageInformationBaseRes baseRes = userRepository.findMyPageInformation(userId);
 
-        MyPageInformationBaseRes base = userRepository.findMyPageInformation(userId);
+        if (baseRes == null) {throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND);}
 
-        String imageUrl = userProfileImageService.getProfileImageUrl(user);
+        String imageUrl = userProfileImageService.getProfileImageUrl(baseRes.user());
 
-        return MyPageInformationRes.of(base, imageUrl);
+        return MyPageInformationRes.from(baseRes,imageUrl);
     }
 }
