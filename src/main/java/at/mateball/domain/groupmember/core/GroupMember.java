@@ -59,4 +59,8 @@ public class GroupMember {
         this.createdAt = LocalDateTime.now();
         this.isLeader = isLeader;
     }
+
+    public static GroupMember leader(User user, Group group, int status) {
+        return new GroupMember(user, group, true, status, true);
+    }
 }
