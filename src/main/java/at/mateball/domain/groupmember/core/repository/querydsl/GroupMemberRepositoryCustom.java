@@ -84,4 +84,5 @@ public interface GroupMemberRepositoryCustom {
 
     Optional<GroupMatchSummaryRes> getMatchSummary(Long groupId);
 
+    void updateStatus(Long userId, Long groupId, int status);
 }
