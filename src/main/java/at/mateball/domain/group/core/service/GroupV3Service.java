@@ -2,9 +2,9 @@ package at.mateball.domain.group.core.service;
 
 import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
-import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
+import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupExecutorV3;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.MatchType;
@@ -13,6 +13,7 @@ import at.mateball.domain.group.core.calculator.MatchingScoreCalculator;
 import at.mateball.domain.group.core.calculator.MatchingTarget;
 import at.mateball.domain.group.core.calculator.common.GroupMatchAggregator;
 import at.mateball.domain.group.core.repository.GroupRepository;
+import at.mateball.domain.group.core.validator.GroupValidator;
 import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.groupRequest.GroupRequestService;
@@ -45,6 +46,7 @@ public class GroupV3Service {
 
     private final GroupRepository groupRepository;
     private final GroupRequestService groupRequestService;
+    private final GroupMemberRepository groupMemberRepository;
     private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final GroupMatchAggregator groupMatchAggregator;
     private final MatchImageAssembler matchImageAssembler;
@@ -334,6 +336,23 @@ public class GroupV3Service {
     @Transactional
     public void permitRequest(Long userId, Long groupId) {
         groupRequestService.permitRequest(userId, groupId);
+    }
+
+    private Group getValidatedGroup(Long userId, Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        GroupValidator.validate(group);
+
+        if (!group.getLeader().getId().equals(userId)) {
+            throw new BusinessException(BusinessErrorCode.NOT_MATCH_LEADER);
+        }
+
+        return group;
+    }
+
+    private void updateLeaderStatusPending(Long userId, Long groupId) {
+        groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
     }
 
 }
