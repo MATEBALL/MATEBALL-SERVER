@@ -10,7 +10,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "match_group")
+@Table(name = "match_group",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"user_id", "game_information_id"})
+        }
+)
 public class Group {
 
     @Id
