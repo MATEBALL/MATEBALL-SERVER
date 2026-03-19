@@ -841,4 +841,15 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
 
         return Optional.ofNullable(requesterId);
     }
+
+
+    @Override
+    public void createGroupMemberV3(Long userId, Long matchId) {
+        User user = entityManager.getReference(User.class, userId);
+        Group group = entityManager.getReference(Group.class, matchId);
+
+        GroupMember groupMember = GroupMember.member(user,group,GroupMemberStatus.AWAITING_APPROVAL.getValue());
+
+        entityManager.persist(groupMember);
+    }
 }

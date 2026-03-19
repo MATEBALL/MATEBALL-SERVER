@@ -67,4 +67,8 @@ public class GroupMember {
     public static GroupMember leader(User user, Group group, int status) {
         return new GroupMember(user, group, true, status, true);
     }
+
+    public static GroupMember member(User user, Group group, int status) {
+        return new GroupMember(user, group, false, status, false);
+    }
 }
