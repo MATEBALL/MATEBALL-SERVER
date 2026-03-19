@@ -69,20 +69,20 @@ public class GroupV3Service {
         );
 
         List<GroupMatchBaseRes> result = groupMatchAggregator.aggregate(
-                flatRows,
-                loginUserTarget,
-                userId,
-                imageMap
-        );
-
-        result.sort(
-                Comparator.comparing(
-                                GroupMatchBaseRes::matchRate,
-                                Comparator.nullsLast(Comparator.reverseOrder())
-                        )
-                        .thenComparing(GroupMatchBaseRes::count, Comparator.reverseOrder())
-                        .thenComparing(GroupMatchBaseRes::matchId)
-        );
+                        flatRows,
+                        loginUserTarget,
+                        userId,
+                        imageMap
+                ).stream()
+                .sorted(
+                        Comparator.comparing(
+                                        GroupMatchBaseRes::matchRate,
+                                        Comparator.nullsLast(Comparator.reverseOrder())
+                                )
+                                .thenComparing(GroupMatchBaseRes::count, Comparator.reverseOrder())
+                                .thenComparing(GroupMatchBaseRes::matchId)
+                )
+                .toList();
 
         return new GroupMatchRes(
                 gameInfo.awayTeam(),
