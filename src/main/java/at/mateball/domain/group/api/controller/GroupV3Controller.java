@@ -2,15 +2,12 @@ package at.mateball.domain.group.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
-import at.mateball.domain.group.api.dto.CreateGroupListRes;
-import at.mateball.domain.group.api.dto.GroupMatchMemberListRes;
-import at.mateball.domain.group.api.dto.GroupMatchRes;
-import at.mateball.domain.group.api.dto.RequestGroupListRes;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.core.service.GroupV3Service;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -98,5 +95,18 @@ public class GroupV3Controller {
         groupV3Service.createRequest(userId, matchId);
 
         return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.CREATED));
+    }
+
+    @PatchMapping("/match-accept/{matchId}")
+    @Operation(summary = "요청 수락 api")
+    public ResponseEntity<MateballResponse<?>> permitRequest(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @NotNull @PathVariable Long matchId
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        groupV3Service.permitRequest(userId, matchId);
+
+        return ResponseEntity.ok(MateballResponse.successWithNoData(SuccessCode.NO_CONTENT));
     }
 }
