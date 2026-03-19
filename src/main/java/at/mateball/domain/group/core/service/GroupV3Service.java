@@ -25,7 +25,6 @@ import at.mateball.domain.team.core.TeamNameMatch;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import at.mateball.storage.FileStorage;
-import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -334,36 +333,35 @@ public class GroupV3Service {
 
     @Transactional
     public void createRequest(Long userId, Long groupId) {
+        GroupValidationRes group = groupRepository.findValidateGroupData(groupId);
+        if (group == null) {
+            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
+        }
 
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
-
-        validateRequest(userId, group);
+        validateRequest(userId, group, groupId);
 
         try {
-            groupMemberRepository.createGroupMember(userId, groupId);
-            groupMemberRepository.updateMemberStatus(group.getLeader().getId(), group.getId(), GroupMemberStatus.NEW_REQUEST.getValue());
-
-            alarmService.createAlarm(group.getLeader().getId(), AlarmType.NEW_REQUEST, group.getId());
-        } catch (DataIntegrityViolationException | PersistenceException e) {
-            throw new BusinessException(BusinessErrorCode.DUPLICATED_MATCH_REQUEST);
+            groupMemberRepository.createGroupMemberV3(userId, groupId);
+            groupMemberRepository.updateMemberStatus(group.leaderId(), groupId, GroupMemberStatus.NEW_REQUEST.getValue());
+            alarmService.createAlarm(group.leaderId(), AlarmType.NEW_REQUEST, groupId);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException(BusinessErrorCode.NOT_ALLOWED_AGE);
         }
     }
 
-    private void validateRequest(Long userId, Group group) {
+    private void validateRequest(Long userId, GroupValidationRes group, Long groupId) {
 
-        validate(group.getGameInformation().getGameDate());
+        validate(group.gameDate());
 
-        if (group.getLeader().getId().equals(userId)) {
+        if (group.leaderId().equals(userId)) {
             throw new BusinessException(BusinessErrorCode.CANNOT_REQUEST_OWN_MATCH);
         }
 
-        if (group.getStatus() == GroupStatus.COMPLETED.getValue()) {
+        if (group.status() == GroupStatus.COMPLETED.getValue()) {
             throw new BusinessException(BusinessErrorCode.ALREADY_FINISHED_MATCH);
         }
 
-        RequestValidationRes data =
-                groupV3RepositoryCustom.getValidation(userId, group.getId());
+        RequestValidationRes data = groupV3RepositoryCustom.getValidation(userId, groupId);
 
         if (data.isDuplicatedRequest()) {
             throw new BusinessException(BusinessErrorCode.DUPLICATED_MATCH_REQUEST);
