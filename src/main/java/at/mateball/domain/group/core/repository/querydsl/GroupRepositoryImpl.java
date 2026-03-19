@@ -279,7 +279,6 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .select(Projections.constructor(
                         ChattingAccessRes.class,
                         chatting.chattingUrl,
-                        group.leader.id,
                         groupMember.status
                 ))
                 .from(group)
