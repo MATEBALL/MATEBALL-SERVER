@@ -5,6 +5,7 @@ import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.GroupMemberStatus;
+import at.mateball.domain.groupmember.api.dto.GroupMatchSummaryRes;
 import at.mateball.domain.groupmember.api.dto.GroupMemberCountRes;
 import at.mateball.domain.groupmember.api.dto.GroupMemberRes;
 import at.mateball.domain.groupmember.api.dto.base.*;
@@ -20,7 +21,6 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,12 +29,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static at.mateball.domain.matchrequirement.core.QMatchRequirement.matchRequirement;
-
 public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final EntityManager entityManager;
 
+    QGroupMember gm = QGroupMember.groupMember;
     QGroupMember groupMember = QGroupMember.groupMember;
     QGroup group = QGroup.group;
     QGameInformation game = QGameInformation.gameInformation;
@@ -842,14 +841,46 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
         return Optional.ofNullable(requesterId);
     }
 
-
     @Override
     public void createGroupMemberV3(Long userId, Long matchId) {
         User user = entityManager.getReference(User.class, userId);
         Group group = entityManager.getReference(Group.class, matchId);
 
-        GroupMember groupMember = GroupMember.member(user,group,GroupMemberStatus.AWAITING_APPROVAL.getValue());
+        GroupMember groupMember = GroupMember.member(user, group, GroupMemberStatus.AWAITING_APPROVAL.getValue());
 
         entityManager.persist(groupMember);
+    }
+
+    @Override
+    public void updateStatusAndParticipant(Long userId, Long groupId, int status) {
+        queryFactory.update(groupMember)
+                .set(groupMember.status, status)
+                .set(groupMember.isParticipant, true)
+                .where(groupMember.user.id.eq(userId), groupMember.group.id.eq(groupId))
+                .execute();
+    }
+
+    @Override
+    public Optional<GroupMatchSummaryRes> getMatchSummary(Long groupId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .select(Projections.constructor(
+                                GroupMatchSummaryRes.class,
+                                Expressions.numberTemplate(Long.class,
+                                        "MAX(CASE WHEN {0} = false AND {1} = {2} THEN {3} END)",
+                                        gm.isParticipant,
+                                        gm.status,
+                                        GroupMemberStatus.AWAITING_APPROVAL.getValue(),
+                                        gm.user.id
+                                ),
+                                Expressions.numberTemplate(Long.class,
+                                        "COALESCE(SUM(CASE WHEN {0} = true THEN 1 ELSE 0 END), 0)",
+                                        gm.isParticipant
+                                )
+                        ))
+                        .from(gm)
+                        .where(gm.group.id.eq(groupId))
+                        .fetchOne()
+        );
     }
 }
