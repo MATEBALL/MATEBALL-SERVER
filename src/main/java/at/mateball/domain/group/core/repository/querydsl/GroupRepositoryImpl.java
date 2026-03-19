@@ -5,6 +5,7 @@ import at.mateball.domain.gameinformation.core.QGameInformation;
 import at.mateball.domain.group.api.dto.ChattingAccessRes;
 import at.mateball.domain.group.api.dto.DirectCreateRes;
 import at.mateball.domain.group.api.dto.GroupCreateRes;
+import at.mateball.domain.group.api.dto.GroupValidationRes;
 import at.mateball.domain.group.api.dto.base.DirectCreateBaseRes;
 import at.mateball.domain.group.api.dto.base.DirectGetBaseRes;
 import at.mateball.domain.group.api.dto.base.GroupCreateBaseRes;
@@ -286,6 +287,21 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .leftJoin(groupMember)
                 .on(groupMember.group.id.eq(group.id)
                         .and(groupMember.user.id.eq(userId)))
+                .where(group.id.eq(groupId))
+                .fetchOne();
+    }
+
+    public GroupValidationRes findValidateGroupData(Long groupId) {
+        QGroup group = QGroup.group;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        GroupValidationRes.class,
+                        group.leader.id,
+                        group.gameInformation.gameDate,
+                        group.status
+                ))
+                .from(group)
                 .where(group.id.eq(groupId))
                 .fetchOne();
     }
