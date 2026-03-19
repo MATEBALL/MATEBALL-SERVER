@@ -142,11 +142,10 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         return queryFactory
                 .select(Projections.constructor(
                         MyPageInformationBaseRes.class,
-                        user.nickname,
+                        user,
                         matchRequirement.team,
                         matchRequirement.style,
-                        groupMember.id.count(),
-                        user.avgSeason
+                        groupMember.id.count()
                 ))
                 .from(user)
                 .leftJoin(matchRequirement)
@@ -159,7 +158,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .where(user.id.eq(userId))
                 .groupBy(
                         user.id,
-                        user.nickname,
                         matchRequirement.team,
                         matchRequirement.style,
                         user.avgSeason
