@@ -34,6 +34,14 @@ public enum GroupStatus {
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
     }
 
+    public static String labelOf(int value) {
+        return Arrays.stream(values())
+                .filter(status -> status.value == value)
+                .map(status -> status.label)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.BAD_REQUEST_ENUM));
+    }
+
     public String toResponseLabel() {
         return switch (this) {
             case PENDING -> "그룹원 모집중";
