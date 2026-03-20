@@ -170,7 +170,7 @@ class MatchSchedulerIntegrationTest {
         Group group = Group.create(userA, game, true);
         em.persist(group);
 
-        GroupMember m1 = new GroupMember(userB, group, true, GroupMemberStatus.PENDING_REQUEST.getValue(), true);
+        GroupMember m1 = new GroupMember(userA, group, true, GroupMemberStatus.PENDING_REQUEST.getValue(), true);
         GroupMember m2 = new GroupMember(userB, group, true, GroupMemberStatus.MATCHED.getValue(), false);
         em.persist(m1);
         em.persist(m2);
