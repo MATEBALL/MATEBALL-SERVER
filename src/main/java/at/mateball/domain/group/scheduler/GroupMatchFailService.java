@@ -1,6 +1,7 @@
 package at.mateball.domain.group.scheduler;
 
 import at.mateball.domain.group.core.repository.GroupRepository;
+import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,10 +13,14 @@ import java.util.List;
 @Service
 @Slf4j
 public class GroupMatchFailService {
-    private final GroupRepository groupRepository;
+    private static final int MIN_PARTICIPANT_FOR_COMPLETE = 2;
 
-    public GroupMatchFailService(GroupRepository groupRepository) {
+    private final GroupRepository groupRepository;
+    private final GroupMemberRepository groupMemberRepository;
+
+    public GroupMatchFailService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository) {
         this.groupRepository = groupRepository;
+        this.groupMemberRepository = groupMemberRepository;
     }
 
     @Transactional
@@ -43,5 +48,13 @@ public class GroupMatchFailService {
         }
 
         return today.plusDays(2);
+    }
+
+    public void validateFailStatus(Long groupId) {
+        int participantCount = groupMemberRepository.countGroupMember(groupId).count();
+
+        if (participantCount < MIN_PARTICIPANT_FOR_COMPLETE) {
+            groupMemberRepository.updateAllStatusFail(groupId);
+        }
     }
 }
