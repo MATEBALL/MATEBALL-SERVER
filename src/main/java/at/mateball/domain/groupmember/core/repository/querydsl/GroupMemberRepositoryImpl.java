@@ -841,4 +841,34 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
 
         return Optional.ofNullable(requesterId);
     }
+
+    @Override
+    public void updateAllStatusFail(Long groupId){
+        queryFactory
+                .update(groupMember)
+                .set(groupMember.status, GroupMemberStatus.MATCH_FAILED.getValue())
+                .where(groupMember.group.id.eq(groupId))
+                .execute();
+
+        queryFactory
+                .update(group)
+                .set(group.status, GroupStatus.FAILED.getValue())
+                .where(group.id.eq(groupId))
+                .execute();
+    }
+
+    @Override
+    public void updateAllStatusComplete(Long groupId){
+        queryFactory
+                .update(groupMember)
+                .set(groupMember.status, GroupMemberStatus.MATCHED.getValue())
+                .where(groupMember.group.id.eq(groupId))
+                .execute();
+
+        queryFactory
+                .update(group)
+                .set(group.status, GroupStatus.COMPLETED.getValue())
+                .where(group.id.eq(groupId))
+                .execute();
+    }
 }
