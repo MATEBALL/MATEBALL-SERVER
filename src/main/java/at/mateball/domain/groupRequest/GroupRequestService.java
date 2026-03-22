@@ -121,4 +121,17 @@ public class GroupRequestService {
         long totalMatched = summary.matchedParticipants() + 1;
         return totalMatched == TOTAL_GROUP_MEMBER;
     }
+
+    public void rejectRequest(Long userId, Long matchId) {
+        getValidatedGroup(userId, matchId);
+
+        GroupMatchSummaryRes summary = groupMemberV3Service.getMatchSummary(matchId);
+        Long requesterId = Optional.ofNullable(summary.requesterId())
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
+
+        groupMemberV3Service.updateLeaderStatusPending(userId, matchId);
+        groupMemberV3Service.updateMemberStatusFailed(requesterId, matchId);
+
+        alarmService.readAllAlarms(userId);
+    }
 }

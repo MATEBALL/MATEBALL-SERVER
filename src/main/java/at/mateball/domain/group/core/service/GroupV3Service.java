@@ -1,10 +1,8 @@
 package at.mateball.domain.group.core.service;
 
-import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
-import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupExecutorV3;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.MatchType;
@@ -13,13 +11,10 @@ import at.mateball.domain.group.core.calculator.MatchingScoreCalculator;
 import at.mateball.domain.group.core.calculator.MatchingTarget;
 import at.mateball.domain.group.core.calculator.common.GroupMatchAggregator;
 import at.mateball.domain.group.core.repository.GroupRepository;
-import at.mateball.domain.group.core.validator.GroupValidator;
 import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.groupRequest.GroupRequestService;
 import at.mateball.domain.groupmember.GroupMemberStatus;
-import at.mateball.domain.groupmember.api.dto.GroupMatchSummaryRes;
-import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.core.constant.StyleMatch;
 import at.mateball.domain.team.core.TeamNameMatch;
 import at.mateball.exception.BusinessException;
@@ -30,7 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static at.mateball.domain.group.core.validator.DateValidator.validate;
@@ -42,10 +40,8 @@ public class GroupV3Service {
 
     private static final String NEW_REQUEST_LABEL = "새요청";
 
-    private final AlarmService alarmService;
     private final GroupRepository groupRepository;
     private final GroupRequestService groupRequestService;
-    private final GroupMemberRepository groupMemberRepository;
     private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final GroupMatchAggregator groupMatchAggregator;
     private final MatchImageAssembler matchImageAssembler;
@@ -337,39 +333,8 @@ public class GroupV3Service {
         groupRequestService.permitRequest(userId, groupId);
     }
 
-    private Group getValidatedGroup(Long userId, Long groupId) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
-
-        GroupValidator.validate(group);
-
-        if (!group.getLeader().getId().equals(userId)) {
-            throw new BusinessException(BusinessErrorCode.NOT_MATCH_LEADER);
-        }
-
-        return group;
-    }
-
-    private void updateLeaderStatusPending(Long userId, Long groupId) {
-        groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
-    }
-
     @Transactional
     public void rejectRequest(Long userId, Long matchId) {
-        getValidatedGroup(userId, matchId);
-
-        GroupMatchSummaryRes summary = groupMemberRepository.getMatchSummary(matchId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUEST_NOT_FOUND));
-        Long requesterId = Optional.ofNullable(summary.requesterId())
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
-
-        updateLeaderStatusPending(userId, matchId);
-        updateMemberStatusFailed(requesterId, matchId);
-
-        alarmService.readAllAlarms(userId);
-    }
-
-    private void updateMemberStatusFailed(Long userId, Long groupId) {
-        groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.MATCH_FAILED.getValue());
+        groupRequestService.rejectRequest(userId, matchId);
     }
 }
