@@ -1,13 +1,10 @@
 package at.mateball.domain.group.core.service;
 
-import at.mateball.domain.alarm.common.AlarmType;
 import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
-import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
-import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupExecutorV3;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.MatchType;
@@ -18,6 +15,7 @@ import at.mateball.domain.group.core.calculator.common.GroupMatchAggregator;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
+import at.mateball.domain.groupRequest.GroupRequestService;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.core.constant.StyleMatch;
@@ -26,7 +24,6 @@ import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import at.mateball.storage.FileStorage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +47,7 @@ public class GroupV3Service {
     private final GameInformationRepository gameInformationRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final AlarmService alarmService;
+    private final GroupRequestService groupRequestService;
     private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final GroupMatchAggregator groupMatchAggregator;
     private final MatchImageAssembler matchImageAssembler;
@@ -333,42 +331,6 @@ public class GroupV3Service {
 
     @Transactional
     public void createRequest(Long userId, Long groupId) {
-        GroupValidationRes group = groupRepository.findValidateGroupData(groupId);
-        if (group == null) {
-            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
-        }
-
-        validateRequest(userId, group, groupId);
-
-        try {
-            groupMemberRepository.createGroupMemberV3(userId, groupId);
-            groupMemberRepository.updateMemberStatus(group.leaderId(), groupId, GroupMemberStatus.NEW_REQUEST.getValue());
-            alarmService.createAlarm(group.leaderId(), AlarmType.NEW_REQUEST, groupId);
-        } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(BusinessErrorCode.DUPLICATED_MATCH_REQUEST);
-        }
-    }
-
-    private void validateRequest(Long userId, GroupValidationRes group, Long groupId) {
-
-        validate(group.gameDate());
-
-        if (group.leaderId().equals(userId)) {
-            throw new BusinessException(BusinessErrorCode.CANNOT_REQUEST_OWN_MATCH);
-        }
-
-        if (group.status() == GroupStatus.COMPLETED.getValue()) {
-            throw new BusinessException(BusinessErrorCode.ALREADY_FINISHED_MATCH);
-        }
-
-        RequestValidationRes data = groupV3RepositoryCustom.getValidation(userId, groupId);
-
-        if (data.isDuplicatedRequest()) {
-            throw new BusinessException(BusinessErrorCode.DUPLICATED_MATCH_REQUEST);
-        }
-
-        if (data.hasPendingRequest()) {
-            throw new BusinessException(BusinessErrorCode.ALREADY_HAS_PENDING_REQUEST);
-        }
+        groupRequestService.createRequest(userId, groupId);
     }
 }
