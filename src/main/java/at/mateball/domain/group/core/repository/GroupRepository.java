@@ -2,11 +2,15 @@ package at.mateball.domain.group.core.repository;
 
 import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.repository.querydsl.GroupRepositoryCustom;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long>, GroupRepositoryCustom {
@@ -17,4 +21,8 @@ public interface GroupRepository extends JpaRepository<Group, Long>, GroupReposi
     @Modifying
     @Query("delete from Group g where g.leader.id = :userId")
     void deleteAllByLeaderId(@Param("userId") Long userId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select g from Group g where g.id = :groupId")
+    Optional<Group> findGroupWithLock(Long groupId);
 }
