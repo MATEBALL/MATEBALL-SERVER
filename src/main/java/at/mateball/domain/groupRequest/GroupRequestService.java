@@ -35,7 +35,6 @@ public class GroupRequestService {
     private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final AlarmService alarmService;
     private final GroupMemberV3Service groupMemberV3Service;
-    private final GroupV3Service groupV3Service;
     private final GroupRequestValidator groupRequestValidator;
     private final ConstraintExceptionTranslator constraintExceptionTranslator;
     private final EntityManager entityManager;
