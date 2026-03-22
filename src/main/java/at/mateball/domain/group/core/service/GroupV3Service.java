@@ -18,6 +18,7 @@ import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.groupRequest.GroupRequestService;
 import at.mateball.domain.groupmember.GroupMemberStatus;
+import at.mateball.domain.groupmember.api.dto.GroupMatchSummaryRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.core.constant.StyleMatch;
 import at.mateball.domain.team.core.TeamNameMatch;
@@ -29,10 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static at.mateball.domain.group.core.validator.DateValidator.validate;
@@ -44,6 +42,7 @@ public class GroupV3Service {
 
     private static final String NEW_REQUEST_LABEL = "새요청";
 
+    private final AlarmService alarmService;
     private final GroupRepository groupRepository;
     private final GroupRequestService groupRequestService;
     private final GroupMemberRepository groupMemberRepository;
