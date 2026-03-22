@@ -1,12 +1,10 @@
 package at.mateball.domain.group.core.service;
 
-import at.mateball.domain.alarm.common.AlarmType;
 import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.gameinformation.core.repository.GameInformationRepository;
 import at.mateball.domain.group.api.dto.*;
 import at.mateball.domain.group.api.dto.base.GroupMatchBaseRes;
-import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.GroupExecutorV3;
 import at.mateball.domain.group.core.GroupStatus;
 import at.mateball.domain.group.core.MatchType;
@@ -15,12 +13,10 @@ import at.mateball.domain.group.core.calculator.MatchingScoreCalculator;
 import at.mateball.domain.group.core.calculator.MatchingTarget;
 import at.mateball.domain.group.core.calculator.common.GroupMatchAggregator;
 import at.mateball.domain.group.core.repository.GroupRepository;
-import at.mateball.domain.group.core.validator.GroupValidator;
 import at.mateball.domain.group.infrastructure.dto.*;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.groupRequest.GroupRequestService;
 import at.mateball.domain.groupmember.GroupMemberStatus;
-import at.mateball.domain.groupmember.api.dto.GroupMatchSummaryRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.matchrequirement.core.constant.StyleMatch;
 import at.mateball.domain.team.core.TeamNameMatch;
@@ -32,7 +28,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static at.mateball.domain.group.core.validator.DateValidator.validate;
@@ -43,12 +42,8 @@ import static at.mateball.domain.group.core.validator.DateValidator.validate;
 public class GroupV3Service {
 
     private static final String NEW_REQUEST_LABEL = "새요청";
-    private static final int TOTAL_GROUP_MEMBER = 4;
 
     private final GroupRepository groupRepository;
-    private final GameInformationRepository gameInformationRepository;
-    private final GroupMemberRepository groupMemberRepository;
-    private final AlarmService alarmService;
     private final GroupRequestService groupRequestService;
     private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final GroupMatchAggregator groupMatchAggregator;
@@ -338,81 +333,7 @@ public class GroupV3Service {
 
     @Transactional
     public void permitRequest(Long userId, Long groupId) {
-        Group group = getValidatedGroup(userId, groupId);
-        boolean isGroup = group.isGroup();
-
-        GroupMatchSummaryRes summary = groupMemberRepository.getMatchSummary(groupId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUEST_NOT_FOUND));
-        Long requesterId = Optional.ofNullable(summary.requesterId())
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
-
-        if (isGroup) processGroupMatch(userId, requesterId, groupId, summary);
-        else processDirectMatch(userId, requesterId, groupId);
+        groupRequestService.permitRequest(userId, groupId);
     }
 
-    private Group getValidatedGroup(Long userId, Long groupId) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
-
-        GroupValidator.validate(group);
-
-        if (!group.getLeader().getId().equals(userId)) {
-            throw new BusinessException(BusinessErrorCode.NOT_MATCH_LEADER);
-        }
-
-        return group;
-    }
-
-    private void processDirectMatch(Long userId, Long requesterId, Long groupId) {
-        updateMemberStatusMatched(userId, groupId);
-        updateMemberStatusMatched(requesterId, groupId);
-
-        updateGroupStatusCompleted(groupId);
-
-        notifyMatched(userId, groupId);
-        notifyMatched(requesterId, groupId);
-    }
-
-    private void processGroupMatch(Long userId, Long requesterId, Long groupId, GroupMatchSummaryRes summary) {
-        updateMemberStatusMatched(requesterId, groupId);
-
-        boolean isFull = isGroupFull(summary);
-
-        if (isFull) {
-            updateMemberStatusMatched(userId, groupId);
-            updateGroupStatusCompleted(groupId);
-
-            notifyMatched(userId, groupId);
-            notifyMatched(requesterId, groupId);
-        } else {
-            updateLeaderStatusPending(userId, groupId);
-            alarmService.readAllAlarms(userId);
-            notifyApproved(requesterId, groupId);
-        }
-    }
-
-    private boolean isGroupFull(GroupMatchSummaryRes summary) {
-        long totalMatched = summary.matchedParticipants() + 1;
-        return totalMatched == TOTAL_GROUP_MEMBER;
-    }
-
-    private void updateMemberStatusMatched(Long userId, Long groupId) {
-        groupMemberRepository.updateStatusAndParticipant(userId, groupId, GroupMemberStatus.MATCHED.getValue());
-    }
-
-    private void updateLeaderStatusPending(Long userId, Long groupId) {
-        groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
-    }
-
-    private void updateGroupStatusCompleted(Long groupId) {
-        groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
-    }
-
-    private void notifyMatched(Long userId, Long groupId) {
-        alarmService.createOrUpdateAlarm(userId, AlarmType.MATCHED, groupId);
-    }
-
-    private void notifyApproved(Long userId, Long groupId) {
-        alarmService.createOrUpdateAlarm(userId, AlarmType.APPROVED, groupId);
-    }
 }

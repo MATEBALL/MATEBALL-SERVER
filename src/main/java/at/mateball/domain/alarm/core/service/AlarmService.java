@@ -71,4 +71,14 @@ public class AlarmService {
 
         alarms.forEach(Alarm::markAsRead);
     }
+
+    @Transactional
+    public void notifyMatched(Long userId, Long groupId) {
+        createOrUpdateAlarm(userId, AlarmType.MATCHED, groupId);
+    }
+
+    @Transactional
+    public void notifyApproved(Long userId, Long groupId) {
+        createOrUpdateAlarm(userId, AlarmType.APPROVED, groupId);
+    }
 }
