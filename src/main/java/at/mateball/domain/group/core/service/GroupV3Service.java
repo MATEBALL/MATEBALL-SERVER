@@ -335,85 +335,84 @@ public class GroupV3Service {
     public void createRequest(Long userId, Long groupId) {
         groupRequestService.createRequest(userId, groupId);
     }
-}
 
+    @Transactional
+    public void permitRequest(Long userId, Long groupId) {
+        Group group = getValidatedGroup(userId, groupId);
+        boolean isGroup = group.isGroup();
 
-@Transactional
-public void permitRequest(Long userId, Long groupId) {
-    Group group = getValidatedGroup(userId, groupId);
-    boolean isGroup = group.isGroup();
+        GroupMatchSummaryRes summary = groupMemberRepository.getMatchSummary(groupId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUEST_NOT_FOUND));
+        Long requesterId = Optional.ofNullable(summary.requesterId())
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
 
-    GroupMatchSummaryRes summary = groupMemberRepository.getMatchSummary(groupId)
-            .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUEST_NOT_FOUND));
-    Long requesterId = Optional.ofNullable(summary.requesterId())
-            .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
-
-    if (isGroup) processGroupMatch(userId, requesterId, groupId, summary);
-    else processDirectMatch(userId, requesterId, groupId);
-}
-
-private Group getValidatedGroup(Long userId, Long groupId) {
-    Group group = groupRepository.findById(groupId)
-            .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
-
-    GroupValidator.validate(group);
-
-    if (!group.getLeader().getId().equals(userId)) {
-        throw new BusinessException(BusinessErrorCode.NOT_MATCH_LEADER);
+        if (isGroup) processGroupMatch(userId, requesterId, groupId, summary);
+        else processDirectMatch(userId, requesterId, groupId);
     }
 
-    return group;
-}
+    private Group getValidatedGroup(Long userId, Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
 
-private void processDirectMatch(Long userId, Long requesterId, Long groupId) {
-    updateMemberStatusMatched(userId, groupId);
-    updateMemberStatusMatched(requesterId, groupId);
+        GroupValidator.validate(group);
 
-    updateGroupStatusCompleted(groupId);
+        if (!group.getLeader().getId().equals(userId)) {
+            throw new BusinessException(BusinessErrorCode.NOT_MATCH_LEADER);
+        }
 
-    notifyMatched(userId, groupId);
-    notifyMatched(requesterId, groupId);
-}
+        return group;
+    }
 
-private void processGroupMatch(Long userId, Long requesterId, Long groupId, GroupMatchSummaryRes summary) {
-    updateMemberStatusMatched(requesterId, groupId);
-
-    boolean isFull = isGroupFull(summary);
-
-    if (isFull) {
+    private void processDirectMatch(Long userId, Long requesterId, Long groupId) {
         updateMemberStatusMatched(userId, groupId);
+        updateMemberStatusMatched(requesterId, groupId);
+
         updateGroupStatusCompleted(groupId);
 
         notifyMatched(userId, groupId);
         notifyMatched(requesterId, groupId);
-    } else {
-        updateLeaderStatusPending(userId, groupId);
-        alarmService.readAllAlarms(userId);
-        notifyApproved(requesterId, groupId);
     }
 
-    private boolean isGroupFull (GroupMatchSummaryRes summary){
+    private void processGroupMatch(Long userId, Long requesterId, Long groupId, GroupMatchSummaryRes summary) {
+        updateMemberStatusMatched(requesterId, groupId);
+
+        boolean isFull = isGroupFull(summary);
+
+        if (isFull) {
+            updateMemberStatusMatched(userId, groupId);
+            updateGroupStatusCompleted(groupId);
+
+            notifyMatched(userId, groupId);
+            notifyMatched(requesterId, groupId);
+        } else {
+            updateLeaderStatusPending(userId, groupId);
+            alarmService.readAllAlarms(userId);
+            notifyApproved(requesterId, groupId);
+        }
+    }
+
+    private boolean isGroupFull(GroupMatchSummaryRes summary) {
         long totalMatched = summary.matchedParticipants() + 1;
         return totalMatched == TOTAL_GROUP_MEMBER;
     }
 
-    private void updateMemberStatusMatched (Long userId, Long groupId){
+    private void updateMemberStatusMatched(Long userId, Long groupId) {
         groupMemberRepository.updateStatusAndParticipant(userId, groupId, GroupMemberStatus.MATCHED.getValue());
     }
 
-    private void updateLeaderStatusPending (Long userId, Long groupId){
+    private void updateLeaderStatusPending(Long userId, Long groupId) {
         groupMemberRepository.updateMemberStatus(userId, groupId, GroupMemberStatus.PENDING_REQUEST.getValue());
     }
 
-    private void updateGroupStatusCompleted (Long groupId){
+    private void updateGroupStatusCompleted(Long groupId) {
         groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
     }
 
-    private void notifyMatched (Long userId, Long groupId){
+    private void notifyMatched(Long userId, Long groupId) {
         alarmService.createOrUpdateAlarm(userId, AlarmType.MATCHED, groupId);
     }
 
-    private void notifyApproved (Long userId, Long groupId){
+    private void notifyApproved(Long userId, Long groupId) {
         alarmService.createOrUpdateAlarm(userId, AlarmType.APPROVED, groupId);
     }
 }
