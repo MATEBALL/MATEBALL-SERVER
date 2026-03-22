@@ -69,7 +69,10 @@ public enum BusinessErrorCode implements ErrorCode {
     // 429 TOO MANY REQUESTS
     EXCEED_GROUP_MATCHING_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "그룹 매칭은 최대 2개까지만 가능합니다."),
     EXCEED_DIRECT_MATCHING_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "1대1 매칭은 최대 3개까지만 가능합니다."),
-    EXCEED_MATCHING_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "한 경기에는 하나의 매칭만 생성할 수 있습니다.");
+    EXCEED_MATCHING_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "한 경기에는 하나의 매칭만 생성할 수 있습니다."),
+
+    // 501 Not Supported Error
+    ERROR_UNKNOWN_ERROR(HttpStatus.NOT_IMPLEMENTED, "서버 내부 오류: 에러 코드를 추출할 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;
