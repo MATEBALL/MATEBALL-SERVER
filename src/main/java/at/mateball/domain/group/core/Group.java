@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "match_group",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"user_id", "game_information_id"}),
-                @UniqueConstraint(columnNames = {"chatting_id"})
+                @UniqueConstraint(name = "uk_group_chatting", columnNames = {"chatting_id"})
         }
 )
 public class Group {

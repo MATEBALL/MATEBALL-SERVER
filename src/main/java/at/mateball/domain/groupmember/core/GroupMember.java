@@ -11,7 +11,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "group_member")
+@Table(name = "group_member",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_group_member_user_group", columnNames = {"user_id", "group_id"})
+        }
+)
 @EntityListeners(AuditingEntityListener.class)
 public class GroupMember {
 
