@@ -23,6 +23,12 @@ public interface GroupRepository extends JpaRepository<Group, Long>, GroupReposi
     void deleteAllByLeaderId(@Param("userId") Long userId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select g from Group g where g.id = :groupId")
+    @Query("""
+                select g
+                from Group g
+                join fetch g.leader
+                join fetch g.gameInformation
+                where g.id = :groupId
+            """)
     Optional<Group> findGroupWithLock(Long groupId);
 }
