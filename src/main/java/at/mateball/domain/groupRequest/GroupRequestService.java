@@ -10,9 +10,10 @@ import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCusto
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.exception.BusinessException;
+import at.mateball.exception.ConstraintExceptionTranslator;
 import at.mateball.exception.code.BusinessErrorCode;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,8 @@ public class GroupRequestService {
     private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final AlarmService alarmService;
     private final GroupRequestValidator groupRequestValidator;
+    private final ConstraintExceptionTranslator constraintExceptionTranslator;
+    private final EntityManager entityManager;
 
     @Transactional
     public void createRequest(Long userId, Long groupId) {
@@ -39,8 +42,9 @@ public class GroupRequestService {
             groupMemberRepository.createGroupMemberV3(userId, groupId);
             groupMemberRepository.updateMemberStatus(validatedGroup.leaderId(), groupId, GroupMemberStatus.NEW_REQUEST.getValue());
             alarmService.createAlarm(validatedGroup.leaderId(), AlarmType.NEW_REQUEST, groupId);
-        } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(BusinessErrorCode.DUPLICATED_MATCH_REQUEST);
+            entityManager.flush();
+        } catch (Exception e) {
+            throw constraintExceptionTranslator.translate(e);
         }
     }
 }
