@@ -7,23 +7,23 @@ import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.GroupMember;
 import at.mateball.domain.user.core.User;
 import at.mateball.exception.BusinessException;
+import at.mateball.exception.ConstraintExceptionTranslator;
 import at.mateball.exception.code.BusinessErrorCode;
 import jakarta.persistence.EntityManager;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import static at.mateball.exception.code.BusinessErrorCode.EXCEED_MATCHING_LIMIT;
 
 @Component
 public class GroupExecutorV3 {
 
     private final EntityManager entityManager;
     private final ChattingV2Service chattingV2Service;
+    private final ConstraintExceptionTranslator constraintExceptionTranslator;
 
-    public GroupExecutorV3(EntityManager entityManager, ChattingV2Service chattingV2Service) {
+    public GroupExecutorV3(EntityManager entityManager, ChattingV2Service chattingV2Service, ConstraintExceptionTranslator constraintExceptionTranslator) {
         this.entityManager = entityManager;
         this.chattingV2Service = chattingV2Service;
+        this.constraintExceptionTranslator = constraintExceptionTranslator;
     }
 
     @Transactional
@@ -53,8 +53,8 @@ public class GroupExecutorV3 {
 
             return group.getId();
 
-        } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(EXCEED_MATCHING_LIMIT);
+        } catch (Exception e) {
+            throw constraintExceptionTranslator.translate(e);
         }
     }
 }
