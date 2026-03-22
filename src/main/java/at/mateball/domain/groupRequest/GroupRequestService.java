@@ -4,6 +4,7 @@ import at.mateball.domain.alarm.common.AlarmType;
 import at.mateball.domain.alarm.core.service.AlarmService;
 import at.mateball.domain.group.api.dto.GroupValidationRes;
 import at.mateball.domain.group.api.dto.RequestValidationRes;
+import at.mateball.domain.group.core.Group;
 import at.mateball.domain.group.core.repository.GroupRepository;
 import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.groupmember.GroupMemberStatus;
@@ -27,18 +28,17 @@ public class GroupRequestService {
 
     @Transactional
     public void createRequest(Long userId, Long groupId) {
-        GroupValidationRes group = groupRepository.findValidateGroupData(groupId);
-        if (group == null) {
-            throw new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND);
-        }
+        Group group = groupRepository.findGroupWithLock(groupId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
 
+        GroupValidationRes validatedGroup = GroupValidationRes.from(group);
         RequestValidationRes validationData = groupV3RepositoryCustom.getValidation(userId, groupId);
-        groupRequestValidator.validateCreateRequest(userId, group, validationData);
+        groupRequestValidator.validateCreateRequest(userId, validatedGroup, validationData);
 
         try {
             groupMemberRepository.createGroupMemberV3(userId, groupId);
-            groupMemberRepository.updateMemberStatus(group.leaderId(), groupId, GroupMemberStatus.NEW_REQUEST.getValue());
-            alarmService.createAlarm(group.leaderId(), AlarmType.NEW_REQUEST, groupId);
+            groupMemberRepository.updateMemberStatus(validatedGroup.leaderId(), groupId, GroupMemberStatus.NEW_REQUEST.getValue());
+            alarmService.createAlarm(validatedGroup.leaderId(), AlarmType.NEW_REQUEST, groupId);
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(BusinessErrorCode.DUPLICATED_MATCH_REQUEST);
         }
