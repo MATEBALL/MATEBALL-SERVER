@@ -16,8 +16,13 @@ public class ConstraintExceptionTranslator {
 
     public BusinessException translate(Exception e) {
         String constraint = extractConstraintName(e);
+
         BusinessErrorCode errorCode = CONSTRAINT_MAP.get(constraint);
-        return new BusinessException(errorCode);
+        if (errorCode != null) {
+            return new BusinessException(errorCode);
+        }
+
+        return new BusinessException(BusinessErrorCode.ERROR_UNKNOWN_ERROR);
     }
 
     private String extractConstraintName(Throwable e) {
