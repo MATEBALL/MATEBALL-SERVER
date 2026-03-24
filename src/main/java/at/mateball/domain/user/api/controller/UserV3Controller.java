@@ -55,4 +55,14 @@ public class UserV3Controller {
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, data));
     }
+
+    @GetMapping("/count")
+    @Operation(summary = "가입자 수 조회 api")
+    public ResponseEntity<MateballResponse<?>> getUsersCount(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        UserCountRes response = userService.getUsersCount(userId);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, response));
+    }
 }
