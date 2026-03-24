@@ -5,6 +5,7 @@ import at.mateball.domain.matchrequirement.core.repository.MatchRequirementRepos
 import at.mateball.domain.team.core.TeamName;
 import at.mateball.domain.user.api.dto.response.MyPageInformationBaseRes;
 import at.mateball.domain.user.api.dto.response.MyPageInformationRes;
+import at.mateball.domain.user.api.dto.response.UserCountRes;
 import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
@@ -57,5 +58,10 @@ public class UserV3Service {
         String imageUrl = userProfileImageService.getProfileImageUrl(baseRes.user());
 
         return MyPageInformationRes.from(baseRes,imageUrl);
+    }
+
+    public UserCountRes getUsersCount(Long userId) {
+        Long userCnt = userRepository.countByIdNot(userId);
+        return new UserCountRes(userCnt);
     }
 }

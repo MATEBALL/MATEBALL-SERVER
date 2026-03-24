@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
     Optional<User> findByKakaoUserId(Long kakaoUserId);
     @Query("select u.nickname from User u where u.id = :id")
     String findNicknameById(@Param("id") Long id);
+
+    Long countByIdNot(Long userId);
 }

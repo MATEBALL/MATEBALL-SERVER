@@ -5,6 +5,7 @@ import at.mateball.common.security.CustomUserDetails;
 import at.mateball.domain.user.api.dto.response.MyPageInformationRes;
 import at.mateball.domain.chatting.api.dto.response.ChattingRes;
 import at.mateball.domain.group.core.service.GroupV3Service;
+import at.mateball.domain.user.api.dto.response.UserCountRes;
 import at.mateball.domain.user.core.service.UserV3Service;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,7 +62,9 @@ public class UserV3Controller {
     public ResponseEntity<MateballResponse<?>> getUsersCount(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        UserCountRes response = userService.getUsersCount(userId);
+        Long userId = customUserDetails.getUserId();
+
+        UserCountRes response = userV3Service.getUsersCount(userId);
 
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, response));
     }
