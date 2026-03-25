@@ -363,7 +363,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
         User user = entityManager.getReference(User.class, userId);
         Group group = entityManager.getReference(Group.class, matchId);
 
-        GroupMember groupMember = new GroupMember(user, group, false, GroupMemberStatus.AWAITING_APPROVAL.getValue());
+        GroupMember groupMember = new GroupMember(user, group, false, GroupMemberStatus.AWAITING_APPROVAL.getValue(), false);
 
         entityManager.persist(groupMember);
     }

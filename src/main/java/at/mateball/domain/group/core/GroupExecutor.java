@@ -36,7 +36,7 @@ public class GroupExecutor {
         Group group = new Group(user, game, LocalDateTime.now(), GroupStatus.PENDING.getValue(), isGroup);
         entityManager.persist(group);
 
-        GroupMember leader = new GroupMember(user, group, true, GroupMemberStatus.PENDING_REQUEST.getValue());
+        GroupMember leader = new GroupMember(user, group, true, GroupMemberStatus.PENDING_REQUEST.getValue(),true); //v1 버전 해결 (임시)
         entityManager.persist(leader);
 
         return group.getId();
