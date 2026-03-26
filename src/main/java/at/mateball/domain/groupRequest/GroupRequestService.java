@@ -122,6 +122,7 @@ public class GroupRequestService {
         return totalMatched == TOTAL_GROUP_MEMBER;
     }
 
+    @Transactional
     public void rejectRequest(Long userId, Long matchId) {
         getValidatedGroup(userId, matchId);
 
