@@ -12,7 +12,8 @@ public record GroupMatchMemberQueryDto(
         Integer teamAllowed,
         Integer style,
         Integer avgSeason,
-        String profileImageKey
+        String profileImageKey,
+        Boolean isLeader
 ) {
     public MatchingTarget toMatchingTarget() {
         return new MatchingTarget(

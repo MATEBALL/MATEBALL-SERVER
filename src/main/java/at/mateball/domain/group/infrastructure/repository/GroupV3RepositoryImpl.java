@@ -206,24 +206,6 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
     }
 
     @Override
-    public Optional<String> findLeaderNicknameByMatchId(Long matchId) {
-        QGroupMember leaderMember = new QGroupMember("leaderMember");
-        QUser leaderUser = new QUser("leaderUser");
-
-        return Optional.ofNullable(
-                queryFactory
-                        .select(leaderUser.nickname)
-                        .from(leaderMember)
-                        .join(leaderMember.user, leaderUser)
-                        .where(
-                                leaderMember.group.id.eq(matchId),
-                                leaderMember.isLeader.isTrue()
-                        )
-                        .fetchOne()
-        );
-    }
-
-    @Override
     public List<GroupMatchMemberQueryDto> findMatchMembersByMatchId(Long matchId) {
         QGroupMember groupMember = new QGroupMember("groupMember");
         QUser memberUser = new QUser("memberUser");
@@ -241,7 +223,8 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                         memberRequirement.teamAllowed,
                         memberRequirement.style,
                         memberUser.avgSeason,
-                        memberUser.profileImageKey
+                        memberUser.profileImageKey,
+                        groupMember.isLeader
                 ))
                 .from(groupMember)
                 .join(groupMember.user, memberUser)

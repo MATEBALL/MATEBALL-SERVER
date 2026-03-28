@@ -145,9 +145,6 @@ public class GroupV3Service {
         List<GroupMatchMemberQueryDto> members =
                 groupV3RepositoryCustom.findMatchMembersByMatchId(matchId);
 
-        String leaderNickname = groupV3RepositoryCustom.findLeaderNicknameByMatchId(matchId)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
-
         MatchingTarget loginUserTarget = loginRequirement.toTarget(userId);
 
         List<Long> memberIds = members.stream()
@@ -159,6 +156,12 @@ public class GroupV3Service {
                         MemberMatchCountDto::memberId,
                         MemberMatchCountDto::matchCount
                 ));
+
+        String leaderNickname = members.stream()
+                .filter(GroupMatchMemberQueryDto::isLeader)
+                .findFirst()
+                .map(GroupMatchMemberQueryDto::nickname)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
 
         List<GroupMatchMemberRes> results = members.stream()
                 .map(member -> toGroupMatchMemberRes(
