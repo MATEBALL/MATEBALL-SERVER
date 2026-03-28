@@ -142,6 +142,9 @@ public class GroupV3Service {
         List<GroupMatchMemberQueryDto> members =
                 groupV3RepositoryCustom.findMatchMembersByMatchId(matchId);
 
+        String leaderNickname = groupV3RepositoryCustom.findLeaderNicknameByMatchId(matchId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
         MatchingTarget loginUserTarget = loginRequirement.toTarget(userId);
 
         List<Long> memberIds = members.stream()
@@ -162,7 +165,7 @@ public class GroupV3Service {
                 ))
                 .toList();
 
-        return new GroupMatchMemberListRes(results);
+        return new GroupMatchMemberListRes(leaderNickname, results);
     }
 
     private void validateNotOwnMatch(Long userId, Long matchId) {
