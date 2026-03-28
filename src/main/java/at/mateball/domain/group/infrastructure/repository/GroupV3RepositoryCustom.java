@@ -23,8 +23,6 @@ public interface GroupV3RepositoryCustom {
 
     Optional<Long> findLeaderIdByMatchId(Long matchId);
 
-    Optional<String> findLeaderNicknameByMatchId(Long matchId);
-
     List<GroupMatchMemberQueryDto> findMatchMembersByMatchId(Long matchId);
 
     List<MemberMatchCountDto> countGroupMembersByUserIds(List<Long> memberIds);
