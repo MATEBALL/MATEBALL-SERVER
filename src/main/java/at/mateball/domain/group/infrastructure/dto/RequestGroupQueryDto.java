@@ -11,6 +11,7 @@ public record RequestGroupQueryDto(
         Boolean isGroup,
         String awayTeam,
         String homeTeam,
+        String stadium,
         LocalDate date,
         Integer status
 ) {

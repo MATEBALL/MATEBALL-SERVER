@@ -9,6 +9,7 @@ public record CreateGroupQueryDto(
         Boolean isGroup,
         String awayTeam,
         String homeTeam,
+        String stadium,
         LocalDate date,
         Integer status,
         Boolean hasNewRequest
