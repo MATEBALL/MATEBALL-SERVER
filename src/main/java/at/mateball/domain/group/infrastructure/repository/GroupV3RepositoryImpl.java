@@ -146,6 +146,7 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                         group.isGroup,
                         group.gameInformation.awayTeamName,
                         group.gameInformation.homeTeamName,
+                        group.gameInformation.stadiumName,
                         group.gameInformation.gameDate,
                         group.status,
                         newRequestFlag.max().eq(1)
@@ -281,6 +282,7 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                         group.isGroup,
                         gameInformation.awayTeamName,
                         gameInformation.homeTeamName,
+                        gameInformation.stadiumName,
                         gameInformation.gameDate,
                         groupMember.status
                 ))
