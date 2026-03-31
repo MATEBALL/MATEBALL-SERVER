@@ -10,6 +10,7 @@ public record RequestGroupRes(
         Boolean isGroup,
         String awayTeam,
         String homeTeam,
+        String stadium,
         LocalDate date,
         String stateLabel,
         String update,
