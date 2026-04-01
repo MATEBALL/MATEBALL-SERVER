@@ -136,7 +136,14 @@ public class GroupV3Service {
 
     public GroupMatchMemberListRes getMatchGroupMembers(Long userId, Long matchId) {
         validateNotOwnMatch(userId, matchId);
+        return buildGroupMatchMemberList(userId, matchId);
+    }
 
+    public GroupMatchMemberListRes getMatchStatusGroupMembers(Long userId, Long matchId) {
+        return buildGroupMatchMemberList(userId, matchId);
+    }
+
+    private GroupMatchMemberListRes buildGroupMatchMemberList(Long userId, Long matchId) {
         LoginUserMatchRequirementDto loginRequirement = groupV3RepositoryCustom.findLoginUserMatchRequirement(userId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND));
 

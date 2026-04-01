@@ -59,6 +59,19 @@ public class GroupV3Controller {
         return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
     }
 
+    @GetMapping("/match-status/members/{matchId}")
+    @Operation(summary = "매칭현황 매칭된 그룹원 리스트 api")
+    public ResponseEntity<MateballResponse<GroupMatchMemberListRes>> getMatchStatusGroupMembers(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long matchId
+    ) {
+        Long userId = customUserDetails.getUserId();
+
+        GroupMatchMemberListRes result = groupV3Service.getMatchStatusGroupMembers(userId, matchId);
+
+        return ResponseEntity.ok(MateballResponse.success(SuccessCode.OK, result));
+    }
+
     @GetMapping("request")
     @Operation(summary = "요청한 매칭 리스트 조회 api")
     public ResponseEntity<MateballResponse<RequestGroupListRes>> getRequestGroupList(
