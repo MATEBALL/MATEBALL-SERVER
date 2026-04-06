@@ -34,4 +34,6 @@ public interface GroupV3RepositoryCustom {
     MatchValidationRes getMatchValidationInfo(Long userId, Long gameId);
 
     RequestValidationRes getValidation(Long userId, Long groupId);
+
+    Optional<String> findNicknameByUserId(Long userId);
 }

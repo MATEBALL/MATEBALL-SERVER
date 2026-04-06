@@ -162,11 +162,8 @@ public class GroupV3Service {
                         MemberMatchCountDto::matchCount
                 ));
 
-        String leaderNickname = members.stream()
-                .filter(GroupMatchMemberQueryDto::isLeader)
-                .findFirst()
-                .map(GroupMatchMemberQueryDto::nickname)
-                .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+        String leaderNickname = groupV3RepositoryCustom.findNicknameByUserId(userId)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.USER_NOT_FOUND));
 
         List<GroupMatchMemberRes> results = members.stream()
                 .map(member -> toGroupMatchMemberRes(
