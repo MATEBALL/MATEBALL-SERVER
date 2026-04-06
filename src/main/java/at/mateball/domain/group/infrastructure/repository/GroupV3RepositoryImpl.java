@@ -376,4 +376,17 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .where(group.id.eq(groupId))
                 .fetchOne();
     }
+
+    @Override
+    public Optional<String> findNicknameByUserId(Long userId) {
+        QUser user = QUser.user;
+
+        return Optional.ofNullable(
+                queryFactory
+                        .select(user.nickname)
+                        .from(user)
+                        .where(user.id.eq(userId))
+                        .fetchOne()
+        );
+    }
 }
