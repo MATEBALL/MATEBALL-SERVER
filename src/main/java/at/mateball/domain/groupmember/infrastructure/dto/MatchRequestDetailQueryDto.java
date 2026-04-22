@@ -1,4 +1,4 @@
-package at.mateball.domain.groupmember.infrastructure;
+package at.mateball.domain.groupmember.infrastructure.dto;
 
 import at.mateball.domain.group.core.calculator.MatchingTarget;
 

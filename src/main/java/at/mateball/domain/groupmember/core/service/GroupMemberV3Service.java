@@ -4,12 +4,13 @@ import at.mateball.domain.group.core.calculator.MatchingScoreCalculator;
 import at.mateball.domain.group.core.calculator.MatchingTarget;
 import at.mateball.domain.group.infrastructure.dto.LoginUserMatchRequirementDto;
 import at.mateball.domain.group.infrastructure.dto.MemberMatchCountDto;
+import at.mateball.domain.group.infrastructure.repository.GroupV3RepositoryCustom;
 import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.api.dto.GroupMatchSummaryRes;
 import at.mateball.domain.groupmember.api.dto.MatchRequestDetailRes;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
-import at.mateball.domain.groupmember.infrastructure.GroupMemberQueryRepository;
-import at.mateball.domain.groupmember.infrastructure.MatchRequestDetailQueryDto;
+import at.mateball.domain.groupmember.infrastructure.repository.GroupMemberQueryRepository;
+import at.mateball.domain.groupmember.infrastructure.dto.MatchRequestDetailQueryDto;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
 import at.mateball.storage.FileStorage;
@@ -26,6 +27,7 @@ public class GroupMemberV3Service {
 
     private final GroupMemberRepository groupMemberRepository;
     private final GroupMemberQueryRepository groupMemberQueryRepository;
+    private final GroupV3RepositoryCustom groupV3RepositoryCustom;
     private final MatchingScoreCalculator matchingScoreCalculator;
     private final FileStorage fileStorage;
 
@@ -45,16 +47,17 @@ public class GroupMemberV3Service {
         return groupMemberRepository.getMatchSummary(groupId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUEST_NOT_FOUND));
     }
+
     public List<MatchRequestDetailRes> getMatchRequestDetails(Long userId, Long matchId) {
         validateAccessibleRequestMatch(userId, matchId);
 
-        LoginUserMatchRequirementDto loginRequirement = groupMemberQueryRepository.findLoginUserMatchRequirement(userId)
+        LoginUserMatchRequirementDto loginRequirement = groupV3RepositoryCustom.findLoginUserMatchRequirement(userId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND));
 
         MatchingTarget loginUserTarget = loginRequirement.toTarget(userId);
 
         List<MatchRequestDetailQueryDto> requestMembers =
-                groupMemberQueryRepository.findMatchRequestDetailMembers(matchId);
+                groupMemberQueryRepository.findMatchRequestDetailMembers(userId, matchId);
 
         if (requestMembers.isEmpty()) {
             return List.of();
@@ -63,13 +66,12 @@ public class GroupMemberV3Service {
         Map<Long, Integer> avgGameMap = buildAvgGameMap(requestMembers);
 
         return requestMembers.stream()
-                .map(member -> {
-                    Long matchRate = calculateMatchRate(loginUserTarget, member);
-                    String imageUrl = fileStorage.getImageUrl(member.profileImageKey());
-                    Integer avgGame = avgGameMap.getOrDefault(member.memberId(), 0);
-
-                    return MatchRequestDetailRes.of(member, avgGame, matchRate, imageUrl);
-                })
+                .map(member -> MatchRequestDetailRes.of(
+                        member,
+                        avgGameMap.getOrDefault(member.memberId(), 0),
+                        calculateMatchRate(loginUserTarget, member),
+                        member.profileImageKey()
+                ))
                 .toList();
     }
 
@@ -86,7 +88,7 @@ public class GroupMemberV3Service {
                 .map(MatchRequestDetailQueryDto::memberId)
                 .toList();
 
-        return groupMemberQueryRepository.countGroupMembersByUserIds(memberIds).stream()
+        return groupV3RepositoryCustom.countGroupMembersByUserIds(memberIds).stream()
                 .collect(Collectors.toMap(
                         MemberMatchCountDto::memberId,
                         MemberMatchCountDto::matchCount
