@@ -22,7 +22,7 @@ public class GroupMemberV3Controller {
     private final GroupMemberV3Service groupMemberV3Service;
 
     @Operation(summary = "매칭 요청 상세 조회")
-    @GetMapping("/match/{matchId}")
+    @GetMapping("/match/{matchId}/member-details")
     public ResponseEntity<MateballResponse<List<MatchRequestDetailRes>>> getMatchRequestDetails(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @NotNull @PathVariable Long matchId

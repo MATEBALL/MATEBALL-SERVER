@@ -1,6 +1,6 @@
 package at.mateball.domain.groupmember.api.dto;
 
-import at.mateball.domain.groupmember.infrastructure.MatchRequestDetailQueryDto;
+import at.mateball.domain.groupmember.infrastructure.dto.MatchRequestDetailQueryDto;
 import at.mateball.domain.matchrequirement.core.constant.StyleMatch;
 import at.mateball.domain.team.core.TeamNameMatch;
 
