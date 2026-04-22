@@ -14,7 +14,6 @@ public record MatchRequestDetailRes(
         String team,
         String style,
         String introduction,
-        String date,
         String imgUrl,
         Integer avgGame,
         Integer avgSeason,
@@ -34,7 +33,6 @@ public record MatchRequestDetailRes(
                 TeamNameMatch.from(queryDto.team()).getLabel(),
                 StyleMatch.from(queryDto.style()).getLabel(),
                 queryDto.introduction(),
-                toDateText(queryDto.date()),
                 imageUrl,
                 avgGame,
                 queryDto.avgSeason(),
@@ -49,9 +47,5 @@ public record MatchRequestDetailRes(
 
         int currentYear = LocalDate.now().getYear();
         return (currentYear - birthYear + 1) + "세";
-    }
-
-    private static String toDateText(LocalDate date) {
-        return date == null ? null : date.toString();
     }
 }
