@@ -2,8 +2,6 @@ package at.mateball.domain.groupmember.infrastructure;
 
 import at.mateball.domain.group.core.calculator.MatchingTarget;
 
-import java.time.LocalDate;
-
 public record MatchRequestDetailQueryDto(
         Long memberId,
         String nickname,
@@ -12,7 +10,6 @@ public record MatchRequestDetailQueryDto(
         Integer team,
         Integer style,
         String introduction,
-        LocalDate date,
         String profileImageKey,
         Integer avgSeason
 ) {
