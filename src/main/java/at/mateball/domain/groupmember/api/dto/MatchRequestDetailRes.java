@@ -8,7 +8,6 @@ public record MatchRequestDetailRes(
         String team,
         String style,
         String introduction,
-        String date,
         String imgUrl,
         Integer avgGame,
         Integer avgSeason,

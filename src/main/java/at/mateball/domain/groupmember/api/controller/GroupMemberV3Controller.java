@@ -2,9 +2,7 @@ package at.mateball.domain.groupmember.api.controller;
 
 import at.mateball.common.MateballResponse;
 import at.mateball.common.security.CustomUserDetails;
-import at.mateball.domain.groupmember.api.dto.DetailMatchingListRes;
 import at.mateball.domain.groupmember.api.dto.MatchRequestDetailRes;
-import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
 import at.mateball.domain.groupmember.core.service.GroupMemberV3Service;
 import at.mateball.exception.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
