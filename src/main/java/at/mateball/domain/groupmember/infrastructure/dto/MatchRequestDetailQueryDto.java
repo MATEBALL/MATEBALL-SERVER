@@ -8,6 +8,7 @@ public record MatchRequestDetailQueryDto(
         Integer birthYear,
         String gender,
         Integer team,
+        Integer teamAllowed,
         Integer style,
         String introduction,
         String profileImageKey,
@@ -17,8 +18,8 @@ public record MatchRequestDetailQueryDto(
         return new MatchingTarget(
                 memberId,
                 team,
-                style,
-                birthYear
+                teamAllowed,
+                style
         );
     }
 }
