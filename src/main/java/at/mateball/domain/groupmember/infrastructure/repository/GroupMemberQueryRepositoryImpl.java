@@ -75,6 +75,7 @@ public class GroupMemberQueryRepositoryImpl implements GroupMemberQueryRepositor
                         user.birthYear,
                         user.gender,
                         matchRequirement.team,
+                        matchRequirement.teamAllowed,
                         matchRequirement.style,
                         user.introduction,
                         user.imgUrl,
@@ -88,10 +89,8 @@ public class GroupMemberQueryRepositoryImpl implements GroupMemberQueryRepositor
                 .where(
                         group.id.eq(matchId),
                         group.status.eq(1),
-
                         groupMember.status.eq(3),
                         groupMember.isParticipant.isFalse(),
-
                         JPAExpressions
                                 .selectOne()
                                 .from(new QGroupMember("requesterMember"))
