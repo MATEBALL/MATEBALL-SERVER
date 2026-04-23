@@ -1,6 +1,5 @@
 package at.mateball.domain.groupmember.infrastructure.repository;
 
-import at.mateball.domain.gameinformation.core.QGameInformation;
 import at.mateball.domain.group.core.QGroup;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.groupmember.infrastructure.dto.MatchRequestDetailQueryDto;
@@ -65,7 +64,6 @@ public class GroupMemberQueryRepositoryImpl implements GroupMemberQueryRepositor
         QGroup group = QGroup.group;
         QUser user = QUser.user;
         QMatchRequirement matchRequirement = QMatchRequirement.matchRequirement;
-        QGameInformation gameInformation = QGameInformation.gameInformation;
 
         return queryFactory
                 .select(Projections.constructor(
@@ -84,7 +82,6 @@ public class GroupMemberQueryRepositoryImpl implements GroupMemberQueryRepositor
                 .from(groupMember)
                 .join(groupMember.user, user)
                 .join(groupMember.group, group)
-                .join(group.gameInformation, gameInformation)
                 .join(matchRequirement).on(matchRequirement.user.id.eq(user.id))
                 .where(
                         group.id.eq(matchId),
