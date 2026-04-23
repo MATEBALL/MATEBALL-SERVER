@@ -70,9 +70,16 @@ public class GroupMemberV3Service {
                         member,
                         avgGameMap.getOrDefault(member.memberId(), 0),
                         calculateMatchRate(loginUserTarget, member),
-                        member.profileImageKey()
+                        resolveProfileImageUrl(member.profileImageKey())
                 ))
                 .toList();
+    }
+
+    private String resolveProfileImageUrl(String profileImageKey) {
+        if (profileImageKey == null || profileImageKey.isBlank()) {
+            return null;
+        }
+        return fileStorage.getImageUrl(profileImageKey);
     }
 
     private void validateAccessibleRequestMatch(Long userId, Long matchId) {
