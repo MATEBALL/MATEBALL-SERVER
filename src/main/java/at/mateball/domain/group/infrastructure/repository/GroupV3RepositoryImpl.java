@@ -250,10 +250,13 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .select(Projections.constructor(
                         MemberMatchCountDto.class,
                         groupMember.user.id,
-                        groupMember.count().intValue()
+                        groupMember.id.countDistinct().intValue()
                 ))
                 .from(groupMember)
-                .where(groupMember.user.id.in(memberIds))
+                .where(
+                        groupMember.user.id.in(memberIds),
+                        groupMember.status.eq(GroupMemberStatus.MATCHED.getValue())
+                )
                 .groupBy(groupMember.user.id)
                 .fetch();
     }

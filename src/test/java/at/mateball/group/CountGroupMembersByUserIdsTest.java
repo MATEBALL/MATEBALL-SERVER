@@ -35,12 +35,12 @@ class CountGroupMembersByUserIdsTest {
     private GroupV3RepositoryImpl groupV3Repository;
 
     @Test
-    void 함께한_매칭_수는_상태와_무관하게_신청_수_전체를_집계한다() {
+    void 함께한_매칭_수는_매칭완료_상태만_집계한다() {
         // given
         User leader = persistUser(1000L);
         User target = persistUser(2000L);
 
-        // target 유저: 상태와 무관하게 신청한 모든 내역(요청/대기/완료/실패 등) 5건
+        // target 유저: MATCHED 2건 + 비-MATCHED(요청/대기/실패 등) 3건
         em.persist(GroupMember.member(target, persistGroup(leader), GroupMemberStatus.MATCHED.getValue()));
         em.persist(GroupMember.member(target, persistGroup(leader), GroupMemberStatus.MATCHED.getValue()));
         em.persist(GroupMember.member(target, persistGroup(leader), GroupMemberStatus.PENDING_REQUEST.getValue()));
@@ -56,17 +56,19 @@ class CountGroupMembersByUserIdsTest {
                 .stream()
                 .collect(Collectors.toMap(MemberMatchCountDto::memberId, MemberMatchCountDto::matchCount));
 
-        // then: MATCHED 만이 아니라 신청한 전체 5건이 집계되어야 한다
-        assertThat(countMap.getOrDefault(target.getId(), 0)).isEqualTo(5);
+        // then: 전체 5건이 아니라 MATCHED 2건만 집계되어야 한다
+        assertThat(countMap.getOrDefault(target.getId(), 0)).isEqualTo(2);
     }
 
     @Test
-    void 신청_내역이_없으면_결과에서_제외된다() {
+    void 매칭완료_내역이_없으면_결과에서_제외된다() {
         // given
-        persistUser(1001L);
+        User leader = persistUser(1001L);
         User target = persistUser(2001L);
 
-        // target 유저: 신청 내역 없음
+        // target 유저: 매칭완료가 아닌 신청 내역만 존재
+        em.persist(GroupMember.member(target, persistGroup(leader),
+                GroupMemberStatus.PENDING_REQUEST.getValue()));
 
         em.flush();
         em.clear();
@@ -74,7 +76,7 @@ class CountGroupMembersByUserIdsTest {
         // when
         List<MemberMatchCountDto> result = groupV3Repository.countGroupMembersByUserIds(List.of(target.getId()));
 
-        // then: getOrDefault(..., 0) 으로 본인 프로필과 동일하게 0 으로 해석된다
+        // then: 매칭완료 내역이 없으므로 결과에서 제외되고, getOrDefault(..., 0) 으로 0 으로 해석된다
         assertThat(result).isEmpty();
     }
 
