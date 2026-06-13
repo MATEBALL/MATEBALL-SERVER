@@ -253,10 +253,7 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                         groupMember.count().intValue()
                 ))
                 .from(groupMember)
-                .where(
-                        groupMember.user.id.in(memberIds),
-                        groupMember.status.eq(GroupMemberStatus.MATCHED.getValue())
-                )
+                .where(groupMember.user.id.in(memberIds))
                 .groupBy(groupMember.user.id)
                 .fetch();
     }
