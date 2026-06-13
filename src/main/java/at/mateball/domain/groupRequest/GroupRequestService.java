@@ -2,6 +2,8 @@ package at.mateball.domain.groupRequest;
 
 import at.mateball.domain.alarm.common.AlarmType;
 import at.mateball.domain.alarm.core.service.AlarmService;
+import at.mateball.domain.chatting.core.Chatting;
+import at.mateball.domain.chatting.core.service.ChattingV2Service;
 import at.mateball.domain.group.api.dto.GroupValidationRes;
 import at.mateball.domain.group.api.dto.RequestValidationRes;
 import at.mateball.domain.group.core.Group;
@@ -37,6 +39,7 @@ public class GroupRequestService {
     private final GroupMemberV3Service groupMemberV3Service;
     private final GroupRequestValidator groupRequestValidator;
     private final ConstraintExceptionTranslator constraintExceptionTranslator;
+    private final ChattingV2Service chattingV2Service;
     private final EntityManager entityManager;
 
     @Transactional
@@ -68,12 +71,12 @@ public class GroupRequestService {
         Long requesterId = Optional.ofNullable(summary.requesterId())
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.REQUESTER_NOT_FOUND));
 
-        if (isGroup) processGroupMatch(userId, requesterId, groupId, summary);
-        else processDirectMatch(userId, requesterId, groupId);
+        if (isGroup) processGroupMatch(group, userId, requesterId, groupId, summary);
+        else processDirectMatch(group, userId, requesterId, groupId);
     }
 
     private Group getValidatedGroup(Long userId, Long groupId) {
-        Group group = groupRepository.findById(groupId)
+        Group group = groupRepository.findGroupWithLock(groupId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
 
         GroupValidator.validate(group);
@@ -85,17 +88,18 @@ public class GroupRequestService {
         return group;
     }
 
-    private void processDirectMatch(Long userId, Long requesterId, Long groupId) {
+    private void processDirectMatch(Group group, Long userId, Long requesterId, Long groupId) {
         groupMemberV3Service.updateMemberStatusMatched(userId, groupId);
         groupMemberV3Service.updateMemberStatusMatched(requesterId, groupId);
 
         updateGroupStatusCompleted(groupId);
+        assignChattingIfAbsent(group);
 
         alarmService.notifyMatched(userId, groupId);
         alarmService.notifyMatched(requesterId, groupId);
     }
 
-    private void processGroupMatch(Long userId, Long requesterId, Long groupId, GroupMatchSummaryRes summary) {
+    private void processGroupMatch(Group group, Long userId, Long requesterId, Long groupId, GroupMatchSummaryRes summary) {
         groupMemberV3Service.updateMemberStatusMatched(requesterId, groupId);
 
         boolean isFull = isGroupFull(summary);
@@ -103,6 +107,7 @@ public class GroupRequestService {
         if (isFull) {
             groupMemberV3Service.updateMemberStatusMatched(userId, groupId);
             updateGroupStatusCompleted(groupId);
+            assignChattingIfAbsent(group);
 
             alarmService.notifyMatched(userId, groupId);
             alarmService.notifyMatched(requesterId, groupId);
@@ -115,6 +120,15 @@ public class GroupRequestService {
 
     public void updateGroupStatusCompleted(Long groupId) { // 순환참조 발생으로 request service 에 위치
         groupRepository.updateGroupStatus(groupId, GroupStatus.COMPLETED.getValue());
+    }
+
+    private void assignChattingIfAbsent(Group group) {
+        if (group.getChatting() != null) {
+            return;
+        }
+
+        Chatting chatting = chattingV2Service.assignChatting();
+        groupRepository.assignChattingToGroup(group.getId(), chatting.getId());
     }
 
     private boolean isGroupFull(GroupMatchSummaryRes summary) {
