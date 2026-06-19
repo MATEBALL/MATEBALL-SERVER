@@ -231,8 +231,10 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .join(groupMember.user, memberUser)
                 .leftJoin(memberRequirement).on(memberRequirement.user.id.eq(memberUser.id))
                 .where(
-                        groupMember.group.id.eq(matchId),
-                        groupMember.status.eq(GroupMemberStatus.APPROVED.getValue())
+                        groupMember.status.in(
+                                        GroupMemberStatus.APPROVED.getValue(),
+                                        GroupMemberStatus.MATCHED.getValue()
+                                )
                                 .or(groupMember.group.leader.id.eq(memberUser.id))
                 )
                 .orderBy(groupMember.id.asc())
