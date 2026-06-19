@@ -1,5 +1,7 @@
 package at.mateball.domain.user.core.repository;
 
+import at.mateball.domain.group.core.GroupStatus;
+import at.mateball.domain.groupmember.GroupMemberStatus;
 import at.mateball.domain.groupmember.core.QGroupMember;
 import at.mateball.domain.matchrequirement.core.QMatchRequirement;
 import at.mateball.domain.user.api.dto.response.*;
@@ -147,8 +149,11 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .leftJoin(matchRequirement)
                 .on(matchRequirement.user.id.eq(user.id))
                 .leftJoin(groupMember)
-                .on(groupMember.user.id.eq(user.id))
-                .where(user.id.eq(userId))
+                .on(
+                        groupMember.user.id.eq(user.id),
+                        groupMember.status.eq(GroupMemberStatus.MATCHED.getValue()),
+                        groupMember.group.status.eq(GroupStatus.COMPLETED.getValue())
+                )                .where(user.id.eq(userId))
                 .groupBy(
                         user.id,
                         matchRequirement.team,
