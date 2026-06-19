@@ -92,7 +92,7 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .join(member).on(
                         member.group.id.eq(group.id)
                                 .and(member.isParticipant.isTrue())
-                )                .join(member.user, memberUser)
+                ).join(member.user, memberUser)
                 .leftJoin(memberRequirement).on(memberRequirement.user.id.eq(memberUser.id))
                 .where(
                         group.gameInformation.id.eq(gameId),
@@ -156,7 +156,7 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .join(groupMember).on(
                         groupMember.group.id.eq(group.id)
                                 .and(groupMember.isParticipant.isTrue())
-                )                .where(group.leader.id.eq(userId))
+                ).where(group.leader.id.eq(userId))
                 .groupBy(
                         group.id,
                         leaderUser.nickname,
@@ -232,7 +232,8 @@ public class GroupV3RepositoryImpl implements GroupV3RepositoryCustom {
                 .leftJoin(memberRequirement).on(memberRequirement.user.id.eq(memberUser.id))
                 .where(
                         groupMember.group.id.eq(matchId),
-                        groupMember.status.ne(GroupMemberStatus.MATCH_FAILED.getValue())
+                        groupMember.status.eq(GroupMemberStatus.APPROVED.getValue()),
+                        groupMember.status.eq(GroupMemberStatus.MATCHED.getValue())
                 )
                 .orderBy(groupMember.id.asc())
                 .fetch();
