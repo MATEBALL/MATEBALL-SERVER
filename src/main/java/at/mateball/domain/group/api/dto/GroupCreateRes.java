@@ -45,4 +45,10 @@ public record GroupCreateRes(
                 imgUrls
         );
     }
+
+    public GroupCreateRes withImgUrl(List<String> resolvedImgUrls) {
+        return new GroupCreateRes(
+                id, nickname, awayTeam, homeTeam, stadium, date, count, resolvedImgUrls
+        );
+    }
 }

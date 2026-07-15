@@ -26,6 +26,7 @@ import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
+import at.mateball.storage.FileStorage;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
     private final AlarmService alarmService;
     private final GroupExecutor groupExecutor;
     private final AgeValidator ageValidator;
+    private final FileStorage fileStorage;
 
     private final static int MAX_DIRECT_COUNT = 3;
     private final static int MAX_GROUP_COUNT = 2;
@@ -68,7 +70,7 @@ import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
             throw new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND);
         }
 
-        return result;
+        return result.withImgUrl(fileStorage.getImageUrl(result.imgUrl()));
     }
 
     public DirectGetListRes getDirects(Long userId, LocalDate date) {
@@ -98,8 +100,14 @@ import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
     }
 
     public GroupCreateRes getGroupMatching(Long userId, Long matchId) {
-        return groupRepository.findGroupCreateRes(userId, matchId)
+        GroupCreateRes result = groupRepository.findGroupCreateRes(userId, matchId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        List<String> imgUrls = result.imgUrl().stream()
+                .map(fileStorage::getImageUrl)
+                .toList();
+
+        return result.withImgUrl(imgUrls);
     }
 
     @Transactional
