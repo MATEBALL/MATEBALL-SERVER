@@ -66,4 +66,11 @@ public record DirectCreateRes(
         );
     }
 
+    public DirectCreateRes withImgUrl(String resolvedImgUrl) {
+        return new DirectCreateRes(
+                id, nickname, age, gender, team, style,
+                awayTeam, homeTeam, stadium, date, resolvedImgUrl
+        );
+    }
+
 }

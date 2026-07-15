@@ -24,6 +24,7 @@ import at.mateball.domain.matchrequirement.api.dto.MatchingScoreDto;
 import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
+import at.mateball.storage.FileStorage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,12 +50,13 @@ public class GroupService {
     private final GameInformationRepository gameInformationRepository;
     private final GroupExecutor groupExecutor;
     private final AgeValidator ageValidator;
+    private final FileStorage fileStorage;
 
     private final static int MAX_DIRECT_COUNT = 3;
     private final static int MAX_GROUP_COUNT = 2;
     private final static int TOTAL_GROUP_MEMBER = 4;
 
-    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, AlarmService alarmService, GameInformationRepository gameInformationRepository, GroupExecutor groupExecutor, AgeValidator ageValidator) {
+    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, AlarmService alarmService, GameInformationRepository gameInformationRepository, GroupExecutor groupExecutor, AgeValidator ageValidator, FileStorage fileStorage) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.matchRequirementService = matchRequirementService;
@@ -62,6 +64,7 @@ public class GroupService {
         this.gameInformationRepository = gameInformationRepository;
         this.groupExecutor = groupExecutor;
         this.ageValidator = ageValidator;
+        this.fileStorage = fileStorage;
     }
 
     public DirectCreateRes getDirectMatching(Long userId, Long matchId) {
@@ -75,7 +78,7 @@ public class GroupService {
             throw new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND);
         }
 
-        return result;
+        return result.withImgUrl(fileStorage.getImageUrl(result.imgUrl()));
     }
 
     public DirectGetListRes getDirects(Long userId, LocalDate date) {
@@ -106,8 +109,14 @@ public class GroupService {
     }
 
     public GroupCreateRes getGroupMatching(Long userId, Long matchId) {
-        return groupRepository.findGroupCreateRes(userId, matchId)
+        GroupCreateRes result = groupRepository.findGroupCreateRes(userId, matchId)
                 .orElseThrow(() -> new BusinessException(BusinessErrorCode.GROUP_NOT_FOUND));
+
+        List<String> imgUrls = result.imgUrl().stream()
+                .map(fileStorage::getImageUrl)
+                .toList();
+
+        return result.withImgUrl(imgUrls);
     }
 
     @Transactional

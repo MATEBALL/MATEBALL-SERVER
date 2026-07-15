@@ -52,7 +52,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                         game.homeTeamName,
                         game.stadiumName,
                         game.gameDate,
-                        user.imgUrl
+                        user.profileImageKey
                 ))
                 .from(group)
                 .join(user).on(group.leader.eq(user))
@@ -153,7 +153,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                 .fetchOne()).orElse(0);
 
         List<String> imgUrls = queryFactory
-                .select(member.imgUrl)
+                .select(member.profileImageKey)
                 .from(groupMember)
                 .join(member).on(groupMember.user.eq(member))
                 .where(
