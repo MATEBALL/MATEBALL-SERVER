@@ -7,6 +7,7 @@ import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
+import at.mateball.storage.FileStorage;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,14 @@ public class ReissueService {
     private final JwtTokenGenerator jwtTokenGenerator;
     private final TokenService tokenService;
     private final UserRepository userRepository;
+    private final FileStorage fileStorage;
 
-    public ReissueService(JwtCookieProvider jwtCookieProvider, JwtTokenGenerator jwtTokenGenerator, TokenService tokenService, UserRepository userRepository) {
+    public ReissueService(JwtCookieProvider jwtCookieProvider, JwtTokenGenerator jwtTokenGenerator, TokenService tokenService, UserRepository userRepository, FileStorage fileStorage) {
         this.jwtCookieProvider = jwtCookieProvider;
         this.jwtTokenGenerator = jwtTokenGenerator;
         this.tokenService = tokenService;
         this.userRepository = userRepository;
+        this.fileStorage = fileStorage;
     }
 
     @Transactional
@@ -56,7 +59,7 @@ public class ReissueService {
                 null,
                 user.getId(),
                 user.getEmail(),
-                user.getImgUrl()
+                fileStorage.getImageUrl(user.getProfileImageKey())
         );
     }
 }

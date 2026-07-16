@@ -74,7 +74,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
         if (groupIds.isEmpty()) return Map.of();
 
         return queryFactory
-                .select(member.group.id, user.imgUrl)
+                .select(member.group.id, user.profileImageKey)
                 .from(member)
                 .join(user).on(member.user.eq(user))
                 .where(
@@ -122,7 +122,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         gameInformation.stadiumName,
                         gameInformation.gameDate,
                         groupMember.status,
-                        leader.imgUrl
+                        leader.profileImageKey
                 ))
                 .from(groupMember)
                 .join(groupMember.group, group)
@@ -158,7 +158,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         gameInformation.stadiumName,
                         gameInformation.gameDate,
                         groupMember.status,
-                        leader.imgUrl
+                        leader.profileImageKey
                 ))
                 .from(groupMember)
                 .join(groupMember.group, group)
@@ -279,7 +279,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         game.homeTeamName,
                         game.stadiumName,
                         game.gameDate,
-                        user.imgUrl
+                        user.profileImageKey
                 ))
                 .from(groupMember)
                 .join(groupMember.user, user)
@@ -340,7 +340,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         game.homeTeamName,
                         game.stadiumName,
                         game.gameDate,
-                        user.imgUrl
+                        user.profileImageKey
                 ))
                 .from(groupMember)
                 .join(groupMember.user, user)
@@ -649,7 +649,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         gameInformation.stadiumName,
                         gameInformation.gameDate,
                         groupMember.status,
-                        leader.imgUrl
+                        leader.profileImageKey
                 ))
                 .from(groupMember)
                 .join(groupMember.group, group)
@@ -686,7 +686,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepositoryCustom {
                         gameInformation.stadiumName,
                         gameInformation.gameDate,
                         groupMember.status,
-                        leader.imgUrl
+                        leader.profileImageKey
                 ))
                 .from(groupMember)
                 .join(groupMember.group, group)

@@ -8,6 +8,7 @@ import at.mateball.domain.groupmember.api.dto.GroupStatusResV2;
 import at.mateball.domain.groupmember.api.dto.base.DirectStatusBaseResV2;
 import at.mateball.domain.groupmember.api.dto.base.GroupStatusBaseResV2;
 import at.mateball.domain.groupmember.core.repository.GroupMemberRepository;
+import at.mateball.storage.FileStorage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.Map;
 @Service
 public class GroupMemberV2Service {
     private final GroupMemberRepository groupMemberRepository;
+    private final FileStorage fileStorage;
 
-    public GroupMemberV2Service(GroupMemberRepository groupMemberRepository) {
+    public GroupMemberV2Service(GroupMemberRepository groupMemberRepository, FileStorage fileStorage) {
         this.groupMemberRepository = groupMemberRepository;
+        this.fileStorage = fileStorage;
     }
 
     public DirectStatusListRes getDirectStatusV2(Long userId, GroupStatus groupStatus) {
@@ -26,7 +29,7 @@ public class GroupMemberV2Service {
                 groupMemberRepository.findDirectMatchingsByUserAndGroupStatusV2(userId, groupStatus.getValue());
 
         List<DirectStatusResV2> result = baseResList.stream()
-                .map(baseRes -> DirectStatusResV2.fromV2(baseRes, userId))
+                .map(baseRes -> DirectStatusResV2.fromV2(resolveImgUrl(baseRes), userId))
                 .toList();
 
         return new DirectStatusListRes(result);
@@ -37,7 +40,7 @@ public class GroupMemberV2Service {
                 groupMemberRepository.findAllDirectMatchingsByUserV2(userId);
 
         List<DirectStatusResV2> result = baseResList.stream()
-                .map(baseRes -> DirectStatusResV2.fromV2(baseRes, userId))
+                .map(baseRes -> DirectStatusResV2.fromV2(resolveImgUrl(baseRes), userId))
                 .toList();
 
         return new DirectStatusListRes(result);
@@ -57,7 +60,7 @@ public class GroupMemberV2Service {
                 .map(base -> GroupStatusResV2.from(
                         base,
                         countMap.getOrDefault(base.id(), 0),
-                        imgMap.getOrDefault(base.id(), List.of()),
+                        resolveImgUrls(imgMap.getOrDefault(base.id(), List.of())),
                         userId
                 ))
                 .toList();
@@ -79,11 +82,21 @@ public class GroupMemberV2Service {
                 .map(base -> GroupStatusResV2.from(
                         base,
                         countMap.getOrDefault(base.id(), 0),
-                        imgMap.getOrDefault(base.id(), List.of()),
+                        resolveImgUrls(imgMap.getOrDefault(base.id(), List.of())),
                         userId
                 ))
                 .toList();
 
         return new GroupStatusListRes(result);
+    }
+
+    private DirectStatusBaseResV2 resolveImgUrl(DirectStatusBaseResV2 baseRes) {
+        return baseRes.withImgUrl(fileStorage.getImageUrl(baseRes.imgUrl()));
+    }
+
+    private List<String> resolveImgUrls(List<String> profileImageKeys) {
+        return profileImageKeys.stream()
+                .map(fileStorage::getImageUrl)
+                .toList();
     }
 }

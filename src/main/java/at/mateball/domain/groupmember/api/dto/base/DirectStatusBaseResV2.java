@@ -16,4 +16,22 @@ public record DirectStatusBaseResV2(
         LocalDate date,
         Integer status,
         String imgUrl
-) {}
+) {
+    public DirectStatusBaseResV2 withImgUrl(String imgUrl) {
+        return new DirectStatusBaseResV2(
+                id,
+                leaderId,
+                nickname,
+                birthYear,
+                gender,
+                team,
+                style,
+                awayTeam,
+                homeTeam,
+                stadium,
+                date,
+                status,
+                imgUrl
+        );
+    }
+}

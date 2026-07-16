@@ -11,6 +11,7 @@ import at.mateball.domain.user.core.User;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
+import at.mateball.storage.FileStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class LoginService {
     private final JwtTokenGenerator jwtTokenGenerator;
     private final TokenService tokenService;
     private final RedirectUriResolver redirectUriResolver;
+    private final FileStorage fileStorage;
 
     @Transactional
     public LoginResult login(LoginCommand loginCommand) {
@@ -86,7 +88,7 @@ public class LoginService {
                 kakaoToken.accessToken(),
                 user.getId(),
                 user.getEmail(),
-                user.getImgUrl()
+                fileStorage.getImageUrl(user.getProfileImageKey())
         );
     }
 }

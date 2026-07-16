@@ -17,4 +17,21 @@ public record DetailMatchingBaseRes(
         LocalDate date,
         String imgUrl
 ) {
+    public DetailMatchingBaseRes withImgUrl(String imgUrl) {
+        return new DetailMatchingBaseRes(
+                id,
+                userId,
+                nickname,
+                birthYear,
+                gender,
+                team,
+                style,
+                introduction,
+                awayTeam,
+                homeTeam,
+                stadium,
+                date,
+                imgUrl
+        );
+    }
 }

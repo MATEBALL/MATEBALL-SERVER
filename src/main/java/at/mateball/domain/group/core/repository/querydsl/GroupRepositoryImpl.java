@@ -90,7 +90,7 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
                         game.stadiumName,
                         game.gameDate,
                         Expressions.nullExpression(Integer.class),
-                        user.imgUrl
+                        user.profileImageKey
                 ))
                 .from(group)
                 .join(user).on(group.leader.eq(user))

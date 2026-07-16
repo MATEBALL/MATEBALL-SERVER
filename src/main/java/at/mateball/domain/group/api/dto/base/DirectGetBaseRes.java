@@ -17,6 +17,24 @@ public record DirectGetBaseRes(
         Integer matchRate,
         String imgUrl
 ) {
+    public DirectGetBaseRes withImgUrl(String imgUrl) {
+        return new DirectGetBaseRes(
+                id,
+                leaderId,
+                nickname,
+                birthYear,
+                gender,
+                team,
+                style,
+                awayTeam,
+                homeTeam,
+                stadium,
+                date,
+                matchRate,
+                imgUrl
+        );
+    }
+
     public DirectGetBaseRes withMatchRate(Integer matchRate) {
         return new DirectGetBaseRes(
                 id,

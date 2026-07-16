@@ -22,6 +22,18 @@ public record UserInformationRes(
         @Schema(description = "사용자의 프로필 이미지")
         String imgUrl
 ) {
+    public UserInformationRes withImgUrl(String imgUrl) {
+        return new UserInformationRes(
+                nickname,
+                age,
+                gender,
+                team,
+                style,
+                introduction,
+                imgUrl
+        );
+    }
+
     public static UserInformationRes fromBase(UserInformationBaseRes userInformationBaseRes) {
         if (userInformationBaseRes == null) {
             return new UserInformationRes(
