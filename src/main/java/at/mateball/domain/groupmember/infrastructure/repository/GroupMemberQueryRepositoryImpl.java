@@ -76,7 +76,7 @@ public class GroupMemberQueryRepositoryImpl implements GroupMemberQueryRepositor
                         matchRequirement.teamAllowed,
                         matchRequirement.style,
                         user.introduction,
-                        user.imgUrl,
+                        user.profileImageKey,
                         user.avgSeason
                 ))
                 .from(groupMember)

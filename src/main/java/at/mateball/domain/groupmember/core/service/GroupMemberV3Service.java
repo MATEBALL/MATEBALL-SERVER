@@ -76,9 +76,6 @@ public class GroupMemberV3Service {
     }
 
     private String resolveProfileImageUrl(String profileImageKey) {
-        if (profileImageKey == null || profileImageKey.isBlank()) {
-            return null;
-        }
         return fileStorage.getImageUrl(profileImageKey);
     }
 
