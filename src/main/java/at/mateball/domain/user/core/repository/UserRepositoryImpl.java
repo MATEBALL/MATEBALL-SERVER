@@ -40,7 +40,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         matchRequirement.team,
                         matchRequirement.style,
                         user.introduction,
-                        user.imgUrl
+                        user.profileImageKey
                 ))
                 .from(user, matchRequirement)
                 .where(user.id.eq(userId),

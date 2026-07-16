@@ -11,6 +11,7 @@ import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.domain.user.core.validator.NicknameValidator;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
+import at.mateball.storage.FileStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import static at.mateball.exception.code.BusinessErrorCode.*;
 public class UserService {
     private final UserRepository userRepository;
     private final MatchRequirementRepository matchRequirementRepository;
+    private final FileStorage fileStorage;
 
     public KaKaoInformationRes getKakaoInformation(final Long userId) {
         User user = userRepository.findById(userId)
@@ -66,7 +68,9 @@ public class UserService {
             throw new BusinessException(BusinessErrorCode.MATCH_REQUIREMENT_NOT_FOUND);
         }
 
-        return userRepository.findUserInformation(userId);
+        UserInformationRes userInformation = userRepository.findUserInformation(userId);
+
+        return userInformation.withImgUrl(fileStorage.getImageUrl(userInformation.imgUrl()));
     }
 
     public User findUser(final Long userId) {

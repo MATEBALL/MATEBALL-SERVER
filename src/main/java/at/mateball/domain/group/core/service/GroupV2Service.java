@@ -92,6 +92,7 @@ import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
 
         List<DirectGetRes> directGetRes = filtered.stream()
                 .map(res -> res.withMatchRate(matchRateMap.getOrDefault(res.leaderId(), 0)))
+                .map(res -> res.withImgUrl(fileStorage.getImageUrl(res.imgUrl())))
                 .map(DirectGetRes::from)
                 .sorted(Comparator.comparingInt(DirectGetRes::matchRate).reversed())
                 .toList();
@@ -206,7 +207,9 @@ import static at.mateball.domain.groupmember.GroupMemberStatus.MATCH_FAILED;
                 .map(groupBase -> {
                     Long groupId = groupBase.id();
                     int count = groupToMemberCount.getOrDefault(groupId, 1);
-                    List<String> imgs = groupToImgUrls.getOrDefault(groupId, List.of());
+                    List<String> imgs = groupToImgUrls.getOrDefault(groupId, List.of()).stream()
+                            .map(fileStorage::getImageUrl)
+                            .toList();
                     int avgMatchRate = groupToAvgMatchRate.getOrDefault(groupId, 0);
 
                     return GroupGetRes.from(groupBase, avgMatchRate, count, imgs);

@@ -16,4 +16,20 @@ public record DirectStatusBaseRes(
         Integer status,
         String imgUrl
 ) {
+    public DirectStatusBaseRes withImgUrl(String imgUrl) {
+        return new DirectStatusBaseRes(
+                id,
+                nickname,
+                birthYear,
+                gender,
+                team,
+                style,
+                awayTeam,
+                homeTeam,
+                stadium,
+                date,
+                status,
+                imgUrl
+        );
+    }
 }

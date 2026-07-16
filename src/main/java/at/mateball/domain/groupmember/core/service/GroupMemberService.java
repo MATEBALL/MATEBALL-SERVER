@@ -13,6 +13,7 @@ import at.mateball.domain.matchrequirement.core.service.MatchRequirementService;
 import at.mateball.domain.user.core.repository.UserRepository;
 import at.mateball.exception.BusinessException;
 import at.mateball.exception.code.BusinessErrorCode;
+import at.mateball.storage.FileStorage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,18 +27,21 @@ public class GroupMemberService {
     private final GroupMemberRepository groupMemberRepository;
     private final MatchRequirementService matchRequirementService;
     private final UserRepository userRepository;
+    private final FileStorage fileStorage;
 
-    public GroupMemberService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, UserRepository userRepository) {
+    public GroupMemberService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, MatchRequirementService matchRequirementService, UserRepository userRepository, FileStorage fileStorage) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.matchRequirementService = matchRequirementService;
         this.userRepository = userRepository;
+        this.fileStorage = fileStorage;
     }
 
     public DirectStatusListRes getDirectStatus(Long userId, GroupStatus groupStatus) {
         List<DirectStatusBaseRes> baseResList = groupMemberRepository.findDirectMatchingsByUserAndGroupStatus(userId, groupStatus.getValue());
 
         List<DirectStatusRes> result = baseResList.stream()
+                .map(this::resolveImgUrl)
                 .map(DirectStatusRes::from)
                 .toList();
 
@@ -48,6 +52,7 @@ public class GroupMemberService {
         List<DirectStatusBaseRes> baseResList = groupMemberRepository.findAllDirectMatchingsByUser(userId);
 
         List<DirectStatusRes> result = baseResList.stream()
+                .map(this::resolveImgUrl)
                 .map(DirectStatusRes::from)
                 .toList();
 
@@ -81,7 +86,7 @@ public class GroupMemberService {
         List<DetailMatchingRes> result = newRequests.stream()
                 .map(base -> {
                     Integer matchRate = matchRateMap.getOrDefault(base.userId(), 0);
-                    return DetailMatchingRes.from(base, matchRate);
+                    return DetailMatchingRes.from(resolveImgUrl(base), matchRate);
                 })
                 .toList();
 
@@ -108,7 +113,7 @@ public class GroupMemberService {
         List<DetailMatchingRes> result = participants.stream()
                 .map(base -> {
                     Integer matchRate = matchRateMap.getOrDefault(base.userId(), 0);
-                    return DetailMatchingRes.from(base, matchRate);
+                    return DetailMatchingRes.from(resolveImgUrl(base), matchRate);
                 })
                 .toList();
 
@@ -133,11 +138,25 @@ public class GroupMemberService {
                 .map(res -> GroupStatusRes.from(
                         res,
                         countMap.getOrDefault(res.id(), 0),
-                        imgMap.getOrDefault(res.id(), List.of())
+                        resolveImgUrls(imgMap.getOrDefault(res.id(), List.of()))
                 ))
                 .toList();
 
         return new GroupStatusListRes(result);
+    }
+
+    private DirectStatusBaseRes resolveImgUrl(DirectStatusBaseRes baseRes) {
+        return baseRes.withImgUrl(fileStorage.getImageUrl(baseRes.imgUrl()));
+    }
+
+    private DetailMatchingBaseRes resolveImgUrl(DetailMatchingBaseRes baseRes) {
+        return baseRes.withImgUrl(fileStorage.getImageUrl(baseRes.imgUrl()));
+    }
+
+    private List<String> resolveImgUrls(List<String> profileImageKeys) {
+        return profileImageKeys.stream()
+                .map(fileStorage::getImageUrl)
+                .toList();
     }
 
     public GroupMemberCountRes countGroupMember(final Long matchId) {
