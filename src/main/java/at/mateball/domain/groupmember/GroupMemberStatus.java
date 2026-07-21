@@ -33,7 +33,7 @@ public enum GroupMemberStatus {
     public String toResponseLabel() {
         return switch (this) {
             case AWAITING_APPROVAL -> "수락 대기 중";
-            case APPROVED -> "수락완료";
+            case APPROVED,MATCHED -> "수락완료";
             default -> null;
         };
     }
